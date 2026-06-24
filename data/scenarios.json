@@ -1,0 +1,44 @@
+{
+  "scenarios": [
+    {
+      "id": "s1",
+      "title": "회의 일정 조율",
+      "description": "김민수와 신규 프로젝트 킥오프 회의 일정 조율 (월요일 오전 10시 또는 화요일 오후 2시)",
+      "minimum": {
+        "contact_ids": ["c1"],
+        "email_ids": ["e1", "e5"],
+        "calendar_ids": ["cal1", "cal2"]
+      }
+    },
+    {
+      "id": "s2",
+      "title": "회의실 예약",
+      "description": "김민수와 프로젝트 킥오프를 위한 회의실 예약 (6/24 오후 2시, 5층 A회의실)",
+      "minimum": {
+        "contact_ids": ["c1"],
+        "email_ids": ["e5", "e23"],
+        "calendar_ids": ["cal2"]
+      }
+    },
+    {
+      "id": "s3",
+      "title": "문서 검토",
+      "description": "김민수가 보낸 프로젝트 제안서 검토 의견을 확인하고 관련 이메일 찾기",
+      "minimum": {
+        "contact_ids": ["c1"],
+        "email_ids": ["e14", "e20", "e23"],
+        "calendar_ids": []
+      }
+    },
+    {
+      "id": "s4",
+      "title": "주간 메일 요약",
+      "description": "이번 주 업무 이메일 요약 (중요도 high 이상만)",
+      "minimum": {
+        "contact_ids": [],
+        "email_ids": ["e1", "e5", "e9", "e15"],
+        "calendar_ids": []
+      }
+    }
+  ]
+}

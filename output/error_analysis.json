@@ -1,0 +1,852 @@
+[
+  {
+    "query": "What are the export control requirements for 3.B.1?",
+    "answer": "3.B.1",
+    "mode": "minimal",
+    "top10": [
+      "7.E.4.b.7",
+      "7.E.4.b.8",
+      "3.A.1.b.7",
+      "3.A.1.b.3",
+      "3.B.1.b",
+      "5.A.3.b",
+      "3.A.1.b.2",
+      "7.B.3",
+      "3.B.1.f.3",
+      "9.E.3.a.3"
+    ]
+  },
+  {
+    "query": "What are the export control requirements for 3.B.1?",
+    "answer": "3.B.1",
+    "mode": "raw",
+    "top10": [
+      "7.E.4.b.8",
+      "5.A.3.b",
+      "9.E.3.h",
+      "4A011",
+      "7.E.4.b.7",
+      "9.E.3.i",
+      "8.E.2.a",
+      "6A022",
+      "3.B.1.c",
+      "3.A.1.a.12"
+    ]
+  },
+  {
+    "query": "What are the export control requirements for 3.B.1?",
+    "answer": "3.B.1",
+    "mode": "local_rule",
+    "top10": [
+      "7.E.4.b.8",
+      "5.A.3.b",
+      "9.E.3.h",
+      "4A011",
+      "7.E.4.b.7",
+      "9.E.3.i",
+      "8.E.2.a",
+      "6A022",
+      "3.B.1.c",
+      "3.A.1.a.12"
+    ]
+  },
+  {
+    "query": "What are the export control requirements for 3.B.1?",
+    "answer": "3.B.1",
+    "mode": "category",
+    "top10": [
+      "3.D.1",
+      "3.D.2",
+      "3.A.1.a.12",
+      "3.A.1.b.4.f",
+      "7.E.4.b.7",
+      "7.E.4.b.8",
+      "7.B.3",
+      "3.A.1.b.8",
+      "3.D.4",
+      "3.E.2"
+    ]
+  },
+  {
+    "query": "Provide a detailed explanation of the export control classification and applicable licensing policy for 2.B.1.a, including technical parameters and end-use concerns.",
+    "answer": "2.B.1.a",
+    "mode": "minimal",
+    "top10": [
+      "2.B",
+      "9.B.5",
+      "9.B.2",
+      "2.B.9",
+      "2.B.7",
+      "8B905",
+      "2.B.5",
+      "5.A.2.b",
+      "8.A.2.b",
+      "2.B.1"
+    ]
+  },
+  {
+    "query": "Provide a detailed explanation of the export control classification and applicable licensing policy for 2.B.1.a, including technical parameters and end-use concerns.",
+    "answer": "2.B.1.a",
+    "mode": "raw",
+    "top10": [
+      "7.A.3.a",
+      "4A031",
+      "8D904",
+      "0B003",
+      "2.D",
+      "3.B.2",
+      "9.E.3.h",
+      "2.B.7",
+      "6A022",
+      "9.B.2"
+    ]
+  },
+  {
+    "query": "Provide a detailed explanation of the export control classification and applicable licensing policy for 2.B.1.a, including technical parameters and end-use concerns.",
+    "answer": "2.B.1.a",
+    "mode": "local_rule",
+    "top10": [
+      "7.A.3.a",
+      "4A031",
+      "8D904",
+      "0B003",
+      "2.D",
+      "3.B.2",
+      "9.E.3.h",
+      "2.B.7",
+      "6A022",
+      "9.B.2"
+    ]
+  },
+  {
+    "query": "Provide a detailed explanation of the export control classification and applicable licensing policy for 2.B.1.a, including technical parameters and end-use concerns.",
+    "answer": "2.B.1.a",
+    "mode": "category",
+    "top10": [
+      "1.D.1",
+      "2.B",
+      "2.E.2",
+      "5.A.2.b",
+      "3.A.1.b.4.f",
+      "3.D.2",
+      "9.B",
+      "6.A.1.a.2.b",
+      "3B018",
+      "2.B.6.b.4"
+    ]
+  },
+  {
+    "query": "1.B.1의 기술적 기준을 설명하세요.",
+    "answer": "1.B.1",
+    "mode": "minimal",
+    "top10": [
+      "5.B",
+      "1.B",
+      "6.B",
+      "5.B.1.b.1",
+      "3.B.1.f",
+      "2.B",
+      "9.B.1",
+      "2.B.1.b",
+      "3.B.1.b",
+      "6.A.2.a.1.b"
+    ]
+  },
+  {
+    "query": "1.B.1의 기술적 기준을 설명하세요.",
+    "answer": "1.B.1",
+    "mode": "raw",
+    "top10": [
+      "1.E.1",
+      "2.D.1",
+      "1.B",
+      "5.B",
+      "5.A.1.h.1",
+      "2.E.1",
+      "3.A.1.a.12",
+      "1.C.2.c.3",
+      "5.B.1",
+      "3.D.1"
+    ]
+  },
+  {
+    "query": "1.B.1의 기술적 기준을 설명하세요.",
+    "answer": "1.B.1",
+    "mode": "local_rule",
+    "top10": [
+      "1.E.1",
+      "2.D.1",
+      "1.B",
+      "5.B",
+      "5.A.1.h.1",
+      "2.E.1",
+      "3.A.1.a.12",
+      "1.C.2.c.3",
+      "5.B.1",
+      "3.D.1"
+    ]
+  },
+  {
+    "query": "1.B.1의 기술적 기준을 설명하세요.",
+    "answer": "1.B.1",
+    "mode": "category",
+    "top10": [
+      "1.C.2.c.3",
+      "1.C.10.e.2",
+      "1.C.7.f",
+      "1.C.7.d",
+      "1.E.2.e",
+      "3.A.1.b.4.f",
+      "5.A.1.i",
+      "1.D.1",
+      "5.E",
+      "1.C.10.c"
+    ]
+  },
+  {
+    "query": "Compare the scope and requirements of 6.A.5.a.7 against the general export control framework, and describe when a license is required.",
+    "answer": "6.A.5.a.7",
+    "mode": "minimal",
+    "top10": [
+      "7.E.4.b.7",
+      "7.E.4.b.8",
+      "4.A.5",
+      "7.E.4.b.5",
+      "7.E.2",
+      "8C801",
+      "7.E.4.a.6",
+      "5.E.1.a",
+      "7.A.5",
+      "7.E.1"
+    ]
+  },
+  {
+    "query": "Compare the scope and requirements of 6.A.5.a.7 against the general export control framework, and describe when a license is required.",
+    "answer": "6.A.5.a.7",
+    "mode": "raw",
+    "top10": [
+      "6A022",
+      "7.E.4.b.8",
+      "8.E.2.a",
+      "7.D.4",
+      "7.E.4.b.7",
+      "7.E.1",
+      "1.E.1",
+      "9.E.3.h",
+      "7.E.2",
+      "6.D.3.h"
+    ]
+  },
+  {
+    "query": "Compare the scope and requirements of 6.A.5.a.7 against the general export control framework, and describe when a license is required.",
+    "answer": "6.A.5.a.7",
+    "mode": "local_rule",
+    "top10": [
+      "6A022",
+      "7.E.4.b.8",
+      "8.E.2.a",
+      "7.D.4",
+      "7.E.4.b.7",
+      "7.E.1",
+      "1.E.1",
+      "9.E.3.h",
+      "7.E.2",
+      "6.D.3.h"
+    ]
+  },
+  {
+    "query": "Compare the scope and requirements of 6.A.5.a.7 against the general export control framework, and describe when a license is required.",
+    "answer": "6.A.5.a.7",
+    "mode": "category",
+    "top10": [
+      "7.D.4",
+      "6.A.5.d.5",
+      "6.D",
+      "7.E.2",
+      "6A022",
+      "7.E.4.b.7",
+      "6.E.2",
+      "7.E.1",
+      "7.E.4.b.8",
+      "7.B.3"
+    ]
+  },
+  {
+    "query": "Describe the controls for export classification 6.D.3.b.",
+    "answer": "6.D.3.b",
+    "mode": "raw",
+    "top10": [
+      "8.E.2.a",
+      "6.D",
+      "6.D.1",
+      "6.E.1",
+      "7.E.4.c",
+      "6A022",
+      "7.D.3.b",
+      "4A011",
+      "6.D.3.a.4",
+      "3.D.1"
+    ]
+  },
+  {
+    "query": "Describe the controls for export classification 6.D.3.b.",
+    "answer": "6.D.3.b",
+    "mode": "local_rule",
+    "top10": [
+      "8.E.2.a",
+      "6.D",
+      "6.D.1",
+      "6.E.1",
+      "7.E.4.c",
+      "6A022",
+      "7.D.3.b",
+      "4A011",
+      "6.D.3.a.4",
+      "3.D.1"
+    ]
+  },
+  {
+    "query": "Describe the controls for export classification 6.D.3.b.",
+    "answer": "6.D.3.b",
+    "mode": "category",
+    "top10": [
+      "7.D.3.d.4",
+      "6.B.2",
+      "5.D.2.d",
+      "9.D.2",
+      "6.D.1",
+      "9.D.1",
+      "2.B.6.b.4",
+      "7.D.4.a",
+      "8.E.2.a",
+      "7.B.3"
+    ]
+  },
+  {
+    "query": "6.A.8.f에 해당하는 이중용도 품목은 무엇입니까?",
+    "answer": "6.A.8.f",
+    "mode": "category",
+    "top10": [
+      "6.D.1",
+      "6.A.2.f",
+      "6.A.6.e",
+      "6.D.3.c",
+      "6.A.2.a.1.b",
+      "5.A.1.i",
+      "6.A.5.d",
+      "3.A.1.b.4.b",
+      "6.D",
+      "6.A.3.b.3"
+    ]
+  },
+  {
+    "query": "7.D.3 주요 요점 요약",
+    "answer": "7.D.3",
+    "mode": "category",
+    "top10": [
+      "7.D.3.d.4",
+      "7.D.4.a",
+      "7.D.4",
+      "7.B.3",
+      "1.C.7.d",
+      "3.A.2.d.6.A",
+      "5.D.2.d",
+      "9.D.1",
+      "9.D.2",
+      "5.D.1.e"
+    ]
+  },
+  {
+    "query": "Provide a detailed explanation of the export control classification and applicable licensing policy for 3.A.1.f, including technical parameters and end-use concerns.",
+    "answer": "3.A.1.f",
+    "mode": "minimal",
+    "top10": [
+      "9.B.5",
+      "8B905",
+      "9.E.3.f.2",
+      "3.B.1.f.3",
+      "3.A",
+      "3.D.2",
+      "9.E.3.f",
+      "2.B.9",
+      "5.E.1.c.3",
+      "8B209"
+    ]
+  },
+  {
+    "query": "Provide a detailed explanation of the export control classification and applicable licensing policy for 3.A.1.f, including technical parameters and end-use concerns.",
+    "answer": "3.A.1.f",
+    "mode": "raw",
+    "top10": [
+      "7.A.3.a",
+      "4A031",
+      "0B003",
+      "8D904",
+      "9.E.3.h",
+      "9.E.3.f.3",
+      "3.A.1.a.12",
+      "9.E.3.f",
+      "3.B.2",
+      "2.B.5"
+    ]
+  },
+  {
+    "query": "Provide a detailed explanation of the export control classification and applicable licensing policy for 3.A.1.f, including technical parameters and end-use concerns.",
+    "answer": "3.A.1.f",
+    "mode": "local_rule",
+    "top10": [
+      "7.A.3.a",
+      "4A031",
+      "0B003",
+      "8D904",
+      "9.E.3.h",
+      "9.E.3.f.3",
+      "3.A.1.a.12",
+      "9.E.3.f",
+      "3.B.2",
+      "2.B.5"
+    ]
+  },
+  {
+    "query": "Provide a detailed explanation of the export control classification and applicable licensing policy for 3.A.1.f, including technical parameters and end-use concerns.",
+    "answer": "3.A.1.f",
+    "mode": "category",
+    "top10": [
+      "3.D.2",
+      "7.E.4.b.5",
+      "3B018",
+      "8D302",
+      "3.D.1",
+      "3.A",
+      "2.B.7",
+      "3.A.1.b",
+      "6.A.1.a.1.a",
+      "3B019"
+    ]
+  },
+  {
+    "query": "What are the export control requirements for 8.A.2.k?",
+    "answer": "8.A.2.k",
+    "mode": "category",
+    "top10": [
+      "8.A.2.b",
+      "7.E.4.b.7",
+      "7.E.4.b.8",
+      "6.D.1",
+      "6.A.1.c",
+      "3.A.1.b.3",
+      "5.E.1.d.1",
+      "2.E.2",
+      "8E902",
+      "8.E.2.a"
+    ]
+  },
+  {
+    "query": "3.A.1.a.14의 통제 범위는?",
+    "answer": "3.A.1.a.14",
+    "mode": "category",
+    "top10": [
+      "3.A.1.a.12",
+      "3.A.1.a.11",
+      "3.A.1.a.10",
+      "3.B.1.g",
+      "6.A.2.a.1.b",
+      "3.A.2.d.6.A",
+      "6.B.2",
+      "3.D.1",
+      "1.C.10.b",
+      "3.A"
+    ]
+  },
+  {
+    "query": "8.A.2.j 주요 요점 요약",
+    "answer": "8.A.2.j",
+    "mode": "raw",
+    "top10": [
+      "8.E.2",
+      "6.A.8.j",
+      "8.A.2.m",
+      "8.A.2.l",
+      "8.A.2.n",
+      "8.A.2.e",
+      "8.A.2.k",
+      "8.A.2.j.4",
+      "8.A.2.j.2",
+      "8.A.2.g"
+    ]
+  },
+  {
+    "query": "8.A.2.j 주요 요점 요약",
+    "answer": "8.A.2.j",
+    "mode": "local_rule",
+    "top10": [
+      "8.E.2",
+      "6.A.8.j",
+      "8.A.2.m",
+      "8.A.2.l",
+      "8.A.2.n",
+      "8.A.2.e",
+      "8.A.2.k",
+      "8.A.2.j.4",
+      "8.A.2.j.2",
+      "8.A.2.g"
+    ]
+  },
+  {
+    "query": "8.A.2.j 주요 요점 요약",
+    "answer": "8.A.2.j",
+    "mode": "category",
+    "top10": [
+      "6.A.5.d.2",
+      "6.A.2.a.1.b",
+      "6.A.5.b.5.c",
+      "6.A.1.c",
+      "6.A.3.b.3",
+      "8.E.2.a",
+      "6.D.1",
+      "1.C.2.c.3",
+      "5.D.2.b",
+      "8A901"
+    ]
+  },
+  {
+    "query": "6.A.4.a.3와 일반 수출통제 체계를 비교하고, 라이선스 필요성이 판단되는 기준을 설명하세요.",
+    "answer": "6.A.4.a.3",
+    "mode": "minimal",
+    "top10": [
+      "6.A.4.d.3",
+      "4.A.3.a",
+      "6.A.3.b.4",
+      "3.A.1.a.4",
+      "3.A.1.b.4.b",
+      "6.A.4.d.4",
+      "4.A.3.b",
+      "6.A.3.a.6",
+      "4.A.3.c",
+      "6.A.4"
+    ]
+  },
+  {
+    "query": "6.A.4.a.3와 일반 수출통제 체계를 비교하고, 라이선스 필요성이 판단되는 기준을 설명하세요.",
+    "answer": "6.A.4.a.3",
+    "mode": "category",
+    "top10": [
+      "7.D.4",
+      "6.D",
+      "6.D.1",
+      "5.A.4.b",
+      "6.A.2.f",
+      "8D704",
+      "6.A.2.a.1.b",
+      "6.B.2",
+      "3.A.1.a.12",
+      "1.E.2.g"
+    ]
+  },
+  {
+    "query": "1.C.10의 통제 대상 품목은 무엇입니까?",
+    "answer": "1.C.10",
+    "mode": "category",
+    "top10": [
+      "1.C.10.c",
+      "1.C.7.f",
+      "1.C.7.d",
+      "1.C.2.c.3",
+      "6.A.2.a.1.b",
+      "1.C.2.d",
+      "1.E.2.e",
+      "1.C.7.e",
+      "1.C.10.e.2",
+      "1.E.2.f"
+    ]
+  },
+  {
+    "query": "Which dual-use items fall under category 4.A?",
+    "answer": "4.A",
+    "mode": "raw",
+    "top10": [
+      "6A022",
+      "2.D.2",
+      "8.E.2.a",
+      "4.D",
+      "5.E.2",
+      "5.A.4.b",
+      "6A021",
+      "5A302",
+      "5A301",
+      "2.B.5.b"
+    ]
+  },
+  {
+    "query": "Which dual-use items fall under category 4.A?",
+    "answer": "4.A",
+    "mode": "local_rule",
+    "top10": [
+      "6A022",
+      "2.D.2",
+      "8.E.2.a",
+      "4.D",
+      "5.E.2",
+      "5.A.4.b",
+      "6A021",
+      "5A302",
+      "5A301",
+      "2.B.5.b"
+    ]
+  },
+  {
+    "query": "Which dual-use items fall under category 4.A?",
+    "answer": "4.A",
+    "mode": "category",
+    "top10": [
+      "5.A.4.b",
+      "5C023",
+      "5C022",
+      "5A302",
+      "5A301",
+      "7.D.4",
+      "3A120",
+      "6A011",
+      "4A031",
+      "5A303"
+    ]
+  },
+  {
+    "query": "7.A.1.b에 정의된 모든 품목, 사양, 임계값 한도를 나열하고 허가가 required 경우를 설명하세요.",
+    "answer": "7.A.1.b",
+    "mode": "minimal",
+    "top10": [
+      "7.E.4.b.7",
+      "7.E.4.b.8",
+      "9.E.3.a.1",
+      "9.E.3.b",
+      "7.B",
+      "9.E.3.a.3.a",
+      "7.B.1",
+      "3.A.1.b.7.b",
+      "7.B.3",
+      "7.D.1"
+    ]
+  },
+  {
+    "query": "7.A.1.b에 정의된 모든 품목, 사양, 임계값 한도를 나열하고 허가가 required 경우를 설명하세요.",
+    "answer": "7.A.1.b",
+    "mode": "raw",
+    "top10": [
+      "9.E.3.f",
+      "7.E.1",
+      "7.D.1",
+      "9.E.3.a.1",
+      "7.B.3",
+      "6A022",
+      "1.E.1",
+      "7.E.4.b.8",
+      "7.E.4.b.7",
+      "7.E.2"
+    ]
+  },
+  {
+    "query": "7.A.1.b에 정의된 모든 품목, 사양, 임계값 한도를 나열하고 허가가 required 경우를 설명하세요.",
+    "answer": "7.A.1.b",
+    "mode": "local_rule",
+    "top10": [
+      "9.E.3.f",
+      "7.E.1",
+      "7.D.1",
+      "9.E.3.a.1",
+      "7.B.3",
+      "6A022",
+      "1.E.1",
+      "7.E.4.b.8",
+      "7.E.4.b.7",
+      "7.E.2"
+    ]
+  },
+  {
+    "query": "7.A.1.b에 정의된 모든 품목, 사양, 임계값 한도를 나열하고 허가가 required 경우를 설명하세요.",
+    "answer": "7.A.1.b",
+    "mode": "category",
+    "top10": [
+      "1.C.7.f",
+      "7.B.3",
+      "7.B.1",
+      "1.C.7.d",
+      "7.D.1",
+      "7.E.2",
+      "7.D.4",
+      "6A022",
+      "1.C.2.c.3",
+      "1.C.10.e.2"
+    ]
+  },
+  {
+    "query": "Compare the scope and requirements of 6.A.4.a.2 against the general export control framework, and describe when a license is required.",
+    "answer": "6.A.4.a.2",
+    "mode": "minimal",
+    "top10": [
+      "7.E.4.b.7",
+      "7.E.4.b.8",
+      "4.A.5",
+      "1.A.4.b",
+      "6.A.4.d.2.a",
+      "9.E.3.f.2",
+      "4.D.4",
+      "6.A.1.a.2.a",
+      "6.E.2",
+      "8C801"
+    ]
+  },
+  {
+    "query": "Compare the scope and requirements of 6.A.4.a.2 against the general export control framework, and describe when a license is required.",
+    "answer": "6.A.4.a.2",
+    "mode": "raw",
+    "top10": [
+      "6A022",
+      "8.E.2.a",
+      "7.E.4.b.8",
+      "6.D.3.h",
+      "9.E.3.h",
+      "7.D.4",
+      "3.A.1.a.12",
+      "4A011",
+      "6.A.4.d",
+      "7.E.4.b.7"
+    ]
+  },
+  {
+    "query": "Compare the scope and requirements of 6.A.4.a.2 against the general export control framework, and describe when a license is required.",
+    "answer": "6.A.4.a.2",
+    "mode": "local_rule",
+    "top10": [
+      "6A022",
+      "8.E.2.a",
+      "7.E.4.b.8",
+      "6.D.3.h",
+      "9.E.3.h",
+      "7.D.4",
+      "3.A.1.a.12",
+      "4A011",
+      "6.A.4.d",
+      "7.E.4.b.7"
+    ]
+  },
+  {
+    "query": "Compare the scope and requirements of 6.A.4.a.2 against the general export control framework, and describe when a license is required.",
+    "answer": "6.A.4.a.2",
+    "mode": "category",
+    "top10": [
+      "7.D.4",
+      "6.D",
+      "6.D.1",
+      "6.A.3.b.3",
+      "6A022",
+      "7.E.4.b.7",
+      "6.E.2",
+      "9.E.2",
+      "6.A.2.a.1.b",
+      "2.E.2"
+    ]
+  },
+  {
+    "query": "6.A.5.g의 통제 범위는?",
+    "answer": "6.A.5.g",
+    "mode": "category",
+    "top10": [
+      "6.A.5.d",
+      "6.D",
+      "6.A.2.a.1.b",
+      "5.A.1.i",
+      "6.A.5.d.5",
+      "6.A.5.d.1.e",
+      "5.D.2.b",
+      "7.D.4",
+      "6.A.5.b",
+      "6.D.1"
+    ]
+  },
+  {
+    "query": "수출 통제 분류 3.A.2.g의 요건을 설명하세요.",
+    "answer": "3.A.2.g",
+    "mode": "category",
+    "top10": [
+      "3.D.1",
+      "3.A.2.d.6.A",
+      "6.A.2.f",
+      "3.A.1.b.4.f",
+      "8D704",
+      "6.B.2",
+      "6.A.2.a.1.b",
+      "7.D.4",
+      "3.A.1.a.11",
+      "3.D.4"
+    ]
+  },
+  {
+    "query": "List all items, technical specifications, and threshold limits defined under 3.E.3.c in the current control list.",
+    "answer": "3.E.3.c",
+    "mode": "minimal",
+    "top10": [
+      "2F019",
+      "2G030",
+      "2A035",
+      "6.A.5.e.3.c",
+      "3.A",
+      "2D009",
+      "2D056",
+      "2.E.3.f",
+      "3.E.2",
+      "9.E.3.a.3"
+    ]
+  },
+  {
+    "query": "List all items, technical specifications, and threshold limits defined under 3.E.3.c in the current control list.",
+    "answer": "3.E.3.c",
+    "mode": "raw",
+    "top10": [
+      "2.E.3.f",
+      "9.E.3.a.3.c",
+      "2.B.5.b",
+      "3.A.1.e.3",
+      "5.E.1.a",
+      "2.A",
+      "9.D.3",
+      "3.B.2",
+      "9.B.2",
+      "2F019"
+    ]
+  },
+  {
+    "query": "List all items, technical specifications, and threshold limits defined under 3.E.3.c in the current control list.",
+    "answer": "3.E.3.c",
+    "mode": "local_rule",
+    "top10": [
+      "2.E.3.f",
+      "9.E.3.a.3.c",
+      "2.B.5.b",
+      "3.A.1.e.3",
+      "5.E.1.a",
+      "2.A",
+      "9.D.3",
+      "3.B.2",
+      "9.B.2",
+      "2F019"
+    ]
+  },
+  {
+    "query": "List all items, technical specifications, and threshold limits defined under 3.E.3.c in the current control list.",
+    "answer": "3.E.3.c",
+    "mode": "category",
+    "top10": [
+      "9.E.3.k",
+      "2F019",
+      "2G030",
+      "9.A.3",
+      "9.D.3",
+      "2A035",
+      "3.C.6",
+      "2D056",
+      "2D009",
+      "3.A"
+    ]
+  }
+]

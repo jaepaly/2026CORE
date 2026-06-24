@@ -1,0 +1,17 @@
+[
+  {"id": "c1", "name": "김민수", "email": "minsu.kim@example.com", "phone": "010-1234-5678", "department": "영업팀", "role": "과장", "notes": "월요일 오전 회의 선호, 식사 알레르기: 견과류"},
+  {"id": "c2", "name": "이지은", "email": "jieun.lee@example.com", "phone": "010-2345-6789", "department": "인사팀", "role": "대리", "notes": "출산 휴가 중 복귀 예정 2025-08-01"},
+  {"id": "c3", "name": "박서준", "email": "seojun.park@example.com", "phone": "010-3456-7890", "department": "개발팀", "role": "차장", "notes": "원격 근무, 오후 2시 이후 협의 가능"},
+  {"id": "c4", "name": "최수연", "email": "suyeon.choi@example.com", "phone": "010-4567-8901", "department": "재무팀", "role": "부장", "notes": "2025년 하계 휴가: 7/28~8/1"},
+  {"id": "c5", "name": "정현우", "email": "hyunwoo.jung@example.com", "phone": "010-5678-9012", "department": "마케팅팀", "role": "사원", "notes": "최근 이사, 집 주소 변경됨"},
+  {"id": "c6", "name": "한예슬", "email": "yesol.han@example.com", "phone": "010-6789-0123", "department": "고객지원팀", "role": "과장", "notes": "임신 중, 점심시간 12:30~1:30 비움"},
+  {"id": "c7", "name": "오동훈", "email": "donghun.oh@example.com", "phone": "010-7890-1234", "department": "개발팀", "role": "사원", "notes": "프로젝트 마감일 6/25"},
+  {"id": "c8", "name": "임수진", "email": "sujin.lim@example.com", "phone": "010-8901-2345", "department": "영업팀", "role": "대리", "notes": "병원 진료 예정 6/23 오후"},
+  {"id": "c9", "name": "강태오", "email": "taeo.kang@example.com", "phone": "010-9012-3456", "department": "기획팀", "role": "차장", "notes": "세미나 참석: 6/24~6/25"},
+  {"id": "c10", "name": "신미영", "email": "miyoung.shin@example.com", "phone": "010-0123-4567", "department": "인사팀", "role": "부장", "notes": "정기 검진 매월 첫째 주 수요일"},
+  {"id": "c11", "name": "윤재민", "email": "jaemin.yoon@example.com", "phone": "010-1122-3344", "department": "개발팀", "role": "과장", "notes": "커피 알레르기"},
+  {"id": "c12", "name": "서보람", "email": "boram.seo@example.com", "phone": "010-2233-4455", "department": "디자인팀", "role": "사원", "notes": "주 2회 재택근무"},
+  {"id": "c13", "name": "황지훈", "email": "jihoon.hwang@example.com", "phone": "010-3344-5566", "department": "재무팀", "role": "대리", "notes": "거래처 방문 외근 많음"},
+  {"id": "c14", "name": "안서연", "email": "seoyeon.an@example.com", "phone": "010-4455-6677", "department": "영업팀", "role": "차장", "notes": "자녀 병원 방문 외출 가능 자주"},
+  {"id": "c15", "name": "송민호", "email": "minho.song@example.com", "phone": "010-5566-7788", "department": "개발팀", "role": "사원", "notes": "퇴사 예정자, 인수인계 중"}
+]
