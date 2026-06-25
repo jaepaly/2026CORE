@@ -1,0 +1,140 @@
+{
+  "scenarios": [
+    {
+      "id": "s1",
+      "name": "회의 일정 조율",
+      "task": "김민수와 신규 프로젝트 킥오프 회의 일정 조율 (월요일 오전 10시 또는 화요일 오후 2시)",
+      "minimum": ["c1", "e5", "cal2"],
+      "success_criteria": {
+        "required_contact_names": ["김민수"],
+        "required_event_dates": ["2025-06-24", "2025-06-30"],
+        "required_time": "14:00",
+        "required_location_regex": "3F|5F|A회의실",
+        "output_format": "회의 일정"
+      }
+    },
+    {
+      "id": "s2",
+      "name": "회의실 예약",
+      "task": "김민수와 프로젝트 킥오프를 위한 회의실 예약 (6/24 오후 2시, 5층 A회의실)",
+      "minimum": ["c1", "e5", "cal2"],
+      "success_criteria": {
+        "required_contact_names": ["김민수"],
+        "required_event_dates": ["2025-06-24"],
+        "required_time": "14:00",
+        "required_location": "5층 A회의실",
+        "output_format": "예약"
+      }
+    },
+    {
+      "id": "s3",
+      "name": "문서 검토",
+      "task": "김민수가 보낸 프로젝트 제안서 검토 의견을 확인하고 관련 이메일 찾기",
+      "minimum": ["c1", "e2", "e16"],
+      "success_criteria": {
+        "required_contact_names": ["김민수"],
+        "required_email_subjects": ["코드 리뷰", "디자인 시안", "회의록"],
+        "output_format": "검토"
+      }
+    },
+    {
+      "id": "s4",
+      "name": "주간 메일 요약",
+      "task": "이번 주 업무 이메일 요약 (중요도 high 이상만)",
+      "minimum": ["e1", "e5", "e9", "e15", "e22"],
+      "success_criteria": {
+        "required_email_ids": ["e1", "e5", "e9", "e15", "e22"],
+        "min_required_count": 3,
+        "output_format": "요약"
+      }
+    },
+    {
+      "id": "s5",
+      "name": "휴가 신청서 작성",
+      "task": "강태오의 6/24~6/25 연차 신청 확인서를 작성하고 인사팀(이지은)에게 전달",
+      "minimum": ["c9", "e22", "c2"],
+      "success_criteria": {
+        "required_contact_names": ["강태오", "이지은"],
+        "required_dates": ["2025-06-24", "2025-06-25"],
+        "output_format": "신청"
+      }
+    },
+    {
+      "id": "s6",
+      "name": "프로젝트 마감일 확인",
+      "task": "오동훈의 프로젝트 마감일과 현재 진행 상황을 확인하고 보고서 작성",
+      "minimum": ["c7", "e9"],
+      "success_criteria": {
+        "required_contact_names": ["오동훈"],
+        "required_dates": ["2025-06-25"],
+        "output_format": "보고"
+      }
+    },
+    {
+      "id": "s7",
+      "name": "고객 A사 미팅 준비",
+      "task": "안서연과의 A사 미팅 자료를 준비하고 관련 이메일과 일정을 확인",
+      "minimum": ["c14", "e18", "cal3"],
+      "success_criteria": {
+        "required_contact_names": ["안서연"],
+        "required_keywords": ["A사", "미팅"],
+        "output_format": "자료"
+      }
+    },
+    {
+      "id": "s8",
+      "name": "예산 보고서 작성",
+      "task": "최수연에게 6월 재무 보고서 검토 의견을 받고 예산 보고서를 작성",
+      "minimum": ["c4", "e6"],
+      "success_criteria": {
+        "required_contact_names": ["최수연"],
+        "required_email_subjects": ["재무 보고서"],
+        "output_format": "보고서"
+      }
+    },
+    {
+      "id": "s9",
+      "name": "인사 평가 회의 준비",
+      "task": "6월 인사 평가 회의(6/26 14:00) 참석자 명단 확인 및 자료 준비",
+      "minimum": ["cal4", "c2", "c10", "c11"],
+      "success_criteria": {
+        "required_event_dates": ["2025-06-26"],
+        "required_event_times": ["14:00"],
+        "required_contact_names": ["이지은", "신미영", "윤재민"],
+        "output_format": "회의"
+      }
+    },
+    {
+      "id": "s10",
+      "name": "시스템 권한 요청",
+      "task": "윤재민의 서버 접속 이슈를 확인하고 필요한 권한 요청 절차를 안내",
+      "minimum": ["c11", "e15", "c4"],
+      "success_criteria": {
+        "required_contact_names": ["윤재민", "최수연"],
+        "required_email_subjects": ["서버 접속"],
+        "output_format": "요청"
+      }
+    },
+    {
+      "id": "s11",
+      "name": "건강검진 예약 변경",
+      "task": "신미영의 정기 건강검진(6/25 09:00)을 6/26 10:00으로 변경 요청",
+      "minimum": ["c10", "cal3", "e21"],
+      "success_criteria": {
+        "required_contact_names": ["신미영"],
+        "required_dates": ["2025-06-25", "2025-06-26"],
+        "output_format": "변경"
+      }
+    },
+    {
+      "id": "s12",
+      "name": "긴급 연락망 구축",
+      "task": "개발팀(박서준, 오동훈, 윤재민)과 인사팀(이지은) 연락처를 수집해 긴급 연락망 목록 작성",
+      "minimum": ["c3", "c7", "c11", "c2"],
+      "success_criteria": {
+        "required_contact_names": ["박서준", "오동훈", "윤재민", "이지은"],
+        "output_format": "연락망"
+      }
+    }
+  ]
+}
