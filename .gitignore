@@ -1,4 +1,16 @@
 __pycache__/
 *.pyc
 output/runs_*.jsonl
-output/multi_model_results_v2_*.json
+!output/multi_model_results_v2.json
+!output/multi_model_results_v2_llama.json
+!output/multi_model_results_v2_qwen2.json
+!output/multi_model_results_v2_qwen3.json
+
+# logs / detached run output
+*.log
+*.err
+output/_archive_20scn/
+output/runs.jsonl
+output/runs_qwen2_todo.json
+run_todo.py
+run_qwen2_missing.bat

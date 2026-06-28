@@ -135,6 +135,314 @@
         "required_contact_names": ["박서준", "오동훈", "윤재민", "이지은"],
         "output_format": "연락망"
       }
+    },
+    {
+      "id": "s13",
+      "name": "고객 피드백 정리",
+      "task": "A사 고객 피드백 이메일 2건을 찾아 핵심 의견 요약",
+      "minimum": ["e25", "e26"],
+      "success_criteria": {
+        "required_email_subjects": ["A사 피드백"],
+        "required_keywords": ["개선", "요청"],
+        "output_format": "요약"
+      }
+    },
+    {
+      "id": "s14",
+      "name": "팀 회식 장소 예약",
+      "task": "개발팀 저녁 회식 예약 (6/27 19:00, 장소는 이지은 확인)",
+      "minimum": ["c2", "cal4"],
+      "success_criteria": {
+        "required_contact_names": ["이지은"],
+        "required_event_dates": ["2025-06-27"],
+        "required_event_times": ["19:00"],
+        "output_format": "예약"
+      }
+    },
+    {
+      "id": "s15",
+      "name": "입사자 온보딩 준비",
+      "task": "신입 김하늘의 OT 일정과 담당자(이지은) 확인",
+      "minimum": ["c15", "cal1"],
+      "success_criteria": {
+        "required_contact_names": ["김하늘", "이지은"],
+        "required_event_dates": ["2025-07-01"],
+        "output_format": "온보딩"
+      }
+    },
+    {
+      "id": "s16",
+      "name": "시스템 장애 보고",
+      "task": "지난주 서버 접속 장애 관련 이메일 확인 및 담당자 보고",
+      "minimum": ["e15", "c4", "c11"],
+      "success_criteria": {
+        "required_email_subjects": ["서버 접속"],
+        "required_contact_names": ["윤재민", "최수연"],
+        "output_format": "보고"
+      }
+    },
+    {
+      "id": "s17",
+      "name": "분기 실적 보고",
+      "task": "2분기 실적 이메일 3건을 확인하여 핵심 지표 요약",
+      "minimum": ["e10", "e11", "e12"],
+      "success_criteria": {
+        "required_email_subjects": ["실적"],
+        "min_required_count": 3,
+        "output_format": "요약"
+      }
+    },
+    {
+      "id": "s18",
+      "name": "법인카드 사용 내역",
+      "task": "이번 달 법인카드 사용 이메일에서 금액과 일시 추출",
+      "minimum": ["e18", "e19"],
+      "success_criteria": {
+        "required_email_subjects": ["법인카드"],
+        "required_dates": ["2025-06"],
+        "output_format": "내역"
+      }
+    },
+    {
+      "id": "s19",
+      "name": "외부 강사 섭외",
+      "task": "AI 교육 강사(안서연)의 가능한 일정 확인하고 섭외 메일 초안 작성",
+      "minimum": ["c14", "cal3", "e20"],
+      "success_criteria": {
+        "required_contact_names": ["안서연"],
+        "required_event_dates": ["2025-06-25"],
+        "output_format": "메일"
+      }
+    },
+    {
+      "id": "s20",
+      "name": "사내 공지사항 검토",
+      "task": "이번 주 사내 공지 이메일 2건 검토 및 주요 변경사항 정리",
+      "minimum": ["e1", "e3"],
+      "success_criteria": {
+        "required_email_subjects": ["공지", "변경"],
+        "min_required_count": 2,
+        "output_format": "정리"
+      }
+    },
+    {
+      "id": "s21",
+      "name": "거래처 B사 미팅 확인",
+      "task": "황지훈의 거래처 B사 미팅(6/25) 일정과 장소를 확인",
+      "minimum": ["c13", "cal3"],
+      "success_criteria": {
+        "required_contact_names": ["황지훈"],
+        "required_event_dates": ["2025-06-25"],
+        "required_keywords": ["B사"],
+        "output_format": "확인"
+      }
+    },
+    {
+      "id": "s22",
+      "name": "코드 리뷰 요청 처리",
+      "task": "박서준이 보낸 코드 리뷰 요청 이메일을 확인하고 회신 초안 작성",
+      "minimum": ["c3", "e2"],
+      "success_criteria": {
+        "required_contact_names": ["박서준"],
+        "required_email_subjects": ["코드 리뷰"],
+        "output_format": "회신"
+      }
+    },
+    {
+      "id": "s23",
+      "name": "디자인 시안 피드백",
+      "task": "서보람이 공유한 로고 디자인 시안 이메일을 확인하고 피드백 정리",
+      "minimum": ["c12", "e16"],
+      "success_criteria": {
+        "required_contact_names": ["서보람"],
+        "required_email_subjects": ["디자인 시안"],
+        "output_format": "피드백"
+      }
+    },
+    {
+      "id": "s24",
+      "name": "경영진 보고 준비",
+      "task": "6/27 경영진 보고 참석자(최수연, 강태오)와 일정 확인 후 자료 준비",
+      "minimum": ["cal5", "c4", "c9"],
+      "success_criteria": {
+        "required_event_dates": ["2025-06-27"],
+        "required_contact_names": ["최수연", "강태오"],
+        "output_format": "자료"
+      }
+    },
+    {
+      "id": "s25",
+      "name": "신입 교육 일정 안내",
+      "task": "7월 신입 사원 교육 일정 이메일을 확인하고 참석 안내 작성",
+      "minimum": ["e27"],
+      "success_criteria": {
+        "required_email_subjects": ["신입", "교육"],
+        "output_format": "안내"
+      }
+    },
+    {
+      "id": "s26",
+      "name": "비밀번호 정책 공지",
+      "task": "보안팀의 비밀번호 변경 권장 공지를 확인하고 팀에 전달할 요약 작성",
+      "minimum": ["e30"],
+      "success_criteria": {
+        "required_email_subjects": ["비밀번호"],
+        "output_format": "요약"
+      }
+    },
+    {
+      "id": "s27",
+      "name": "월례 회의 자료 취합",
+      "task": "신미영이 보낸 월례 회의 자료를 확인하고 6/23 주간 월례 회의 일정과 함께 정리",
+      "minimum": ["c10", "e14", "cal1"],
+      "success_criteria": {
+        "required_contact_names": ["신미영"],
+        "required_event_dates": ["2025-06-23"],
+        "output_format": "정리"
+      }
+    },
+    {
+      "id": "s28",
+      "name": "세미나 자료 공유 요청",
+      "task": "강태오가 공유한 세미나 발표 자료 이메일을 확인하고 다운로드 안내",
+      "minimum": ["c9", "e13"],
+      "success_criteria": {
+        "required_contact_names": ["강태오"],
+        "required_email_subjects": ["세미나"],
+        "output_format": "안내"
+      }
+    },
+    {
+      "id": "s29",
+      "name": "인수인계 문서 확인",
+      "task": "퇴사 예정인 송민호의 인수인계 문서 이메일을 확인하고 점검 항목 정리",
+      "minimum": ["c15", "e20"],
+      "success_criteria": {
+        "required_contact_names": ["송민호"],
+        "required_email_subjects": ["인수인계"],
+        "output_format": "정리"
+      }
+    },
+    {
+      "id": "s30",
+      "name": "클라이언트 프레젠테이션 준비",
+      "task": "6/30 클라이언트 프레젠테이션(임수진) 일정을 확인하고 준비 사항 점검",
+      "minimum": ["cal6", "c8"],
+      "success_criteria": {
+        "required_contact_names": ["임수진"],
+        "required_event_dates": ["2025-06-30"],
+        "output_format": "준비"
+      }
+    },
+    {
+      "id": "s31",
+      "name": "버그 수정 결과 확인",
+      "task": "오동훈의 결제 모듈 버그 픽스 완료 보고 이메일을 확인하고 후속 조치 정리",
+      "minimum": ["c7", "e9"],
+      "success_criteria": {
+        "required_contact_names": ["오동훈"],
+        "required_email_subjects": ["버그"],
+        "output_format": "정리"
+      }
+    },
+    {
+      "id": "s32",
+      "name": "재무 실적 검토 회의",
+      "task": "6/25 재무 실적 검토 회의(최수연) 일정과 참석자를 확인",
+      "minimum": ["cal3", "c4"],
+      "success_criteria": {
+        "required_contact_names": ["최수연"],
+        "required_event_dates": ["2025-06-25"],
+        "output_format": "확인"
+      }
+    },
+    {
+      "id": "s33",
+      "name": "1:1 면담 일정 확인",
+      "task": "6/23 오동훈과의 1:1 면담 일정과 장소를 확인",
+      "minimum": ["cal1", "c7"],
+      "success_criteria": {
+        "required_contact_names": ["오동훈"],
+        "required_event_dates": ["2025-06-23"],
+        "output_format": "확인"
+      }
+    },
+    {
+      "id": "s34",
+      "name": "회의록 공유 정리",
+      "task": "김민수가 공유한 지난 회의록 이메일을 확인하고 핵심 내용 정리",
+      "minimum": ["c1", "e23"],
+      "success_criteria": {
+        "required_contact_names": ["김민수"],
+        "required_email_subjects": ["회의록"],
+        "output_format": "정리"
+      }
+    },
+    {
+      "id": "s35",
+      "name": "신규 입사자 환영회 준비",
+      "task": "7/1 신규 입사자 환영 회의 일정을 확인하고 준비 사항 정리",
+      "minimum": ["cal7"],
+      "success_criteria": {
+        "required_event_dates": ["2025-07-01"],
+        "required_keywords": ["환영"],
+        "output_format": "정리"
+      }
+    },
+    {
+      "id": "s36",
+      "name": "월례 보고 일정 확인",
+      "task": "7/1 최수연과의 월례 보고 일정과 장소를 확인",
+      "minimum": ["cal7", "c4"],
+      "success_criteria": {
+        "required_contact_names": ["최수연"],
+        "required_event_dates": ["2025-07-01"],
+        "output_format": "확인"
+      }
+    },
+    {
+      "id": "s37",
+      "name": "인사 발표 자료 공유",
+      "task": "이지은이 보낸 분기 인사 발표 이메일을 확인하고 공유용 요약 작성",
+      "minimum": ["c2", "e4"],
+      "success_criteria": {
+        "required_contact_names": ["이지은"],
+        "required_email_subjects": ["인사 발표"],
+        "output_format": "요약"
+      }
+    },
+    {
+      "id": "s38",
+      "name": "팀 스탠드업 일정 확인",
+      "task": "6/25 개발팀 팀 스탠드업 일정과 장소를 확인",
+      "minimum": ["cal3"],
+      "success_criteria": {
+        "required_event_dates": ["2025-06-25"],
+        "required_keywords": ["스탠드업"],
+        "output_format": "확인"
+      }
+    },
+    {
+      "id": "s39",
+      "name": "거래처 미팅 후기 공유",
+      "task": "황지훈이 보낸 A사 거래처 미팅 후기 이메일을 확인하고 내부 공유 요약 작성",
+      "minimum": ["c13", "e18"],
+      "success_criteria": {
+        "required_contact_names": ["황지훈"],
+        "required_keywords": ["A사"],
+        "output_format": "요약"
+      }
+    },
+    {
+      "id": "s40",
+      "name": "재무팀 1:1 일정 확인",
+      "task": "7/1 황지훈과의 재무팀 1:1 일정을 확인",
+      "minimum": ["cal7", "c13"],
+      "success_criteria": {
+        "required_contact_names": ["황지훈"],
+        "required_event_dates": ["2025-07-01"],
+        "output_format": "확인"
+      }
     }
   ]
 }

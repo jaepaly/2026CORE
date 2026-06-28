@@ -1,0 +1,51 @@
+{
+  "analysis_unit": "model x scenario (n=60), seeds collapsed by majority",
+  "seed_independence": {
+    "groups": 240,
+    "identical_access": 183,
+    "identical_success": 181
+  },
+  "mcnemar": {
+    "A_vs_B": {
+      "pairs": 60,
+      "b": 2,
+      "c": 4,
+      "p": 0.6875,
+      "significant": false
+    },
+    "A_vs_C": {
+      "pairs": 60,
+      "b": 8,
+      "c": 3,
+      "p": 0.2266,
+      "significant": false
+    },
+    "A_vs_D": {
+      "pairs": 60,
+      "b": 8,
+      "c": 3,
+      "p": 0.2266,
+      "significant": false
+    },
+    "C_vs_D": {
+      "pairs": 60,
+      "b": 3,
+      "c": 3,
+      "p": 1.0,
+      "significant": false
+    },
+    "B_vs_C": {
+      "pairs": 60,
+      "b": 9,
+      "c": 2,
+      "p": 0.0654,
+      "significant": false
+    }
+  },
+  "success_rate_collapsed": {
+    "A": 0.2,
+    "B": 0.233,
+    "C": 0.117,
+    "D": 0.117
+  }
+}

@@ -13,14 +13,23 @@ DATA_DIR = os.path.join(os.path.dirname(__file__), "data")
 OUTPUT_DIR = os.path.join(os.path.dirname(__file__), "output")
 RESULTS_JSON = os.path.join(OUTPUT_DIR, f"multi_model_results_v2_{sys.argv[1] if len(sys.argv)>1 else 'all'}.json")
 
-MODELS = ["qwen3:8b", "llama3.1:8b", "qwen2.5:7b"]
-CONDITIONS = ["A", "B", "C"]
-SEEDS = list(range(10))
+KNOWN_MODELS = ["qwen3:8b", "llama3.1:8b", "qwen2.5:7b"]
+CONDITIONS = ["A", "B", "C", "D"]
 MAX_TURNS = 4
 
-MODEL_FILTER = sys.argv[1] if len(sys.argv) > 1 else None
+# 인자 파싱: 첫 비옵션 인자 = 모델(별칭 또는 전체 이름), --seeds N (기본 1; 결정적이라 1이면 충분)
+_args = [a for a in sys.argv[1:] if a != "--cleanup"]
+N_SEEDS = 1
+if "--seeds" in _args:
+    i = _args.index("--seeds")
+    N_SEEDS = int(_args[i + 1]); del _args[i:i + 2]
+SEEDS = list(range(N_SEEDS))
+MODEL_FILTER = _args[0] if _args else None
 if MODEL_FILTER:
-    MODELS = [m for m in MODELS if MODEL_FILTER in m]
+    matched = [m for m in KNOWN_MODELS if MODEL_FILTER in m]
+    MODELS = matched if matched else [MODEL_FILTER]   # 임의 모델명 허용 (예: qwen2.5:14b)
+else:
+    MODELS = KNOWN_MODELS
 
 
 def load_scenario_ids():
