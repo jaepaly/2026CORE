@@ -1,0 +1,126 @@
+{
+  "planned_runs": 1080,
+  "raw_rows": 849,
+  "unique_experiment_keys": 698,
+  "missing_experiment_keys": 382,
+  "duplicate_groups": 97,
+  "extra_duplicate_rows": 151,
+  "absent_model_scenario_condition_groups": [
+    {
+      "model": "llama3.1:8b",
+      "scenario": "s1",
+      "condition": "A"
+    },
+    {
+      "model": "llama3.1:8b",
+      "scenario": "s1",
+      "condition": "B"
+    },
+    {
+      "model": "llama3.1:8b",
+      "scenario": "s1",
+      "condition": "C"
+    },
+    {
+      "model": "llama3.1:8b",
+      "scenario": "s2",
+      "condition": "A"
+    },
+    {
+      "model": "llama3.1:8b",
+      "scenario": "s2",
+      "condition": "B"
+    },
+    {
+      "model": "llama3.1:8b",
+      "scenario": "s2",
+      "condition": "C"
+    },
+    {
+      "model": "qwen3:8b",
+      "scenario": "s1",
+      "condition": "A"
+    },
+    {
+      "model": "qwen3:8b",
+      "scenario": "s1",
+      "condition": "B"
+    },
+    {
+      "model": "qwen3:8b",
+      "scenario": "s1",
+      "condition": "C"
+    },
+    {
+      "model": "qwen3:8b",
+      "scenario": "s2",
+      "condition": "A"
+    },
+    {
+      "model": "qwen3:8b",
+      "scenario": "s2",
+      "condition": "B"
+    },
+    {
+      "model": "qwen3:8b",
+      "scenario": "s2",
+      "condition": "C"
+    },
+    {
+      "model": "qwen3:8b",
+      "scenario": "s3",
+      "condition": "A"
+    },
+    {
+      "model": "qwen3:8b",
+      "scenario": "s3",
+      "condition": "B"
+    },
+    {
+      "model": "qwen3:8b",
+      "scenario": "s3",
+      "condition": "C"
+    },
+    {
+      "model": "qwen3:8b",
+      "scenario": "s4",
+      "condition": "A"
+    },
+    {
+      "model": "qwen3:8b",
+      "scenario": "s4",
+      "condition": "B"
+    },
+    {
+      "model": "qwen3:8b",
+      "scenario": "s4",
+      "condition": "C"
+    },
+    {
+      "model": "qwen3:8b",
+      "scenario": "s5",
+      "condition": "A"
+    }
+  ],
+  "missing_by_model": {
+    "qwen3:8b": 147,
+    "qwen2.5:7b": 123,
+    "llama3.1:8b": 112
+  },
+  "missing_by_condition": {
+    "C": 126,
+    "A": 132,
+    "B": 124
+  },
+  "missing_by_scenario": {
+    "s2": 81,
+    "s1": 81,
+    "s4": 51,
+    "s12": 30,
+    "s3": 57,
+    "s5": 39,
+    "s6": 18,
+    "s11": 21,
+    "s10": 4
+  }
+}

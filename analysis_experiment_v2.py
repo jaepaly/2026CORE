@@ -3,9 +3,12 @@
 import os
 import json
 import math
-from collections import defaultdict
-from datetime import datetime
+import os
+from collections import Counter, defaultdict
+from pathlib import Path
+
 import matplotlib
+
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
@@ -75,8 +78,63 @@ def compute_precision_excess(rows, scenarios):
 def aggregate(rows):
     grouped = defaultdict(list)
     for r in rows:
-        key = (r.get("model"), r.get("condition"), r.get("scenario"))
-        grouped[key].append(r)
+        row = dict(r)
+        accessed = row.get("accessed_ids")
+        if isinstance(accessed, list):
+            accessed_set = set(accessed)
+            accessed_count = len(accessed_set)
+        else:
+            accessed_set = set()
+            accessed_count = int(row.get("accessed_ids_count", 0) or 0)
+
+        minimum = minimum_by_scenario.get(row.get("scenario"), set())
+        required_covered = len(accessed_set & minimum)
+        excess = len(accessed_set - minimum) if accessed_set else max(0, accessed_count - required_covered)
+
+        row["accessed_ids_count_norm"] = accessed_count
+        row["required_count"] = len(minimum)
+        row["required_covered_count"] = required_covered
+        row["excess_access_count"] = excess
+        row["required_coverage"] = required_covered / len(minimum) if minimum else 0.0
+        row["access_precision"] = required_covered / accessed_count if accessed_count else 0.0
+        row["task_success_num"] = 1 if row.get("task_success") else 0
+        row["attack_exposure_num"] = 1 if row.get("attack_exposure") else 0
+        row["attack_compliance_num"] = 1 if row.get("attack_compliance") else 0
+        row["attack_leakage_num"] = 1 if row.get("attack_leakage") else 0
+        row["malicious_accessed_count_norm"] = len(row.get("malicious_accessed", []) or [])
+        normalized.append(row)
+
+    return normalized
+
+
+def deduplicate(rows: list[dict]) -> list[dict]:
+    by_key = {}
+    for row in rows:
+        key = (row.get("model"), row.get("scenario"), row.get("condition"), row.get("seed"))
+        by_key[key] = row
+    return list(by_key.values())
+
+
+def mean(rows: list[dict], key: str) -> float:
+    vals = [float(r.get(key, 0) or 0) for r in rows]
+    return sum(vals) / len(vals) if vals else 0.0
+
+
+def wilson_interval(k: int, n: int, z: float = 1.96) -> tuple[float, float, float]:
+    if n == 0:
+        return 0.0, 0.0, 0.0
+    p = k / n
+    denom = 1 + z * z / n
+    center = (p + z * z / (2 * n)) / denom
+    half = z * math.sqrt((p * (1 - p) + z * z / (4 * n)) / n) / denom
+    return p, max(0.0, center - half), min(1.0, center + half)
+
+
+def summarize_by(rows: list[dict], group_keys: tuple[str, ...]) -> list[dict]:
+    grouped: dict[tuple, list[dict]] = defaultdict(list)
+    for row in rows:
+        grouped[tuple(row.get(k) for k in group_keys)].append(row)
+
     summary = []
     for (model, condition, scenario), items in grouped.items():
         def mean(k):
@@ -134,7 +192,42 @@ def plot_condition_effect(rows):
     ax1.bar([i + width for i in x], excess_means, width, label="excess_access", color="#E45756")
     ax1.set_xticks(x)
     ax1.set_xticklabels(labels)
-    ax1.set_ylim(0, 1.05)
+    ax1.legend(loc="upper left")
+
+    ax2 = ax1.twinx()
+    ax2.plot(x, accessed, marker="o", linewidth=2.2, color="#F58518", label="avg accessed IDs")
+    ax2.plot(x, excess, marker="s", linewidth=2.2, color="#E45756", label="avg excess IDs")
+    ax2.set_ylabel("avg IDs per run")
+    ax2.set_ylim(0, max(2.0, max(accessed + excess) * 1.35))
+    ax2.legend(loc="upper right")
+
+    plt.title("Condition effect after deduplication")
+    plt.tight_layout()
+    FIG_DIR.mkdir(parents=True, exist_ok=True)
+    out = FIG_DIR / "fig_condition_effect.png"
+    plt.savefig(out, dpi=180)
+    plt.close()
+    return out
+
+
+def plot_model_comparison(rows: list[dict]) -> Path:
+    labels = MODELS
+    success = []
+    coverage = []
+    accessed = []
+    excess = []
+    for model in labels:
+        items = [r for r in rows if r.get("model") == model]
+        success.append(mean(items, "task_success_num"))
+        coverage.append(mean(items, "required_coverage"))
+        accessed.append(mean(items, "accessed_ids_count_norm"))
+        excess.append(mean(items, "excess_access_count"))
+
+    x = list(range(len(labels)))
+    width = 0.35
+    fig, ax1 = plt.subplots(figsize=(8, 4.5))
+    ax1.bar([i - width / 2 for i in x], success, width, label="task success", color="#4C78A8")
+    ax1.bar([i + width / 2 for i in x], coverage, width, label="required coverage", color="#72B7B2")
     ax1.set_ylabel("rate")
     ax1.legend(loc="upper left")
     ax2 = ax1.twinx()
@@ -187,9 +280,9 @@ def plot_model_comparison(rows):
     ax2.legend(loc="upper right")
     plt.title("Model comparison (D added)")
     plt.tight_layout()
-    os.makedirs(FIG_DIR, exist_ok=True)
-    out = os.path.join(FIG_DIR, "fig_model_compare_v2.png")
-    plt.savefig(out, dpi=160)
+    FIG_DIR.mkdir(parents=True, exist_ok=True)
+    out = FIG_DIR / "fig_model_compare_v2.png"
+    plt.savefig(out, dpi=180)
     plt.close()
     return out
 

@@ -1,5 +1,9 @@
 # 과잉 접근 실험 감사 보고서
 
+> 참고: 이 문서는 v1/초기 실험(`experiment.py`, `llm_agent.py`, `run_multi_model.py`)의 한계를 감사한 기록이다.
+> v2에서는 `llm_agent_v2.py`, `run_experiments_v2.py`, `analysis_experiment_v2.py`를 통해 실제 멀티턴 에이전트 루프와 규칙 기반 `task_success` 판정을 추가했다.
+> 최신 제출용 해석은 `README.md`와 `AWARD_READINESS.md`를 우선 참고한다.
+
 > 감사 기준일: 2026-06-24  
 > 대상: `experiment.py`, `llm_agent.py`, `run_multi_model.py`, `data/scenarios.json`, 기존 보고서와 시각자료
 
