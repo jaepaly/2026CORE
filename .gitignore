@@ -14,3 +14,11 @@ output/runs.jsonl
 output/runs_qwen2_todo.json
 run_todo.py
 run_qwen2_missing.bat
+
+# 로컬 실행 헬퍼/아카이브 (커밋 안 함)
+_run_*.py
+output/_archive_old/
+output/_archive_20scn/
+output/multi_model_results_v2_qwen2.5
+output/multi_model_results_v2_qwen3
+output/multi_model_results_v2_llama3.1

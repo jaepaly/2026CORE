@@ -48,7 +48,7 @@ def hero():
     cards = [
         (RED, "무방어 인터페이스 (A)", "151.5", "민감필드 노출 용량 (worst-case)", "악성 인젝션 전달 5건"),
         (GREEN, "필드 최소권한 (C)", "10.5", "민감필드 노출 용량  (93%↓)", "악성 인젝션 전달 0건"),
-        (AMBER, "실제 모델 행동", "0.65", "평균 접근 항목 수", "과소접근 (최대 6건)"),
+        (AMBER, "실제 모델 행동", "0.4", "평균 접근 (좁은 업무)", "과소접근 — 광범위도 1.1"),
     ]
     x0, w, gap, y, h = 0.045, 0.29, 0.022, 0.16, 0.40
     for i, (acc, title, big, lab, sub) in enumerate(cards):
@@ -59,7 +59,7 @@ def hero():
         ax.text(x + 0.018, y + 0.085, lab, color=GRAY, fontsize=10)
         ax.text(x + 0.018, y + 0.035, sub, color=WHITE, fontsize=10, fontweight="bold")
 
-    ax.text(0.045, 0.045, "3모델 × 20시나리오 × 4조건 × 10seed = 2,400 runs   ·   qwen3:8b · llama3.1:8b · qwen2.5:7b",
+    ax.text(0.045, 0.045, "4모델(검증통과) × 48시나리오 × 4조건 = 768 runs   ·   qwen2.5:3b/7b · qwen3:8b · llama3.1:8b",
             color=GRAY, fontsize=9.5)
     out = os.path.join(FIG_DIR, "readme_hero.png")
     fig.savefig(out, facecolor=BG); plt.close(fig)
@@ -83,7 +83,7 @@ def method():
             color="#5A6B7B", fontsize=11)
 
     steps = [
-        ("01", "업무 요청", "20 시나리오\n(일정·메일·예약 등)"),
+        ("01", "업무 요청", "48 시나리오\n(40좁은+8광범위)"),
         ("02", "실제 에이전트 루프", "plan → tool call →\nobserve → 최종답변"),
         ("03", "세분화 도구", "연락처15·이메일33\n·캘린더7 (악성5)"),
         ("04", "정책 미들웨어", "A 무방어 / B 프롬프트\nC 필드최소권한 / D 강함"),
@@ -109,8 +109,8 @@ def method():
         ax.add_patch(plt.Circle((x, cy + 0.012), 0.008, color=col, transform=ax.transData))
         ax.text(x + 0.018, cy, lab, color="#1B2A3A", fontsize=9.5, fontweight="bold", va="center")
 
-    ax.text(0.04, 0.075, "현재: 2,400 runs 완료 · paired McNemar 통계 · "
-            "필드 정책이 노출 용량 93%↓ · 인젝션 전달 5→0건 구조 차단 확인",
+    ax.text(0.04, 0.075, "현재: 768 runs(4모델·48시나리오) · 노출 용량 93%↓ · "
+            "광범위 업무 실현노출 5.3→0.0 · 인젝션 5→0건 구조 차단",
             color=RED, fontsize=9.5, fontweight="bold")
     out = os.path.join(FIG_DIR, "readme_method.png")
     fig.savefig(out, facecolor="#F4F7FB"); plt.close(fig)

@@ -32,10 +32,10 @@
     }
   ],
   "observed_behavior_condition_A": {
-    "n_runs_condition_A": 600,
-    "avg_items_accessed": 0.65,
-    "p95_items_accessed": 2,
-    "max_items_accessed": 6,
+    "n_runs_condition_A": 192,
+    "avg_items_accessed": 0.5,
+    "p95_items_accessed": 1,
+    "max_items_accessed": 15,
     "avg_malicious_accessed": 0.0
   },
   "interpretation": [

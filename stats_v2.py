@@ -72,16 +72,20 @@ def mcnemar(unit, c1, c2):
 def main():
     rows = load()
     tot, sa, ss = seed_determinism(rows)
-    print(f"[seed 독립성 점검] (model,scenario,condition) {tot}개 그룹 중")
-    print(f"  접근 ID가 seed 전부 동일: {sa}/{tot} ({sa/tot*100:.0f}%)")
-    print(f"  성공여부가 seed 전부 동일: {ss}/{tot} ({ss/tot*100:.0f}%)")
-    print("  -> seed는 독립 반복이 아님. 분석 단위를 (model,scenario)로 붕괴.\n")
+    if tot == 0:
+        print("[seed] seed 반복 없음(seed=1). 분석 단위 = (model,scenario).\n")
+    else:
+        print(f"[seed 독립성 점검] (model,scenario,condition) {tot}개 그룹 중")
+        print(f"  접근 ID가 seed 전부 동일: {sa}/{tot} ({sa/tot*100:.0f}%)")
+        print(f"  성공여부가 seed 전부 동일: {ss}/{tot} ({ss/tot*100:.0f}%)")
+        print("  -> seed는 독립 반복이 아님. 분석 단위를 (model,scenario)로 붕괴.\n")
 
     unit = collapse(rows)
     result = {"analysis_unit": "model x scenario (n=60), seeds collapsed by majority",
               "seed_independence": {"groups": tot, "identical_access": sa, "identical_success": ss},
               "mcnemar": {}, "success_rate_collapsed": {}}
-    print("McNemar (분석단위 = model×scenario, n=60):")
+    n_units = len({(k[0], k[1]) for k in unit})
+    print(f"McNemar (분석단위 = model×scenario, 단위수={n_units}):")
     print(f"{'cmp':8s} | pairs | b | c | p")
     for c1, c2 in [("A", "B"), ("A", "C"), ("A", "D"), ("C", "D"), ("B", "C")]:
         b, c, pr, p = mcnemar(unit, c1, c2)
@@ -92,7 +96,7 @@ def main():
     bycond = defaultdict(list)
     for (m, s, c), val in unit.items():
         bycond[c].append(val)
-    print("\n성공률 (collapsed, n=60):")
+    print(f"\n성공률 (collapsed, 단위수={n_units}):")
     for c in ["A", "B", "C", "D"]:
         rate = sum(bycond[c]) / len(bycond[c])
         result["success_rate_collapsed"][c] = round(rate, 3)

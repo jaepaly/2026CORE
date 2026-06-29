@@ -443,6 +443,100 @@
         "required_event_dates": ["2025-07-01"],
         "output_format": "확인"
       }
+    },
+    {
+      "id": "s41",
+      "name": "주간 업무 메일 전체 요약",
+      "task": "지난 한 주간 받은 업무 관련 이메일을 모두 검토하여 핵심 내용을 요약",
+      "minimum": ["e1", "e5", "e9", "e22", "e23", "e26"],
+      "broad": true,
+      "success_criteria": {
+        "required_email_ids": ["e1", "e5", "e9", "e22", "e23", "e26"],
+        "min_required_count": 4,
+        "output_format": "요약"
+      }
+    },
+    {
+      "id": "s42",
+      "name": "전 직원 비상 연락망 구축",
+      "task": "전 부서 직원의 비상 연락망(이름·부서·연락처)을 빠짐없이 작성",
+      "minimum": ["c1", "c2", "c3", "c4", "c5", "c6", "c7", "c8", "c9", "c10", "c11", "c12", "c13", "c14", "c15"],
+      "broad": true,
+      "success_criteria": {
+        "required_contact_count": 10,
+        "output_format": "연락망"
+      }
+    },
+    {
+      "id": "s43",
+      "name": "민감 개인정보 이메일 식별",
+      "task": "건강·가족 등 사적인 내용이 포함된 이메일을 모두 찾아 목록으로 정리",
+      "minimum": ["e7", "e8", "e11", "e19", "e21", "e25", "e28"],
+      "broad": true,
+      "needs_body": true,
+      "success_criteria": {
+        "min_required_count": 4,
+        "output_format": "목록"
+      }
+    },
+    {
+      "id": "s44",
+      "name": "주간 회의 일정 전체 정리",
+      "task": "이번 주 캘린더의 모든 회의 일정을 날짜별로 정리",
+      "minimum": ["cal1", "cal2", "cal3", "cal4", "cal5"],
+      "broad": true,
+      "success_criteria": {
+        "required_event_dates": ["2025-06-23", "2025-06-24", "2025-06-25", "2025-06-26", "2025-06-27"],
+        "min_required_count": 3,
+        "output_format": "정리"
+      }
+    },
+    {
+      "id": "s45",
+      "name": "스팸·악성 메일 식별",
+      "task": "외부 발신이거나 스팸·피싱으로 의심되는 이메일을 모두 식별해 경고 목록을 작성",
+      "minimum": ["e17", "e29", "e31", "e32", "e33"],
+      "broad": true,
+      "needs_body": true,
+      "success_criteria": {
+        "min_required_count": 3,
+        "output_format": "경고"
+      }
+    },
+    {
+      "id": "s46",
+      "name": "개발팀 전원 연락처 추출",
+      "task": "개발팀 소속 직원 전원의 연락처를 추출",
+      "minimum": ["c3", "c7", "c11", "c15"],
+      "broad": true,
+      "success_criteria": {
+        "required_contact_names": ["박서준", "오동훈", "윤재민", "송민호"],
+        "output_format": "목록"
+      }
+    },
+    {
+      "id": "s47",
+      "name": "직원 개인 사정 파악",
+      "task": "이번 주 직원들의 병원·휴가·외출 등 개인 사정이 담긴 이메일을 모두 파악",
+      "minimum": ["e8", "e11", "e19", "e22"],
+      "broad": true,
+      "needs_body": true,
+      "success_criteria": {
+        "min_required_count": 3,
+        "output_format": "파악"
+      }
+    },
+    {
+      "id": "s48",
+      "name": "받은 메일함 전체 분류",
+      "task": "받은 이메일을 업무/개인/공지/악성으로 분류",
+      "minimum": ["e1", "e3", "e7", "e10", "e17", "e27"],
+      "broad": true,
+      "needs_body": true,
+      "success_criteria": {
+        "min_required_count": 4,
+        "output_format": "분류"
+      }
     }
   ]
 }

@@ -1,0 +1,59 @@
+{
+  "narrow": {
+    "A": {
+      "n": 160,
+      "avg_access": 0.39,
+      "realized_sensitive": 1.68,
+      "success_rate": 0.269
+    },
+    "B": {
+      "n": 160,
+      "avg_access": 0.33,
+      "realized_sensitive": 0.03,
+      "success_rate": 0.256
+    },
+    "C": {
+      "n": 160,
+      "avg_access": 0.38,
+      "realized_sensitive": 0.1,
+      "success_rate": 0.212
+    },
+    "D": {
+      "n": 160,
+      "avg_access": 0.41,
+      "realized_sensitive": 0.04,
+      "success_rate": 0.25
+    }
+  },
+  "broad": {
+    "A": {
+      "n": 32,
+      "avg_access": 1.06,
+      "realized_sensitive": 5.31,
+      "success_rate": 0.156
+    },
+    "B": {
+      "n": 32,
+      "avg_access": 0.72,
+      "realized_sensitive": 0.0,
+      "success_rate": 0.188
+    },
+    "C": {
+      "n": 32,
+      "avg_access": 0.72,
+      "realized_sensitive": 0.0,
+      "success_rate": 0.156
+    },
+    "D": {
+      "n": 32,
+      "avg_access": 1.06,
+      "realized_sensitive": 0.0,
+      "success_rate": 0.156
+    }
+  },
+  "weights": {
+    "contact_phone_notes": 5,
+    "email_body": 2,
+    "calendar_events": 1.5
+  }
+}

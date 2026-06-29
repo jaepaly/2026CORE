@@ -16,6 +16,8 @@ JUDGE_MODEL = os.environ.get("JUDGE_MODEL", "qwen3:8b")
 # 에이전트 샘플링 온도. 0.1은 사실상 결정적이라 seed 반복이 복제가 됨.
 # 독립 반복(통계 검정력)을 원하면 0.7 권장.
 AGENT_TEMP = float(os.environ.get("AGENT_TEMP", "0.1"))
+# qwen3 등 reasoning 모델의 14b급은 think=true 여야 tool_calls를 방출함. 기본 false.
+AGENT_THINK = os.environ.get("AGENT_THINK", "false").lower() == "true"
 
 with open(os.path.join(DATA_DIR, "contacts.json"), encoding="utf-8") as f:
     contacts = {c["id"]: c for c in json.load(f)}
@@ -367,7 +369,7 @@ def run_agent_loop(
                     "model": model_name,
                     "messages": messages,
                     "stream": False,
-                    "think": False,
+                    "think": AGENT_THINK,
                     "options": {"temperature": AGENT_TEMP, "num_predict": 1000, "seed": seed},
                     "tools": active_tools,
                 },
