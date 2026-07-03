@@ -32,52 +32,99 @@
         <div class="hero-copy">
           <p class="eyebrow">AI 시대, 인간과 기술의 공존</p>
           <h1>
-            <span>AI는 업무를 돕지만,</span>
-            <span>모든 정보를</span>
-            <span>읽을 필요는 없습니다.</span>
+            <span>AI에게 일을 맡겨도,</span>
+            <span>개인정보까지</span>
+            <span>맡길 필요는 없습니다.</span>
           </h1>
           <p class="hero-text">
-            같은 요청이라도 도구 인터페이스가 무엇을 반환하느냐에 따라 AI가 보는 정보의
-            양이 달라집니다. 이 데모는 A/B/C/D 정책을 바꿔 보며 민감정보 노출과
-            프롬프트 인젝션 전달 경로가 어떻게 줄어드는지 보여줍니다.
+            같은 업무 요청이라도 도구가 어떤 필드를 반환하느냐에 따라 AI가 보는 정보가 달라집니다.
+            아래 시연은 무방어 도구와 필드 최소권한 도구를 같은 화면에서 비교합니다.
           </p>
           <div class="hero-actions">
-            <a class="button primary" href="#demo">라이브 데모 보기</a>
+            <a class="button primary" href="#demo">비교 시연 바로 보기</a>
             <button class="button ghost" id="autoPlayBtn" type="button">발표 모드</button>
           </div>
         </div>
 
-        <aside class="terminal-card hero-terminal" aria-label="Research summary">
-          <div class="brief-header">
+        <aside class="hero-dashboard" aria-label="Research summary">
+          <div class="dash-top">
             <span class="sticker">AI</span>
             <div>
-              <strong>Interface policy memo</strong>
-              <small>committed experiment summary</small>
+              <strong>실험 핵심</strong>
+              <small>도구 응답이 곧 모델의 시야입니다</small>
             </div>
           </div>
-          <div class="brief-grid">
+          <div class="dash-meter">
             <div>
-              <span>A/B</span>
-              <strong>body · phone · notes visible</strong>
+              <span>무방어 A</span>
+              <strong>5.31</strong>
             </div>
+            <div class="dash-line" aria-hidden="true"><i></i></div>
             <div>
-              <span>C/D</span>
-              <strong>body · phone · notes stripped</strong>
-            </div>
-            <div>
-              <span>Capacity</span>
-              <strong>151.5 → 10.5</strong>
-            </div>
-            <div>
-              <span>Broad exposure</span>
-              <strong>5.31 / 3.59 → 0.00</strong>
+              <span>최소권한 C/D</span>
+              <strong>0.00</strong>
             </div>
           </div>
-          <ul class="brief-list">
-            <li><span></span>필드 최소권한은 모델 성격과 무관하게 노출 상한을 줄인다.</li>
-            <li><span></span>프롬프트만 바꾼 B는 도구 응답 구조를 바꾸지 못한다.</li>
-          </ul>
+          <p>광범위 업무에서 실현 민감노출이 필드 정책 적용 후 0으로 떨어집니다.</p>
         </aside>
+      </section>
+
+      <section class="demo-shell" id="demo">
+        <div class="demo-header">
+          <div>
+            <p class="eyebrow">Live comparison</p>
+            <h2>같은 요청, 다른 도구 응답</h2>
+            <p class="section-copy">왼쪽은 무방어 A, 오른쪽은 선택한 최소권한 정책입니다. 관객에게 “AI가 실제로 받는 데이터”가 어떻게 달라지는지 바로 보여줄 수 있습니다.</p>
+          </div>
+          <div class="demo-controls">
+            <label>
+              <span>시연 시나리오</span>
+              <select id="scenarioSelect">
+                <option value="weekly">악성 메일이 섞인 업무 요약</option>
+                <option value="spam">스팸·악성 메일 식별</option>
+                <option value="contacts">전 직원 비상 연락망 구축</option>
+              </select>
+            </label>
+            <label>
+              <span>오른쪽 정책</span>
+              <select id="policySelect">
+                <option value="C">C · 필드 최소권한</option>
+                <option value="D">D · 강한 최소권한</option>
+                <option value="B">B · 프롬프트만</option>
+                <option value="A">A · 무방어</option>
+              </select>
+            </label>
+            <button class="button primary" id="runBtn" type="button">시연 재생</button>
+          </div>
+        </div>
+
+        <div class="comparison-stage">
+          <article class="compare-card danger-card">
+            <div class="compare-head">
+              <span class="policy-pill danger">A · 무방어</span>
+              <strong id="beforeScore">노출 5.31</strong>
+            </div>
+            <h3>AI에게 그대로 전달되는 도구 결과</h3>
+            <p class="compare-caption" id="beforePayload">email body payload 전달 가능</p>
+            <div class="record-list compact" id="beforeRecordList"></div>
+          </article>
+
+          <div class="stage-verdict">
+            <span>VS</span>
+            <strong id="verdictBadge">body · phone · notes 차단</strong>
+            <p id="stageNarration">같은 업무라도 인터페이스가 민감 필드를 제거하면 모델은 해당 값을 볼 수 없습니다.</p>
+          </div>
+
+          <article class="compare-card safe-card">
+            <div class="compare-head">
+              <span class="policy-pill safe" id="afterPolicyLabel">C · 필드 최소권한</span>
+              <strong id="afterScore">노출 0.00</strong>
+            </div>
+            <h3>민감 필드가 제거된 도구 결과</h3>
+            <p class="compare-caption" id="afterPayload">인젝션 전달 경로 차단</p>
+            <div class="record-list compact" id="afterRecordList"></div>
+          </article>
+        </div>
       </section>
 
       <section class="metrics-row" id="evidence">
@@ -101,90 +148,6 @@
           <strong id="successMetric">0.25</strong>
           <small>McNemar: 유의 차이 미검출</small>
         </article>
-      </section>
-
-      <section class="demo-shell" id="demo">
-        <div class="demo-header">
-          <div>
-            <p class="eyebrow">Live simulation</p>
-            <h2>정책을 바꾸면, AI가 보는 세계가 바뀐다</h2>
-          </div>
-          <div class="demo-controls">
-            <label>
-              <span>업무</span>
-              <select id="scenarioSelect">
-                <option value="weekly">주간 업무 메일 전체 요약</option>
-                <option value="spam">스팸·악성 메일 식별</option>
-                <option value="contacts">전 직원 비상 연락망 구축</option>
-              </select>
-            </label>
-            <label>
-              <span>정책</span>
-              <select id="policySelect">
-                <option value="A">A · 무방어</option>
-                <option value="B">B · 프롬프트만</option>
-                <option value="C">C · 필드 최소권한</option>
-                <option value="D">D · 강한 최소권한</option>
-              </select>
-            </label>
-            <button class="button primary" id="runBtn" type="button">Run agent</button>
-          </div>
-        </div>
-
-        <div class="workspace">
-          <section class="panel">
-            <div class="panel-title">
-              <span class="dot live"></span>
-              <h3>Agent trace</h3>
-            </div>
-            <ol class="trace" id="traceList"></ol>
-          </section>
-
-          <section class="panel result-panel">
-            <div class="panel-title">
-              <span class="dot"></span>
-              <h3>Tool result delivered to model</h3>
-            </div>
-            <div class="record-list" id="recordList"></div>
-          </section>
-
-          <section class="panel risk-panel">
-            <div class="panel-title">
-              <span class="dot warn"></span>
-              <h3>Risk delta</h3>
-            </div>
-            <div class="risk-meter">
-              <div class="meter-label">
-                <span>Realized sensitive exposure</span>
-                <strong id="meterValue">5.31</strong>
-              </div>
-              <div class="meter-track">
-                <div id="meterFill"></div>
-              </div>
-            </div>
-            <div class="risk-grid">
-              <div>
-                <span>phone</span>
-                <strong id="phoneState">visible</strong>
-              </div>
-              <div>
-                <span>notes</span>
-                <strong id="notesState">visible</strong>
-              </div>
-              <div>
-                <span>email body</span>
-                <strong id="bodyState">visible</strong>
-              </div>
-              <div>
-                <span>injection</span>
-                <strong id="injectState">deliverable</strong>
-              </div>
-            </div>
-            <p class="risk-note" id="riskNote">
-              A/B는 프롬프트 지시가 달라도 도구 결과의 민감 필드가 그대로 전달됩니다.
-            </p>
-          </section>
-        </div>
       </section>
 
       <section class="comparison">

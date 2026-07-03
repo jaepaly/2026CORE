@@ -240,19 +240,19 @@ function renderMetrics(policyKey) {
   const sensitiveVisible = policy.redacts.length === 0;
   const realized = policy.realized;
 
-  $("#capacityMetric").textContent = formatNumber(policy.capacity);
-  $("#realizedMetric").textContent = formatNumber(realized);
-  $("#realizedCaption").textContent = `현재 정책 ${policyKey} · ${policy.short}`;
-  $("#malMetric").textContent = policy.malicious;
-  $("#successMetric").textContent = formatNumber(policy.success);
-  $("#meterValue").textContent = formatNumber(realized);
-  $("#meterFill").style.width = `${Math.min(100, (realized / 5.31) * 100)}%`;
+  if ($("#capacityMetric")) $("#capacityMetric").textContent = formatNumber(policy.capacity);
+  if ($("#realizedMetric")) $("#realizedMetric").textContent = formatNumber(realized);
+  if ($("#realizedCaption")) $("#realizedCaption").textContent = `비교 정책 ${policyKey} · ${policy.short}`;
+  if ($("#malMetric")) $("#malMetric").textContent = policy.malicious;
+  if ($("#successMetric")) $("#successMetric").textContent = formatNumber(policy.success);
+  if ($("#meterValue")) $("#meterValue").textContent = formatNumber(realized);
+  if ($("#meterFill")) $("#meterFill").style.width = `${Math.min(100, (realized / 5.31) * 100)}%`;
 
-  $("#phoneState").textContent = sensitiveVisible ? "visible" : "redacted";
-  $("#notesState").textContent = sensitiveVisible ? "visible" : "redacted";
-  $("#bodyState").textContent = sensitiveVisible ? "visible" : "redacted";
-  $("#injectState").textContent = policy.malicious > 0 ? "deliverable" : "blocked";
-  $("#riskNote").textContent = policy.note;
+  if ($("#phoneState")) $("#phoneState").textContent = sensitiveVisible ? "visible" : "redacted";
+  if ($("#notesState")) $("#notesState").textContent = sensitiveVisible ? "visible" : "redacted";
+  if ($("#bodyState")) $("#bodyState").textContent = sensitiveVisible ? "visible" : "redacted";
+  if ($("#injectState")) $("#injectState").textContent = policy.malicious > 0 ? "deliverable" : "blocked";
+  if ($("#riskNote")) $("#riskNote").textContent = policy.note;
 }
 
 function fieldMarkup(policyKey, key, value) {
@@ -272,8 +272,31 @@ function fieldMarkup(policyKey, key, value) {
 }
 
 function renderRecords(policyKey, scenarioKey) {
+  if (!$("#recordList")) return;
   const scenario = scenarios[scenarioKey];
   $("#recordList").innerHTML = scenario.records
+    .map((record) => {
+      const badge = record.malicious ? "payload" : record.type;
+      return `
+        <article class="record">
+          <header>
+            <strong>${escapeHtml(record.title)}</strong>
+            <span>${escapeHtml(record.id)} · ${escapeHtml(badge)}</span>
+          </header>
+          <div class="fields">
+            ${record.fields.map(([key, value]) => fieldMarkup(policyKey, key, value)).join("")}
+          </div>
+        </article>`;
+    })
+    .join("");
+}
+
+function renderRecordList(targetSelector, policyKey, scenarioKey) {
+  const target = $(targetSelector);
+  if (!target) return;
+
+  const scenario = scenarios[scenarioKey];
+  target.innerHTML = scenario.records
     .map((record) => {
       const badge = record.malicious ? "payload" : record.type;
       return `
@@ -321,6 +344,7 @@ function clearTraceTimers() {
 function renderTrace(policyKey, scenarioKey) {
   clearTraceTimers();
   const traceList = $("#traceList");
+  if (!traceList) return;
   traceList.innerHTML = "";
 
   buildTrace(policyKey, scenarioKey).forEach(([label, text], index) => {
@@ -333,9 +357,35 @@ function renderTrace(policyKey, scenarioKey) {
   });
 }
 
+function renderComparison(policyKey, scenarioKey) {
+  const before = policies.A;
+  const after = policies[policyKey];
+  const scenario = scenarios[scenarioKey];
+  const redactedCount = countRedactedFields(policyKey, scenarioKey);
+  const blocked = after.malicious === 0;
+
+  renderRecordList("#beforeRecordList", "A", scenarioKey);
+  renderRecordList("#afterRecordList", policyKey, scenarioKey);
+
+  if ($("#beforeScore")) $("#beforeScore").textContent = `노출 ${formatNumber(before.realized)}`;
+  if ($("#afterScore")) $("#afterScore").textContent = `노출 ${formatNumber(after.realized)}`;
+  if ($("#afterPolicyLabel")) $("#afterPolicyLabel").textContent = after.label;
+  if ($("#beforePayload")) $("#beforePayload").textContent = "body·phone·notes가 그대로 모델 입력에 포함됩니다.";
+  if ($("#afterPayload")) $("#afterPayload").textContent = blocked
+    ? "body payload와 연락처 민감 메모 전달 경로가 차단됩니다."
+    : "프롬프트만 바뀌어 민감 필드는 여전히 전달됩니다.";
+  if ($("#verdictBadge")) $("#verdictBadge").textContent = redactedCount > 0
+    ? `${redactedCount}개 민감 필드 제거`
+    : "도구 응답 구조 변화 없음";
+  if ($("#stageNarration")) $("#stageNarration").textContent = redactedCount > 0
+    ? `${scenario.label}: 같은 요청을 수행해도 ${after.label}은 모델이 보기 전에 민감 필드를 잘라냅니다.`
+    : `${scenario.label}: ${after.label}은 프롬프트 지시만 달라져 도구가 반환한 민감 필드를 막지 못합니다.`;
+}
+
 function runDemo() {
   const { policyKey, scenarioKey } = currentState();
   renderMetrics(policyKey);
+  renderComparison(policyKey, scenarioKey);
   renderRecords(policyKey, scenarioKey);
   renderTrace(policyKey, scenarioKey);
 }
