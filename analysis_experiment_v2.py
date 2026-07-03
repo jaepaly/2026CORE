@@ -49,6 +49,15 @@ def load_runs():
                     rows.append(json.loads(line))
                 except Exception:
                     pass
+    if rows:
+        return rows
+    # Reproducibility fallback: GitHub commits the aggregate result JSON, while
+    # raw runs_*.jsonl files may be absent.
+    if os.path.exists(RESULTS_JSON):
+        with open(RESULTS_JSON, encoding="utf-8") as f:
+            data = json.load(f)
+        if isinstance(data, list):
+            return data
     return rows
 
 

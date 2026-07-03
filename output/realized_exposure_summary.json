@@ -1,4 +1,5 @@
 {
+  "source": "multi_model_results_v2.json",
   "narrow": {
     "A": {
       "n": 160,
@@ -9,7 +10,7 @@
     "B": {
       "n": 160,
       "avg_access": 0.33,
-      "realized_sensitive": 0.03,
+      "realized_sensitive": 1.5,
       "success_rate": 0.256
     },
     "C": {
@@ -35,7 +36,7 @@
     "B": {
       "n": 32,
       "avg_access": 0.72,
-      "realized_sensitive": 0.0,
+      "realized_sensitive": 3.59,
       "success_rate": 0.188
     },
     "C": {
@@ -52,8 +53,9 @@
     }
   },
   "weights": {
-    "contact_phone_notes": 5,
-    "email_body": 2,
+    "contact_phone_notes": 5.0,
+    "email_body": 2.0,
     "calendar_events": 1.5
-  }
+  },
+  "note": "B is prompt-only and therefore uses A-like field exposure when an item is accessed."
 }

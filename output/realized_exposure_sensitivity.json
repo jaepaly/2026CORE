@@ -1,0 +1,297 @@
+{
+  "default": {
+    "weights": {
+      "contact_phone_notes": 5.0,
+      "email_body": 2.0,
+      "calendar_events": 1.5
+    },
+    "narrow": {
+      "A": {
+        "n": 160,
+        "avg_access": 0.39,
+        "realized_sensitive": 1.68,
+        "success_rate": 0.269
+      },
+      "B": {
+        "n": 160,
+        "avg_access": 0.33,
+        "realized_sensitive": 1.5,
+        "success_rate": 0.256
+      },
+      "C": {
+        "n": 160,
+        "avg_access": 0.38,
+        "realized_sensitive": 0.1,
+        "success_rate": 0.212
+      },
+      "D": {
+        "n": 160,
+        "avg_access": 0.41,
+        "realized_sensitive": 0.04,
+        "success_rate": 0.25
+      }
+    },
+    "broad": {
+      "A": {
+        "n": 32,
+        "avg_access": 1.06,
+        "realized_sensitive": 5.31,
+        "success_rate": 0.156
+      },
+      "B": {
+        "n": 32,
+        "avg_access": 0.72,
+        "realized_sensitive": 3.59,
+        "success_rate": 0.188
+      },
+      "C": {
+        "n": 32,
+        "avg_access": 0.72,
+        "realized_sensitive": 0.0,
+        "success_rate": 0.156
+      },
+      "D": {
+        "n": 32,
+        "avg_access": 1.06,
+        "realized_sensitive": 0.0,
+        "success_rate": 0.156
+      }
+    }
+  },
+  "equal": {
+    "weights": {
+      "contact_phone_notes": 1.0,
+      "email_body": 1.0,
+      "calendar_events": 1.0
+    },
+    "narrow": {
+      "A": {
+        "n": 160,
+        "avg_access": 0.39,
+        "realized_sensitive": 0.39,
+        "success_rate": 0.269
+      },
+      "B": {
+        "n": 160,
+        "avg_access": 0.33,
+        "realized_sensitive": 0.33,
+        "success_rate": 0.256
+      },
+      "C": {
+        "n": 160,
+        "avg_access": 0.38,
+        "realized_sensitive": 0.07,
+        "success_rate": 0.212
+      },
+      "D": {
+        "n": 160,
+        "avg_access": 0.41,
+        "realized_sensitive": 0.03,
+        "success_rate": 0.25
+      }
+    },
+    "broad": {
+      "A": {
+        "n": 32,
+        "avg_access": 1.06,
+        "realized_sensitive": 1.06,
+        "success_rate": 0.156
+      },
+      "B": {
+        "n": 32,
+        "avg_access": 0.72,
+        "realized_sensitive": 0.72,
+        "success_rate": 0.188
+      },
+      "C": {
+        "n": 32,
+        "avg_access": 0.72,
+        "realized_sensitive": 0.0,
+        "success_rate": 0.156
+      },
+      "D": {
+        "n": 32,
+        "avg_access": 1.06,
+        "realized_sensitive": 0.0,
+        "success_rate": 0.156
+      }
+    }
+  },
+  "conservative": {
+    "weights": {
+      "contact_phone_notes": 2.0,
+      "email_body": 1.0,
+      "calendar_events": 1.0
+    },
+    "narrow": {
+      "A": {
+        "n": 160,
+        "avg_access": 0.39,
+        "realized_sensitive": 0.7,
+        "success_rate": 0.269
+      },
+      "B": {
+        "n": 160,
+        "avg_access": 0.33,
+        "realized_sensitive": 0.61,
+        "success_rate": 0.256
+      },
+      "C": {
+        "n": 160,
+        "avg_access": 0.38,
+        "realized_sensitive": 0.07,
+        "success_rate": 0.212
+      },
+      "D": {
+        "n": 160,
+        "avg_access": 0.41,
+        "realized_sensitive": 0.03,
+        "success_rate": 0.25
+      }
+    },
+    "broad": {
+      "A": {
+        "n": 32,
+        "avg_access": 1.06,
+        "realized_sensitive": 2.12,
+        "success_rate": 0.156
+      },
+      "B": {
+        "n": 32,
+        "avg_access": 0.72,
+        "realized_sensitive": 1.44,
+        "success_rate": 0.188
+      },
+      "C": {
+        "n": 32,
+        "avg_access": 0.72,
+        "realized_sensitive": 0.0,
+        "success_rate": 0.156
+      },
+      "D": {
+        "n": 32,
+        "avg_access": 1.06,
+        "realized_sensitive": 0.0,
+        "success_rate": 0.156
+      }
+    }
+  },
+  "aggressive": {
+    "weights": {
+      "contact_phone_notes": 8.0,
+      "email_body": 5.0,
+      "calendar_events": 2.0
+    },
+    "narrow": {
+      "A": {
+        "n": 160,
+        "avg_access": 0.39,
+        "realized_sensitive": 2.69,
+        "success_rate": 0.269
+      },
+      "B": {
+        "n": 160,
+        "avg_access": 0.33,
+        "realized_sensitive": 2.43,
+        "success_rate": 0.256
+      },
+      "C": {
+        "n": 160,
+        "avg_access": 0.38,
+        "realized_sensitive": 0.14,
+        "success_rate": 0.212
+      },
+      "D": {
+        "n": 160,
+        "avg_access": 0.41,
+        "realized_sensitive": 0.05,
+        "success_rate": 0.25
+      }
+    },
+    "broad": {
+      "A": {
+        "n": 32,
+        "avg_access": 1.06,
+        "realized_sensitive": 8.5,
+        "success_rate": 0.156
+      },
+      "B": {
+        "n": 32,
+        "avg_access": 0.72,
+        "realized_sensitive": 5.75,
+        "success_rate": 0.188
+      },
+      "C": {
+        "n": 32,
+        "avg_access": 0.72,
+        "realized_sensitive": 0.0,
+        "success_rate": 0.156
+      },
+      "D": {
+        "n": 32,
+        "avg_access": 1.06,
+        "realized_sensitive": 0.0,
+        "success_rate": 0.156
+      }
+    }
+  },
+  "pii_heavy": {
+    "weights": {
+      "contact_phone_notes": 7.0,
+      "email_body": 2.0,
+      "calendar_events": 1.0
+    },
+    "narrow": {
+      "A": {
+        "n": 160,
+        "avg_access": 0.39,
+        "realized_sensitive": 2.27,
+        "success_rate": 0.269
+      },
+      "B": {
+        "n": 160,
+        "avg_access": 0.33,
+        "realized_sensitive": 2.07,
+        "success_rate": 0.256
+      },
+      "C": {
+        "n": 160,
+        "avg_access": 0.38,
+        "realized_sensitive": 0.07,
+        "success_rate": 0.212
+      },
+      "D": {
+        "n": 160,
+        "avg_access": 0.41,
+        "realized_sensitive": 0.03,
+        "success_rate": 0.25
+      }
+    },
+    "broad": {
+      "A": {
+        "n": 32,
+        "avg_access": 1.06,
+        "realized_sensitive": 7.44,
+        "success_rate": 0.156
+      },
+      "B": {
+        "n": 32,
+        "avg_access": 0.72,
+        "realized_sensitive": 5.03,
+        "success_rate": 0.188
+      },
+      "C": {
+        "n": 32,
+        "avg_access": 0.72,
+        "realized_sensitive": 0.0,
+        "success_rate": 0.156
+      },
+      "D": {
+        "n": 32,
+        "avg_access": 1.06,
+        "realized_sensitive": 0.0,
+        "success_rate": 0.156
+      }
+    }
+  }
+}
