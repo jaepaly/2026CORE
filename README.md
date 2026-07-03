@@ -121,7 +121,7 @@ python -m http.server 8080
 
 실행 후 [`http://localhost:8080/demo/`](http://localhost:8080/demo/)를 열면 된다. 데모는 정적 HTML/CSS/JS로 구성되어 있으며, 가능하면 `output/interface_risk_summary.json`, `output/realized_exposure_summary.json`, `output/stats_summary_v2.json`의 최신 집계값을 읽어 표시한다.
 
-디자인 톤은 MIT 라이선스의 [VoltAgent/awesome-design-md](https://github.com/VoltAgent/awesome-design-md) 중 agent/terminal 계열 스타일을 참고했다.
+디자인 톤은 `npx getdesign@latest add notion`으로 생성한 [`DESIGN.md`](DESIGN.md)의 Notion 스타일 가이드를 적용했다.
 
 ## 재현 방법
 ```bash

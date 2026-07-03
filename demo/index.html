@@ -44,19 +44,35 @@
         </div>
 
         <aside class="terminal-card hero-terminal" aria-label="Research summary">
-          <div class="terminal-chrome">
-            <span></span><span></span><span></span>
-            <em>interface-policy.report</em>
+          <div class="brief-header">
+            <span class="sticker">AI</span>
+            <div>
+              <strong>Interface policy memo</strong>
+              <small>committed experiment summary</small>
+            </div>
           </div>
-          <pre><code>policy A/B: body + phone + notes visible
-policy C/D: body + phone + notes stripped
-
-capacity:
-  A/B 151.5  → injection payloads: 5
-  C/D  10.5  → injection payloads: 0
-
-realized exposure, broad tasks:
-  A 5.31 · B 3.59 · C 0.00 · D 0.00</code></pre>
+          <div class="brief-grid">
+            <div>
+              <span>A/B</span>
+              <strong>body · phone · notes visible</strong>
+            </div>
+            <div>
+              <span>C/D</span>
+              <strong>body · phone · notes stripped</strong>
+            </div>
+            <div>
+              <span>Capacity</span>
+              <strong>151.5 → 10.5</strong>
+            </div>
+            <div>
+              <span>Broad exposure</span>
+              <strong>5.31 / 3.59 → 0.00</strong>
+            </div>
+          </div>
+          <ul class="brief-list">
+            <li><span></span>필드 최소권한은 모델 성격과 무관하게 노출 상한을 줄인다.</li>
+            <li><span></span>프롬프트만 바꾼 B는 도구 응답 구조를 바꾸지 못한다.</li>
+          </ul>
         </aside>
       </section>
 
@@ -189,8 +205,8 @@ realized exposure, broad tasks:
 
     <footer>
       <span>
-        Design language inspired by MIT-licensed
-        <a href="https://github.com/VoltAgent/awesome-design-md">VoltAgent/awesome-design-md</a>.
+        Design language applied from
+        <a href="../DESIGN.md">DESIGN.md</a>, generated with <code>npx getdesign@latest add notion</code>.
       </span>
       <span>Static demo · no external runtime</span>
     </footer>

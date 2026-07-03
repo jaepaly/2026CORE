@@ -21,7 +21,12 @@ The demo is static HTML/CSS/JS. It fetches committed summary JSON files from
 
 ## Design basis
 
-The visual language is inspired by the MIT-licensed VoltAgent design guide from
-[`VoltAgent/awesome-design-md`](https://github.com/VoltAgent/awesome-design-md):
-near-black canvas, emerald accent, terminal-native cards, tight grids, and
-developer-tool style interaction.
+The visual language follows the Notion-style `DESIGN.md` installed with:
+
+```bash
+npx getdesign@latest add notion
+```
+
+Key choices: warm paper canvas, white document-like cards, Notion blue as the
+single structural accent, a deep indigo hero band, pill CTAs, hairline borders,
+and small decorative sticker colors.
