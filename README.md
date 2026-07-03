@@ -111,6 +111,18 @@ worst-case 용량(`interface_risk.py`). B는 프롬프트만 추가하고 필드
 - 낮은 업무 성공률이 모델 능력 한계인지 채점 엄격성인지.
 - 악성 payload가 이메일 `body`가 아니라 subject, sender, calendar event, contact notes 등에 있을 때도 C/D가 같은 효과를 내는지.
 
+## 라이브 데모
+
+브라우저에서 A/B/C/D 정책을 바꿔 보며, 같은 업무 요청이라도 모델에게 전달되는 도구 결과가 어떻게 달라지는지 확인할 수 있다.
+
+```bash
+python -m http.server 8080
+```
+
+실행 후 [`http://localhost:8080/demo/`](http://localhost:8080/demo/)를 열면 된다. 데모는 정적 HTML/CSS/JS로 구성되어 있으며, 가능하면 `output/interface_risk_summary.json`, `output/realized_exposure_summary.json`, `output/stats_summary_v2.json`의 최신 집계값을 읽어 표시한다.
+
+디자인 톤은 MIT 라이선스의 [VoltAgent/awesome-design-md](https://github.com/VoltAgent/awesome-design-md) 중 agent/terminal 계열 스타일을 참고했다.
+
 ## 재현 방법
 ```bash
 python run_experiments_v2.py <model> --seeds 1   # 모델별 실행 (재개 가능)
@@ -124,5 +136,5 @@ python stats_v2.py                                # (model×scenario) McNemar
 ## 다음 개선 방향
 1. 상용·대형 모델 추가(API)로 "능력↑ 시 과잉접근 출현" 검증 — 로컬 14b는 tool 미준수로 불가
 2. coarse/read_all v3 실험 결과를 완주해 도구 입도 효과를 현재 README 결과와 분리 보고
-3. 좌우 분할 라이브 데모(무방어 vs 필드 최소권한). UI/문서 스타일 후보로 [VoltAgent/awesome-design-md](https://github.com/VoltAgent/awesome-design-md) 참고
+3. 라이브 데모를 실제 실험 로그 replay 모드로 확장해, 발표자가 임의 시나리오 대신 커밋된 run 결과를 그대로 재생할 수 있게 만들기
 4. LLM judge 결과 일부를 사람 평가로 검증해 낮은 성공률의 원인을 분리

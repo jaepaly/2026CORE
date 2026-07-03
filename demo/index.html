@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>2026CORE · AI Agent Privacy Live Demo</title>
+    <meta
+      name="description"
+      content="Interactive demo showing how field-level least privilege changes AI agent privacy exposure."
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="grid-glow" aria-hidden="true"></div>
+    <header class="topbar">
+      <a class="brand" href="../README.md">
+        <span class="brand-mark">C</span>
+        <span>
+          <strong>2026CORE</strong>
+          <small>Agent privacy lab</small>
+        </span>
+      </a>
+      <nav class="nav">
+        <a href="#demo">Live demo</a>
+        <a href="#evidence">Evidence</a>
+        <a href="../README.md">Research README</a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow">AI 시대, 인간과 기술의 공존</p>
+          <h1>업무를 돕는 AI는<br />어디까지 읽어야 하는가?</h1>
+          <p class="hero-text">
+            같은 업무라도 도구 인터페이스가 무엇을 반환하느냐에 따라 민감정보 노출과
+            프롬프트 인젝션 전달 가능성이 달라집니다. 아래 데모는 A/B/C/D 정책을 즉석에서
+            바꿔 보며 이 차이를 보여줍니다.
+          </p>
+          <div class="hero-actions">
+            <a class="button primary" href="#demo">데모 실행</a>
+            <button class="button ghost" id="autoPlayBtn" type="button">발표 모드</button>
+          </div>
+        </div>
+
+        <aside class="terminal-card hero-terminal" aria-label="Research summary">
+          <div class="terminal-chrome">
+            <span></span><span></span><span></span>
+            <em>interface-policy.report</em>
+          </div>
+          <pre><code>policy A/B: body + phone + notes visible
+policy C/D: body + phone + notes stripped
+
+capacity:
+  A/B 151.5  → injection payloads: 5
+  C/D  10.5  → injection payloads: 0
+
+realized exposure, broad tasks:
+  A 5.31 · B 3.59 · C 0.00 · D 0.00</code></pre>
+        </aside>
+      </section>
+
+      <section class="metrics-row" id="evidence">
+        <article class="metric-card">
+          <span>설계상 노출 용량</span>
+          <strong id="capacityMetric">151.5</strong>
+          <small>A/B는 필드 필터 없음</small>
+        </article>
+        <article class="metric-card">
+          <span>광범위 업무 실현 노출</span>
+          <strong id="realizedMetric">5.31</strong>
+          <small id="realizedCaption">현재 정책 A</small>
+        </article>
+        <article class="metric-card">
+          <span>악성 지시 전달 가능</span>
+          <strong id="malMetric">5</strong>
+          <small>email body payload 기준</small>
+        </article>
+        <article class="metric-card">
+          <span>성공률 차이</span>
+          <strong id="successMetric">0.25</strong>
+          <small>McNemar: 유의 차이 미검출</small>
+        </article>
+      </section>
+
+      <section class="demo-shell" id="demo">
+        <div class="demo-header">
+          <div>
+            <p class="eyebrow">Live simulation</p>
+            <h2>정책을 바꾸면, AI가 보는 세계가 바뀐다</h2>
+          </div>
+          <div class="demo-controls">
+            <label>
+              <span>업무</span>
+              <select id="scenarioSelect">
+                <option value="weekly">주간 업무 메일 전체 요약</option>
+                <option value="spam">스팸·악성 메일 식별</option>
+                <option value="contacts">전 직원 비상 연락망 구축</option>
+              </select>
+            </label>
+            <label>
+              <span>정책</span>
+              <select id="policySelect">
+                <option value="A">A · 무방어</option>
+                <option value="B">B · 프롬프트만</option>
+                <option value="C">C · 필드 최소권한</option>
+                <option value="D">D · 강한 최소권한</option>
+              </select>
+            </label>
+            <button class="button primary" id="runBtn" type="button">Run agent</button>
+          </div>
+        </div>
+
+        <div class="workspace">
+          <section class="panel">
+            <div class="panel-title">
+              <span class="dot live"></span>
+              <h3>Agent trace</h3>
+            </div>
+            <ol class="trace" id="traceList"></ol>
+          </section>
+
+          <section class="panel result-panel">
+            <div class="panel-title">
+              <span class="dot"></span>
+              <h3>Tool result delivered to model</h3>
+            </div>
+            <div class="record-list" id="recordList"></div>
+          </section>
+
+          <section class="panel risk-panel">
+            <div class="panel-title">
+              <span class="dot warn"></span>
+              <h3>Risk delta</h3>
+            </div>
+            <div class="risk-meter">
+              <div class="meter-label">
+                <span>Realized sensitive exposure</span>
+                <strong id="meterValue">5.31</strong>
+              </div>
+              <div class="meter-track">
+                <div id="meterFill"></div>
+              </div>
+            </div>
+            <div class="risk-grid">
+              <div>
+                <span>phone</span>
+                <strong id="phoneState">visible</strong>
+              </div>
+              <div>
+                <span>notes</span>
+                <strong id="notesState">visible</strong>
+              </div>
+              <div>
+                <span>email body</span>
+                <strong id="bodyState">visible</strong>
+              </div>
+              <div>
+                <span>injection</span>
+                <strong id="injectState">deliverable</strong>
+              </div>
+            </div>
+            <p class="risk-note" id="riskNote">
+              A/B는 프롬프트 지시가 달라도 도구 결과의 민감 필드가 그대로 전달됩니다.
+            </p>
+          </section>
+        </div>
+      </section>
+
+      <section class="comparison">
+        <article>
+          <p class="eyebrow">Before</p>
+          <h3>A/B · 프롬프트에 부탁하기</h3>
+          <p>
+            모델에게 “필요한 것만 읽어라”고 말해도 도구가 body·phone·notes를 그대로 반환하면,
+            접근 순간 민감 필드는 모델 컨텍스트에 들어갑니다.
+          </p>
+        </article>
+        <article>
+          <p class="eyebrow">After</p>
+          <h3>C/D · 인터페이스에서 집행하기</h3>
+          <p>
+            정책 미들웨어가 민감 필드를 제거하면 모델이 같은 ID를 조회해도 본문과 개인 메모가
+            전달되지 않습니다. 안전은 프롬프트가 아니라 인터페이스에서 강제됩니다.
+          </p>
+        </article>
+      </section>
+    </main>
+
+    <footer>
+      <span>
+        Design language inspired by MIT-licensed
+        <a href="https://github.com/VoltAgent/awesome-design-md">VoltAgent/awesome-design-md</a>.
+      </span>
+      <span>Static demo · no external runtime</span>
+    </footer>
+
+    <script src="./app.js"></script>
+  </body>
+</html>
