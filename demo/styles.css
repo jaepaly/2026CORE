@@ -6,11 +6,12 @@
   --canvas: #ffffff;
   --canvas-soft: #f6f5f4;
   --surface: #ffffff;
-  --ink: #000000;
+  --ink: #0f0f0f;
   --ink-secondary: #31302e;
   --ink-muted: #615d59;
   --ink-faint: #a39e98;
   --hairline: #e6e6e6;
+  --hairline-strong: #d7d7d7;
   --accent-sky: #62aef0;
   --accent-purple: #d6b6f6;
   --accent-pink: #ff64c8;
@@ -43,7 +44,10 @@ html {
 body {
   margin: 0;
   min-height: 100vh;
-  background: var(--canvas-soft);
+  background:
+    radial-gradient(circle at 18% 10%, rgba(98, 174, 240, 0.16), transparent 25rem),
+    radial-gradient(circle at 90% 12%, rgba(214, 182, 246, 0.18), transparent 22rem),
+    var(--canvas-soft);
   color: var(--ink);
   overflow-x: hidden;
 }
@@ -63,11 +67,11 @@ select {
   inset: 0;
   z-index: -1;
   pointer-events: none;
-  background:
-    radial-gradient(circle at 12% 22%, rgba(98, 174, 240, 0.2) 0 8px, transparent 9px),
-    radial-gradient(circle at 88% 16%, rgba(255, 100, 200, 0.18) 0 10px, transparent 11px),
-    radial-gradient(circle at 78% 80%, rgba(42, 157, 153, 0.14) 0 11px, transparent 12px),
-    radial-gradient(circle at 20% 84%, rgba(214, 182, 246, 0.28) 0 14px, transparent 15px);
+  background-image:
+    linear-gradient(rgba(0, 0, 0, 0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 0, 0, 0.025) 1px, transparent 1px);
+  background-size: 48px 48px;
+  mask-image: linear-gradient(to bottom, black, transparent 62%);
 }
 
 .topbar {
@@ -79,7 +83,7 @@ select {
   justify-content: space-between;
   gap: 24px;
   padding: 16px clamp(18px, 4vw, 48px);
-  background: rgba(255, 255, 255, 0.86);
+  background: rgba(255, 255, 255, 0.9);
   border-bottom: 1px solid var(--hairline);
   backdrop-filter: blur(18px);
 }
@@ -110,7 +114,7 @@ select {
 .brand strong {
   color: var(--ink);
   font-size: 15px;
-  font-weight: 700;
+  font-weight: 750;
   letter-spacing: -0.1px;
 }
 
@@ -132,25 +136,24 @@ select {
 }
 
 main {
-  width: min(1180px, calc(100% - 32px));
+  width: min(1160px, calc(100% - 32px));
   margin: 0 auto;
 }
 
 .hero {
   position: relative;
   display: grid;
-  grid-template-columns: minmax(0, 1.02fr) minmax(340px, 0.88fr);
+  grid-template-columns: minmax(0, 1.04fr) minmax(360px, 0.86fr);
   gap: clamp(28px, 5vw, 64px);
   align-items: center;
-  margin: 34px 0 36px;
-  padding: clamp(42px, 7vw, 82px);
+  margin: 44px 0 30px;
+  padding: clamp(42px, 6vw, 72px);
   overflow: hidden;
+  border: 1px solid var(--hairline);
   border-radius: 28px;
   background:
-    radial-gradient(circle at 86% 18%, rgba(255, 100, 200, 0.32), transparent 9rem),
-    radial-gradient(circle at 78% 78%, rgba(98, 174, 240, 0.28), transparent 13rem),
-    var(--secondary);
-  color: var(--on-primary);
+    linear-gradient(135deg, rgba(255, 255, 255, 0.98), rgba(247, 250, 255, 0.96)),
+    var(--surface);
   box-shadow: var(--shadow-elevated);
 }
 
@@ -158,51 +161,46 @@ main {
 .hero::after {
   content: "";
   position: absolute;
-  border-radius: 18px;
-  transform: rotate(-8deg);
-  opacity: 0.95;
+  border-radius: 999px;
+  pointer-events: none;
 }
 
 .hero::before {
-  width: 74px;
-  height: 74px;
-  right: 34px;
-  top: 32px;
-  background: var(--accent-purple);
-  box-shadow: 0 0 0 9px rgba(255, 255, 255, 0.08);
+  width: 300px;
+  height: 300px;
+  right: -120px;
+  top: -120px;
+  background: radial-gradient(circle, rgba(0, 117, 222, 0.18), transparent 68%);
 }
 
 .hero::after {
-  width: 48px;
-  height: 48px;
-  right: 150px;
-  bottom: 44px;
-  background: var(--accent-orange);
-  transform: rotate(12deg);
+  width: 220px;
+  height: 220px;
+  left: -96px;
+  bottom: -96px;
+  background: radial-gradient(circle, rgba(214, 182, 246, 0.36), transparent 68%);
 }
 
 .hero-copy,
 .hero-terminal {
   position: relative;
   z-index: 1;
+  min-width: 0;
 }
 
 .eyebrow {
   display: inline-flex;
   width: fit-content;
   margin: 0 0 16px;
-  padding: 4px 10px;
+  padding: 5px 11px;
+  border: 1px solid rgba(0, 117, 222, 0.14);
   border-radius: 999px;
-  background: var(--surface);
+  background: rgba(0, 117, 222, 0.07);
   color: var(--primary);
   font-size: 12px;
-  font-weight: 700;
+  font-weight: 750;
   line-height: 1.35;
   letter-spacing: 0.125px;
-}
-
-.hero .eyebrow {
-  color: var(--secondary);
 }
 
 h1,
@@ -214,12 +212,12 @@ p {
 
 h1 {
   margin-bottom: 22px;
-  max-width: 760px;
-  color: var(--on-primary);
-  font-size: clamp(42px, 5.4vw, 64px);
-  font-weight: 800;
+  max-width: 740px;
+  color: var(--ink);
+  font-size: clamp(43px, 5.15vw, 62px);
+  font-weight: 850;
   line-height: 1.04;
-  letter-spacing: -1.8px;
+  letter-spacing: -1.9px;
   word-break: keep-all;
 }
 
@@ -232,7 +230,7 @@ h2 {
   margin-bottom: 10px;
   color: var(--ink);
   font-size: clamp(32px, 4vw, 46px);
-  font-weight: 800;
+  font-weight: 820;
   line-height: 1.06;
   letter-spacing: -1.2px;
 }
@@ -241,16 +239,16 @@ h3 {
   margin-bottom: 0;
   color: var(--ink);
   font-size: 20px;
-  font-weight: 700;
+  font-weight: 760;
   line-height: 1.3;
   letter-spacing: -0.25px;
 }
 
 .hero-text {
-  max-width: 650px;
-  color: rgba(255, 255, 255, 0.82);
+  max-width: 620px;
+  color: var(--ink-secondary);
   font-size: 17px;
-  line-height: 1.65;
+  line-height: 1.72;
 }
 
 .hero-actions {
@@ -271,7 +269,7 @@ h3 {
   background: var(--surface);
   color: var(--ink);
   cursor: pointer;
-  font-weight: 600;
+  font-weight: 700;
   transition: transform 0.16s ease, border-color 0.16s ease, background 0.16s ease, color 0.16s ease;
 }
 
@@ -287,6 +285,7 @@ h3 {
   border-color: transparent;
   background: var(--primary);
   color: var(--on-primary);
+  box-shadow: 0 10px 24px rgba(0, 117, 222, 0.18);
 }
 
 .button.primary:hover {
@@ -317,8 +316,9 @@ h3 {
 
 .hero-terminal {
   overflow: hidden;
-  color: var(--ink);
   padding: 22px;
+  color: var(--ink);
+  transform: rotate(0.7deg);
 }
 
 .brief-header {
@@ -336,7 +336,7 @@ h3 {
 .brief-header strong {
   color: var(--ink);
   font-size: 18px;
-  font-weight: 800;
+  font-weight: 820;
   letter-spacing: -0.3px;
 }
 
@@ -352,7 +352,7 @@ h3 {
   width: 48px;
   height: 48px;
   border-radius: 15px;
-  background: var(--accent-purple);
+  background: linear-gradient(135deg, var(--accent-purple), #f0e6ff);
   color: #391c57;
   font-weight: 900;
   transform: rotate(-4deg);
@@ -368,7 +368,7 @@ h3 {
   padding: 14px;
   border: 1px solid var(--hairline);
   border-radius: 12px;
-  background: var(--canvas-soft);
+  background: linear-gradient(180deg, #fff, #faf9f8);
 }
 
 .brief-grid span,
@@ -379,7 +379,7 @@ h3 {
 .brief-grid span {
   color: var(--ink-muted);
   font-size: 12px;
-  font-weight: 700;
+  font-weight: 760;
 }
 
 .brief-grid strong {
@@ -428,7 +428,32 @@ code {
 }
 
 .metric-card {
+  position: relative;
   padding: 22px;
+  overflow: hidden;
+}
+
+.metric-card::after {
+  content: "";
+  position: absolute;
+  right: 16px;
+  top: 18px;
+  width: 34px;
+  height: 34px;
+  border-radius: 12px;
+  background: rgba(0, 117, 222, 0.08);
+}
+
+.metric-card:nth-child(2)::after {
+  background: rgba(255, 100, 200, 0.12);
+}
+
+.metric-card:nth-child(3)::after {
+  background: rgba(221, 91, 0, 0.12);
+}
+
+.metric-card:nth-child(4)::after {
+  background: rgba(42, 157, 153, 0.12);
 }
 
 .metric-card span,
@@ -444,7 +469,7 @@ code {
   margin: 12px 0 5px;
   color: var(--ink);
   font-size: 40px;
-  font-weight: 800;
+  font-weight: 860;
   letter-spacing: -1.4px;
 }
 
@@ -452,7 +477,7 @@ code {
   padding: 30px;
   border: 1px solid var(--hairline);
   border-radius: 24px;
-  background: var(--surface);
+  background: rgba(255, 255, 255, 0.82);
   box-shadow: var(--shadow-elevated);
 }
 
@@ -476,14 +501,14 @@ label span {
   margin-bottom: 6px;
   color: var(--ink-muted);
   font-size: 12px;
-  font-weight: 600;
+  font-weight: 700;
 }
 
 select {
   min-width: 190px;
   height: 44px;
   border: 1px solid #dddddd;
-  border-radius: 4px;
+  border-radius: 8px;
   background: var(--surface);
   color: var(--ink);
   padding: 0 12px;
@@ -545,8 +570,8 @@ select:focus {
 .trace li {
   padding: 12px;
   border: 1px solid var(--hairline);
-  border-radius: 8px;
-  background: var(--canvas-soft);
+  border-radius: 10px;
+  background: #fbfaf9;
   color: var(--ink-secondary);
   font-size: 14px;
   line-height: 1.5;
@@ -557,7 +582,7 @@ select:focus {
   margin-bottom: 4px;
   color: var(--primary);
   font-size: 12px;
-  font-weight: 700;
+  font-weight: 800;
   letter-spacing: 0.125px;
 }
 
@@ -568,7 +593,7 @@ select:focus {
 
 .record {
   border: 1px solid var(--hairline);
-  border-radius: 12px;
+  border-radius: 14px;
   background: var(--surface);
   overflow: hidden;
 }
@@ -579,19 +604,19 @@ select:focus {
   gap: 12px;
   padding: 12px 14px;
   border-bottom: 1px solid var(--hairline);
-  background: var(--canvas-soft);
+  background: #fbfaf9;
 }
 
 .record header strong {
   color: var(--ink);
   font-size: 15px;
-  font-weight: 700;
+  font-weight: 760;
 }
 
 .record header span {
   color: var(--ink-muted);
   font-size: 12px;
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .fields {
@@ -611,7 +636,7 @@ select:focus {
 
 .field b {
   color: var(--ink-muted);
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .field.redacted {
@@ -627,7 +652,7 @@ select:focus {
   color: var(--danger);
   font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
   font-size: 12px;
-  font-weight: 700;
+  font-weight: 800;
 }
 
 .risk-meter {
@@ -645,7 +670,7 @@ select:focus {
 
 .meter-label strong {
   color: var(--ink);
-  font-weight: 800;
+  font-weight: 860;
 }
 
 .meter-track {
@@ -674,7 +699,7 @@ select:focus {
   padding: 12px;
   border: 1px solid var(--hairline);
   border-radius: 12px;
-  background: var(--canvas-soft);
+  background: #fbfaf9;
 }
 
 .risk-grid span,
@@ -685,14 +710,14 @@ select:focus {
 .risk-grid span {
   color: var(--ink-muted);
   font-size: 12px;
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .risk-grid strong {
   margin-top: 6px;
   color: var(--ink);
   font-size: 15px;
-  font-weight: 700;
+  font-weight: 760;
 }
 
 .risk-note {
@@ -730,7 +755,7 @@ footer {
 
 footer a {
   color: var(--primary);
-  font-weight: 600;
+  font-weight: 700;
 }
 
 @media (max-width: 980px) {
@@ -765,6 +790,10 @@ footer a {
     padding: 32px 22px;
   }
 
+  .hero-terminal {
+    transform: none;
+  }
+
   .brief-grid {
     grid-template-columns: 1fr;
   }
@@ -795,6 +824,11 @@ footer a {
   }
 
   h1 {
-    font-size: 42px;
+    font-size: 34px;
+    letter-spacing: -1.2px;
+  }
+
+  h1 span {
+    white-space: normal;
   }
 }
