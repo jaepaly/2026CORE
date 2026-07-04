@@ -1,16 +1,17 @@
 {
   "source": "multi_model_results_v2.json",
+  "method": "measured_from_delivered_fields",
   "narrow": {
     "A": {
       "n": 160,
       "avg_access": 0.39,
-      "realized_sensitive": 1.68,
+      "realized_sensitive": 1.06,
       "success_rate": 0.269
     },
     "B": {
       "n": 160,
       "avg_access": 0.33,
-      "realized_sensitive": 1.5,
+      "realized_sensitive": 0.93,
       "success_rate": 0.256
     },
     "C": {
@@ -30,13 +31,13 @@
     "A": {
       "n": 32,
       "avg_access": 1.06,
-      "realized_sensitive": 5.31,
+      "realized_sensitive": 3.19,
       "success_rate": 0.156
     },
     "B": {
       "n": 32,
       "avg_access": 0.72,
-      "realized_sensitive": 3.59,
+      "realized_sensitive": 2.16,
       "success_rate": 0.188
     },
     "C": {
@@ -53,9 +54,10 @@
     }
   },
   "weights": {
-    "contact_phone_notes": 5.0,
+    "contact_phone": 2.0,
+    "contact_notes": 3.0,
     "email_body": 2.0,
     "calendar_events": 1.5
   },
-  "note": "B is prompt-only and therefore uses A-like field exposure when an item is accessed."
+  "note": "Realized exposure is measured from the fields each tool actually delivered (search_contacts returns notes but not phone; get_contact returns both; search/get_email return body). B is prompt-only, so it uses A-like field exposure when an item is accessed."
 }

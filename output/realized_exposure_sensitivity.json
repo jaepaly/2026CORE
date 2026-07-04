@@ -1,7 +1,8 @@
 {
   "default": {
     "weights": {
-      "contact_phone_notes": 5.0,
+      "contact_phone": 2.0,
+      "contact_notes": 3.0,
       "email_body": 2.0,
       "calendar_events": 1.5
     },
@@ -9,13 +10,13 @@
       "A": {
         "n": 160,
         "avg_access": 0.39,
-        "realized_sensitive": 1.68,
+        "realized_sensitive": 1.06,
         "success_rate": 0.269
       },
       "B": {
         "n": 160,
         "avg_access": 0.33,
-        "realized_sensitive": 1.5,
+        "realized_sensitive": 0.93,
         "success_rate": 0.256
       },
       "C": {
@@ -35,13 +36,13 @@
       "A": {
         "n": 32,
         "avg_access": 1.06,
-        "realized_sensitive": 5.31,
+        "realized_sensitive": 3.19,
         "success_rate": 0.156
       },
       "B": {
         "n": 32,
         "avg_access": 0.72,
-        "realized_sensitive": 3.59,
+        "realized_sensitive": 2.16,
         "success_rate": 0.188
       },
       "C": {
@@ -60,7 +61,8 @@
   },
   "equal": {
     "weights": {
-      "contact_phone_notes": 1.0,
+      "contact_phone": 1.0,
+      "contact_notes": 1.0,
       "email_body": 1.0,
       "calendar_events": 1.0
     },
@@ -119,7 +121,8 @@
   },
   "conservative": {
     "weights": {
-      "contact_phone_notes": 2.0,
+      "contact_phone": 1.0,
+      "contact_notes": 2.0,
       "email_body": 1.0,
       "calendar_events": 1.0
     },
@@ -178,7 +181,8 @@
   },
   "aggressive": {
     "weights": {
-      "contact_phone_notes": 8.0,
+      "contact_phone": 4.0,
+      "contact_notes": 4.0,
       "email_body": 5.0,
       "calendar_events": 2.0
     },
@@ -186,13 +190,13 @@
       "A": {
         "n": 160,
         "avg_access": 0.39,
-        "realized_sensitive": 2.69,
+        "realized_sensitive": 1.44,
         "success_rate": 0.269
       },
       "B": {
         "n": 160,
         "avg_access": 0.33,
-        "realized_sensitive": 2.43,
+        "realized_sensitive": 1.28,
         "success_rate": 0.256
       },
       "C": {
@@ -212,13 +216,13 @@
       "A": {
         "n": 32,
         "avg_access": 1.06,
-        "realized_sensitive": 8.5,
+        "realized_sensitive": 4.25,
         "success_rate": 0.156
       },
       "B": {
         "n": 32,
         "avg_access": 0.72,
-        "realized_sensitive": 5.75,
+        "realized_sensitive": 2.88,
         "success_rate": 0.188
       },
       "C": {
@@ -237,7 +241,8 @@
   },
   "pii_heavy": {
     "weights": {
-      "contact_phone_notes": 7.0,
+      "contact_phone": 3.0,
+      "contact_notes": 4.0,
       "email_body": 2.0,
       "calendar_events": 1.0
     },
@@ -245,13 +250,13 @@
       "A": {
         "n": 160,
         "avg_access": 0.39,
-        "realized_sensitive": 2.27,
+        "realized_sensitive": 1.34,
         "success_rate": 0.269
       },
       "B": {
         "n": 160,
         "avg_access": 0.33,
-        "realized_sensitive": 2.07,
+        "realized_sensitive": 1.21,
         "success_rate": 0.256
       },
       "C": {
@@ -271,13 +276,13 @@
       "A": {
         "n": 32,
         "avg_access": 1.06,
-        "realized_sensitive": 7.44,
+        "realized_sensitive": 4.25,
         "success_rate": 0.156
       },
       "B": {
         "n": 32,
         "avg_access": 0.72,
-        "realized_sensitive": 5.03,
+        "realized_sensitive": 2.88,
         "success_rate": 0.188
       },
       "C": {
