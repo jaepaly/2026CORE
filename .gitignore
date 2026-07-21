@@ -22,3 +22,21 @@ output/_archive_20scn/
 output/multi_model_results_v2_qwen2.5
 output/multi_model_results_v2_qwen3
 output/multi_model_results_v2_llama3.1
+
+# v3 experiment artifacts: raw traces are local-only; reviewed synthetic
+# manifests, summaries, figures, and replay examples can be versioned.
+experiments/*
+!experiments/README.md
+!experiments/*/
+experiments/*/runs.jsonl
+experiments/*/traces/
+experiments/*/raw/
+experiments/*/*.log
+!experiments/*/manifest.json
+!experiments/*/validation.json
+!experiments/*/summary.json
+!experiments/*/stats.json
+!experiments/*/figures/
+!experiments/*/figures/*.png
+!experiments/*/replay/
+!experiments/*/replay/*.json
