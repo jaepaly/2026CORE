@@ -1,12 +1,11 @@
 #!/usr/bin/env python3
-"""2400 run에 대한 paired 통계 (올바른 분석 단위).
+"""Paired success-rate statistics.
 
-[중요] 현재 데이터는 seed가 모델 호출에 전달되지 않아(temp=0.1), 같은
-(model, scenario, condition)의 10개 seed가 사실상 동일한 복제다(접근 98%·성공 86%
-가 seed 전부 동일). 따라서 seed를 독립 표본으로 쓰면 유효 표본이 ~10배 부풀려진다.
+[중요] seed 반복이 여러 개 있더라도 낮은 temperature에서는 독립 표본으로 보기 어렵다.
+따라서 조건 간 성공률 비교는 run 단위가 아니라 paired 분석 단위인
+(model, scenario)로 붕괴해 본다.
 
-올바른 분석 단위 = (model, scenario) 페어(n=60). seed는 majority로 붕괴한다.
-참고용으로 naive(per-run) 수치도 함께 출력하되, 결론은 collapsed 기준으로 본다.
+현재 커밋 기준 데이터는 4 models × 48 scenarios = 192 paired units, seed=1이다.
 """
 import json
 import math
@@ -23,6 +22,18 @@ def load():
         if b == "runs.jsonl" or b.startswith("runs_v3_"):
             continue
         rows += [json.loads(l) for l in open(p, encoding="utf-8") if l.strip()]
+    if rows:
+        return rows
+    # Reproducibility fallback for the committed repository: raw JSONL logs are
+    # not always tracked, but the aggregate run file is.
+    aggregate = f"{OUTPUT}/multi_model_results_v2.json"
+    try:
+        with open(aggregate, encoding="utf-8") as f:
+            data = json.load(f)
+        if isinstance(data, list):
+            return data
+    except FileNotFoundError:
+        pass
     return rows
 
 
@@ -81,10 +92,10 @@ def main():
         print("  -> seed는 독립 반복이 아님. 분석 단위를 (model,scenario)로 붕괴.\n")
 
     unit = collapse(rows)
-    result = {"analysis_unit": "model x scenario (n=60), seeds collapsed by majority",
+    n_units = len({(k[0], k[1]) for k in unit})
+    result = {"analysis_unit": f"model x scenario (n={n_units}), seeds collapsed by majority when repeated",
               "seed_independence": {"groups": tot, "identical_access": sa, "identical_success": ss},
               "mcnemar": {}, "success_rate_collapsed": {}}
-    n_units = len({(k[0], k[1]) for k in unit})
     print(f"McNemar (분석단위 = model×scenario, 단위수={n_units}):")
     print(f"{'cmp':8s} | pairs | b | c | p")
     for c1, c2 in [("A", "B"), ("A", "C"), ("A", "D"), ("C", "D"), ("B", "C")]:

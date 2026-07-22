@@ -1,5 +1,5 @@
 {
-  "analysis_unit": "model x scenario (n=60), seeds collapsed by majority",
+  "analysis_unit": "model x scenario (n=192), seeds collapsed by majority when repeated",
   "seed_independence": {
     "groups": 0,
     "identical_access": 0,

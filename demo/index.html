@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>2026CORE · AI Agent Privacy Live Demo</title>
+    <meta
+      name="description"
+      content="Interactive demo showing how field-level least privilege changes AI agent privacy exposure."
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="grid-glow" aria-hidden="true"></div>
+    <header class="topbar">
+      <a class="brand" href="../README.md">
+        <span class="brand-mark">C</span>
+        <span>
+          <strong>2026CORE</strong>
+          <small>Agent privacy lab</small>
+        </span>
+      </a>
+      <nav class="nav">
+        <a href="#demo">Live demo</a>
+        <a href="#evidence">Evidence</a>
+        <a href="../README.md">Research README</a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow">AI 시대, 인간과 기술의 공존</p>
+          <h1>
+            <span>AI에게 일을 맡겨도,</span>
+            <span>개인정보까지</span>
+            <span>맡길 필요는 없습니다.</span>
+          </h1>
+          <p class="hero-text">
+            같은 업무 요청이라도 도구가 어떤 필드를 반환하느냐에 따라 AI가 보는 정보가 달라집니다.
+            아래 시연은 무방어 도구와 필드 최소권한 도구를 같은 화면에서 비교합니다.
+          </p>
+          <div class="hero-actions">
+            <a class="button primary" href="#demo">비교 시연 바로 보기</a>
+            <button class="button ghost" id="autoPlayBtn" type="button">발표 모드</button>
+          </div>
+        </div>
+
+        <aside class="hero-dashboard" aria-label="Research summary">
+          <div class="dash-top">
+            <span class="sticker">AI</span>
+            <div>
+              <strong>실험 핵심</strong>
+              <small>도구 응답이 곧 모델의 시야입니다</small>
+            </div>
+          </div>
+          <div class="dash-meter">
+            <div>
+              <span>무방어 A</span>
+              <strong>5.31</strong>
+            </div>
+            <div class="dash-line" aria-hidden="true"><i></i></div>
+            <div>
+              <span>최소권한 C/D</span>
+              <strong>0.00</strong>
+            </div>
+          </div>
+          <p>광범위 업무에서 실현 민감노출이 필드 정책 적용 후 0으로 떨어집니다.</p>
+        </aside>
+      </section>
+
+      <section class="demo-shell" id="demo">
+        <div class="demo-header">
+          <div>
+            <p class="eyebrow">Live comparison</p>
+            <h2>같은 요청, 다른 도구 응답</h2>
+            <p class="section-copy">왼쪽은 무방어 A, 오른쪽은 선택한 최소권한 정책입니다. 관객에게 “AI가 실제로 받는 데이터”가 어떻게 달라지는지 바로 보여줄 수 있습니다.</p>
+          </div>
+          <div class="demo-controls">
+            <label>
+              <span>시연 시나리오</span>
+              <select id="scenarioSelect">
+                <option value="weekly">악성 메일이 섞인 업무 요약</option>
+                <option value="spam">스팸·악성 메일 식별</option>
+                <option value="contacts">전 직원 비상 연락망 구축</option>
+              </select>
+            </label>
+            <label>
+              <span>오른쪽 정책</span>
+              <select id="policySelect">
+                <option value="C">C · 필드 최소권한</option>
+                <option value="D">D · 강한 최소권한</option>
+                <option value="B">B · 프롬프트만</option>
+                <option value="A">A · 무방어</option>
+              </select>
+            </label>
+            <button class="button primary" id="runBtn" type="button">시연 재생</button>
+          </div>
+        </div>
+
+        <div class="comparison-stage">
+          <article class="compare-card danger-card">
+            <div class="compare-head">
+              <span class="policy-pill danger">A · 무방어</span>
+              <strong id="beforeScore">노출 5.31</strong>
+            </div>
+            <h3>AI에게 그대로 전달되는 도구 결과</h3>
+            <p class="compare-caption" id="beforePayload">email body payload 전달 가능</p>
+            <div class="record-list compact" id="beforeRecordList"></div>
+          </article>
+
+          <div class="stage-verdict">
+            <span>VS</span>
+            <strong id="verdictBadge">body · phone · notes 차단</strong>
+            <p id="stageNarration">같은 업무라도 인터페이스가 민감 필드를 제거하면 모델은 해당 값을 볼 수 없습니다.</p>
+          </div>
+
+          <article class="compare-card safe-card">
+            <div class="compare-head">
+              <span class="policy-pill safe" id="afterPolicyLabel">C · 필드 최소권한</span>
+              <strong id="afterScore">노출 0.00</strong>
+            </div>
+            <h3>민감 필드가 제거된 도구 결과</h3>
+            <p class="compare-caption" id="afterPayload">인젝션 전달 경로 차단</p>
+            <div class="record-list compact" id="afterRecordList"></div>
+          </article>
+        </div>
+      </section>
+
+      <section class="metrics-row" id="evidence">
+        <article class="metric-card">
+          <span>설계상 노출 용량</span>
+          <strong id="capacityMetric">151.5</strong>
+          <small>A/B는 필드 필터 없음</small>
+        </article>
+        <article class="metric-card">
+          <span>광범위 업무 실현 노출</span>
+          <strong id="realizedMetric">5.31</strong>
+          <small id="realizedCaption">현재 정책 A</small>
+        </article>
+        <article class="metric-card">
+          <span>악성 지시 전달 가능</span>
+          <strong id="malMetric">5</strong>
+          <small>email body payload 기준</small>
+        </article>
+        <article class="metric-card">
+          <span>성공률 차이</span>
+          <strong id="successMetric">0.25</strong>
+          <small>McNemar: 유의 차이 미검출</small>
+        </article>
+      </section>
+
+      <section class="comparison">
+        <article>
+          <p class="eyebrow">Before</p>
+          <h3>A/B · 프롬프트에 부탁하기</h3>
+          <p>
+            모델에게 “필요한 것만 읽어라”고 말해도 도구가 body·phone·notes를 그대로 반환하면,
+            접근 순간 민감 필드는 모델 컨텍스트에 들어갑니다.
+          </p>
+        </article>
+        <article>
+          <p class="eyebrow">After</p>
+          <h3>C/D · 인터페이스에서 집행하기</h3>
+          <p>
+            정책 미들웨어가 민감 필드를 제거하면 모델이 같은 ID를 조회해도 본문과 개인 메모가
+            전달되지 않습니다. 안전은 프롬프트가 아니라 인터페이스에서 강제됩니다.
+          </p>
+        </article>
+      </section>
+    </main>
+
+    <footer>
+      <span>
+        Design language applied from
+        <a href="../DESIGN.md">DESIGN.md</a>, generated with <code>npx getdesign@latest add notion</code>.
+      </span>
+      <span>Static demo · no external runtime</span>
+    </footer>
+
+    <script src="./app.js"></script>
+  </body>
+</html>

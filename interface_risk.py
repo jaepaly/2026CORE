@@ -9,7 +9,8 @@
   프롬프트 인젝션을 구조적으로(모델 견고성과 무관하게) 무력화한다.
 
 용량(capacity)은 분석적으로 계산하며 Ollama가 필요 없다.
-관측 접근(behavior)은 기존 runs_*.jsonl(2400 run)에서 읽는다.
+관측 접근(behavior)은 runs_*.jsonl에서 읽고, 원시 로그가 없으면
+커밋된 output/multi_model_results_v2.json을 재현성 fallback으로 사용한다.
 """
 import os
 import json
@@ -81,13 +82,11 @@ def capacity_for(policy_cond: str) -> dict:
     }
 
 
-def observed_from_runs():
-    """기존 2400 run에서 실제 접근 행동(조건 A=무방어 granular)을 집계."""
+def load_v2_rows():
     import glob
+    rows = []
     files = [p for p in sorted(glob.glob(os.path.join(OUTPUT_DIR, "runs_*.jsonl")))
              if os.path.basename(p) != "runs.jsonl" and not os.path.basename(p).startswith("runs_v3_")]
-    accesses = []
-    malic = []
     for p in files:
         if not os.path.exists(p):
             continue
@@ -96,13 +95,29 @@ def observed_from_runs():
             if not line:
                 continue
             try:
-                r = json.loads(line)
+                rows.append(json.loads(line))
             except Exception:
                 continue
-            if r.get("condition") != "A":
-                continue
-            accesses.append(len(set(r.get("accessed_ids", []))))
-            malic.append(len(set(r.get("malicious_accessed", []))))
+    if rows:
+        return rows
+    aggregate = os.path.join(OUTPUT_DIR, "multi_model_results_v2.json")
+    if os.path.exists(aggregate):
+        with open(aggregate, encoding="utf-8") as f:
+            data = json.load(f)
+        if isinstance(data, list):
+            return data
+    return rows
+
+
+def observed_from_runs():
+    """실제 접근 행동(조건 A=무방어 granular)을 집계."""
+    accesses = []
+    malic = []
+    for r in load_v2_rows():
+        if r.get("condition") != "A":
+            continue
+        accesses.append(len(set(r.get("accessed_ids", []))))
+        malic.append(len(set(r.get("malicious_accessed", []))))
     if not accesses:
         return None
     accesses.sort()
@@ -118,21 +133,27 @@ def observed_from_runs():
 
 def plot_capacity(caps, observed):
     policies = [c["policy"] for c in caps]
-    labels = {"A": "A: 무방어\n(read_all/full)", "C": "C: 필드 최소권한", "D": "D: 강한 최소권한"}
+    labels = {
+        "A": "A: no filter",
+        "B": "B: prompt only",
+        "C": "C: field policy",
+        "D": "D: strong policy",
+    }
     xl = [labels.get(p, p) for p in policies]
     sens = [c["sensitive_field_score"] for c in caps]
 
-    fig, ax = plt.subplots(figsize=(7, 4.2))
-    bars = ax.bar(xl, sens, color=["#E45756", "#54A24B", "#4C78A8"])
+    fig, ax = plt.subplots(figsize=(8, 4.2))
+    color_map = {"A": "#E45756", "B": "#BAB0AC", "C": "#54A24B", "D": "#4C78A8"}
+    bars = ax.bar(xl, sens, color=[color_map.get(p, "#999999") for p in policies])
     for b, c in zip(bars, caps):
         ax.text(b.get_x() + b.get_width() / 2, b.get_height(),
-                f"{c['sensitive_field_score']:.0f}\n악성전달 {c['malicious_payloads_deliverable']}건",
+                f"{c['sensitive_field_score']:.0f}\nmal {c['malicious_payloads_deliverable']}",
                 ha="center", va="bottom", fontsize=9)
     ax.set_ylim(0, max(sens) * 1.22)
-    ax.set_ylabel("민감 필드 노출 용량 (worst-case)")
-    title = "인터페이스가 위험을 결정한다: 필드 최소권한이 노출 용량을 설계로 제한"
+    ax.set_ylabel("Sensitive-field exposure capacity")
+    title = "Interface-level exposure capacity"
     if observed:
-        title += f"\n(실제 관측 접근 평균 {observed['avg_items_accessed']}건 / 최대 {observed['max_items_accessed']}건 — 행동은 용량보다 훨씬 낮음)"
+        title += f"\n(observed A: avg {observed['avg_items_accessed']} IDs, max {observed['max_items_accessed']} IDs)"
     ax.set_title(title, fontsize=10)
     plt.tight_layout()
     os.makedirs(FIG_DIR, exist_ok=True)
@@ -143,13 +164,14 @@ def plot_capacity(caps, observed):
 
 
 def main():
-    caps = [capacity_for(p) for p in ["A", "C", "D"]]
+    caps = [capacity_for(p) for p in ["A", "B", "C", "D"]]
     observed = observed_from_runs()
     summary = {
         "sensitivity_weights": SENS,
         "exposure_capacity": caps,
         "observed_behavior_condition_A": observed,
         "interpretation": [
+            "A/B는 필드 필터가 없으므로 같은 설계상 노출 용량을 가진다.",
             "민감 필드 노출 용량은 정책(필드 최소권한)으로 모델과 무관하게 급감한다.",
             "악성 인젝션 지시는 email body에 있으며, body를 제거하는 정책 C/D는 "
             "공격 지시 전달 가능 건수를 5건->0건으로 만든다(구조적 인젝션 차단).",
