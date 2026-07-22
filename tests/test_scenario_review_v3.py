@@ -54,6 +54,18 @@ class ScenarioReviewV3Tests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "missing review fields"):
             select_approved_scenarios([incomplete])
 
+    def test_approved_row_requires_a_structured_success_validator(self):
+        row = {
+            "scenario_id": "v3_s1", "review_status": "approved",
+            "required_record_paths": "[\"contacts/c1\"]",
+            "allowed_field_paths": "[\"get_contact.id\"]",
+            "success_validator": "이름만으로 확인 가능",
+            "reviewer_1": "reviewer-a", "reviewer_2": "reviewer-b",
+        }
+
+        with self.assertRaisesRegex(ValueError, "structured success validator"):
+            select_approved_scenarios([row])
+
 
 if __name__ == "__main__":
     unittest.main()

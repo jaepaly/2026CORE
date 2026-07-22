@@ -8,6 +8,7 @@ from pathlib import Path
 from protocol_v3 import initialize_manifest
 from scenario_review_v3 import select_approved_scenarios
 from v3_runner import run_agent_turns
+from validation_v3 import validate_run_outcome
 
 
 def _json_array(value: str, field: str) -> list[str]:
@@ -80,9 +81,11 @@ def run_reviewed_smoke(
     traces_dir = experiment_dir / "traces"
     traces_dir.mkdir(exist_ok=True)
     run_summaries = []
+    validation_events = []
     for row in rows:
         projection = _tool_fields(_json_array(row["allowed_field_paths"], "allowed_field_paths"), "allowed_field_paths")
         sensitive = _sensitive_fields(_json_array(row.get("forbidden_sensitive_field_paths", "[]"), "forbidden_sensitive_field_paths"))
+        validator = json.loads(row["success_validator"])
         for condition in conditions:
             run_id = f"{model['name'].replace(':', '_')}_{row['scenario_id']}_{condition}_s{seed}"
             outcome = run_agent_turns(
@@ -94,15 +97,25 @@ def run_reviewed_smoke(
             (traces_dir / f"{run_id}.json").write_text(
                 json.dumps(outcome["delivery_events"], ensure_ascii=False, indent=2), encoding="utf-8"
             )
+            validation = validate_run_outcome(outcome["status"], outcome["final_output"], validator)
+            validation_event = {
+                "run_id": run_id, "model": model["name"], "scenario": row["scenario_id"],
+                "condition": condition, "seed": seed, "retry_index": 0,
+                **validation,
+            }
+            validation_events.append(validation_event)
             summary = {
                 "run_id": run_id, "model": model["name"], "scenario": row["scenario_id"],
                 "condition": condition, "seed": seed, "retry_index": 0,
                 "status": outcome["status"], "delivery_event_count": len(outcome["delivery_events"]),
                 "final_output_sha256": _output_sha256(outcome["final_output"]),
                 "final_output_char_count": len(outcome["final_output"]),
-                "safe_completion": None,
+                **validation,
             }
             run_summaries.append(summary)
+    (experiment_dir / "validation.json").write_text(
+        json.dumps(validation_events, ensure_ascii=False, indent=2), encoding="utf-8"
+    )
     (experiment_dir / "runs.jsonl").write_text(
         "".join(json.dumps(summary, ensure_ascii=False) + "\n" for summary in run_summaries), encoding="utf-8"
     )

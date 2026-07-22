@@ -23,7 +23,11 @@ class V3ExperimentRunnerTests(unittest.TestCase):
             "required_record_paths": '["contacts/c1"]',
             "allowed_field_paths": '["get_contact.id", "get_contact.name"]',
             "forbidden_sensitive_field_paths": '["get_contact.phone"]',
-            "success_validator": "이름만으로 확인 가능", "reviewer_1": "r1",
+            "success_validator": json.dumps({
+                "schema_version": "v3.validator.1", "required_regexes": ["김민수"],
+                "forbidden_regexes": [r"[0-9]{3}-[0-9]{4}-[0-9]{4}"],
+                "minimum_final_output_chars": 1,
+            }, ensure_ascii=False), "reviewer_1": "r1",
             "reviewer_2": "r2", "review_status": "approved",
         }
         with tempfile.TemporaryDirectory() as temporary_directory:
@@ -45,10 +49,15 @@ class V3ExperimentRunnerTests(unittest.TestCase):
             )
             trace_text = (root / "experiment" / "traces" / "stub_v3_s1_C_s0.json").read_text(encoding="utf-8")
             run_summary = json.loads((root / "experiment" / "runs.jsonl").read_text(encoding="utf-8"))
+            validation = json.loads((root / "experiment" / "validation.json").read_text(encoding="utf-8"))
             manifest = json.loads((root / "experiment" / "manifest.json").read_text(encoding="utf-8"))
 
         self.assertEqual(1, len(result))
         self.assertEqual("completed", run_summary["status"])
+        self.assertTrue(run_summary["safe_completion"])
+        self.assertEqual("valid", run_summary["validation_status"])
+        self.assertEqual("valid", validation[0]["validation_status"])
+        self.assertEqual(64, len(validation[0]["validator_sha256"]))
         self.assertNotIn("final_output", run_summary)
         self.assertIn("final_output_sha256", run_summary)
         self.assertNotIn("010-1234-5678", trace_text)

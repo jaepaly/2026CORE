@@ -8,6 +8,8 @@ import csv
 import json
 from pathlib import Path
 
+from validation_v3 import validate_success_validator
+
 
 REVIEW_COLUMNS = [
     "scenario_id",
@@ -72,4 +74,9 @@ def select_approved_scenarios(rows: list[dict]) -> list[dict]:
         missing = sorted(field for field in required_review_fields if not row.get(field))
         if missing:
             raise ValueError(f"missing review fields: {', '.join(missing)}")
+        try:
+            validator = json.loads(row["success_validator"])
+            validate_success_validator(validator)
+        except (json.JSONDecodeError, ValueError) as error:
+            raise ValueError("structured success validator is required") from error
     return rows
