@@ -133,6 +133,36 @@ python stats_v2.py                                # (model×scenario) McNemar
 ```
 팀 분산 실행 방법은 [`TASK_DISTRIBUTION.md`](TASK_DISTRIBUTION.md), 개별 패킷은 [`team/`](team/).
 
+## v3 시나리오 사람 검토 분담
+
+v2 결과는 탐색적(legacy) 결과로 보존한다. v3 본 실험은 사람이 검토·승인한 시나리오만 사용하며, **승인되지 않은 행은 파일럿과 본 실험 모두에 투입하지 않는다.** 검토 대상은 합성 데이터 기반의 [`data/scenario_review_v3.csv`](data/scenario_review_v3.csv) 48개 행이다.
+
+| 담당 | 1차 검토 (`reviewer_1`) | 2차 교차 검토 (`reviewer_2`) | 책임 범위 |
+|---|---|---|---|
+| 장승우 | `v3_s1`–`v3_s24` | `v3_s25`–`v3_s48` | 업무 성공에 필요한 최소 record·field 정의, 불필요한 민감 field 식별 |
+| 이예찬 | `v3_s25`–`v3_s48` | `v3_s1`–`v3_s24` | 1차 라벨 독립 재검토, projection이 업무 성공을 과도하게 막지 않는지 확인 |
+| 박재현 | 이견 행 adjudication | 최종 승인 확인 | 이견 사유·최종 판단 기록, 실험 투입 여부 확정 |
+
+### 각 검토자가 채울 항목
+
+각 담당자는 자신에게 배정된 행에서 아래 열을 채운다. `legacy_*` 열은 참고용이며 v3 라벨을 자동으로 복사하거나 정답처럼 취급하지 않는다.
+
+- `required_record_paths`: 업무 완료에 필요한 합성 record ID/경로
+- `allowed_field_paths`: 해당 업무에서 모델에 전달해도 되는 **최소 field**와 tool별 projection 근거
+- `forbidden_sensitive_field_paths`: 업무에 불필요한 민감 field (`body`, `phone`, `notes` 등)
+- `success_validator`: 민감값을 요구하지 않는 업무 성공 기준
+- `reviewer_1`, `reviewer_2`: 각 검토자의 이름과 독립 검토 완료 표시
+- `review_status`: 두 검토가 일치하면 `approved`; 이견이면 `needs_adjudication`
+- `review_notes`: 판단 근거 및 이견 내용. 합성 민감 본문·전화번호 등 raw 값은 기록하지 않는다.
+
+### 승인 게이트
+
+1. 1차 검토자는 배정 구간을 독립적으로 라벨링한다.
+2. 2차 검토자는 상대 구간을 보고 교차 검토한다.
+3. 두 검토자가 합의한 행만 `approved`로 바꾼다. 이견 행은 `needs_adjudication`으로 두고 박재현이 결정한다.
+4. `approved` 행은 두 reviewer 이름, 접근·projection·success 라벨이 모두 있어야 한다. 하나라도 빠지면 protocol validation이 해당 행의 실험 투입을 거부한다.
+5. 검토 완료 후 CSV 변경을 별도 commit/PR로 제출하고, 승인된 manifest hash를 고정한 뒤에만 model pilot을 실행한다.
+
 ## 다음 개선 방향
 1. 상용·대형 모델 추가(API)로 "능력↑ 시 과잉접근 출현" 검증 — 로컬 14b는 tool 미준수로 불가
 2. coarse/read_all v3 실험 결과를 완주해 도구 입도 효과를 현재 README 결과와 분리 보고
