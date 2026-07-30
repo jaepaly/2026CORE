@@ -25,6 +25,11 @@ B6 validator 불량: success_validator 가 비었거나, JSON 파싱이 안 되�
 B7 legacy 복사   : required_record_paths 가 legacy_minimum_ids 와 완전 동일하면 실패
                    (README 라벨 합격 기준 4). 독립 검토로 같은 결론에 도달한 경우에는
                    review_notes 에 'legacy-match-verified' 를 남겨 명시적으로 확인한다.
+B9 발견 경로 없음: get_contact/get_email 만 허용하고 대응하는 search_* 를 허용하지 않으면 실패.
+                   상세조회는 정확한 record id 를 요구하는데 C/D 에서는 search_* 가 빈 결과를
+                   돌려주므로 id 를 알 방법이 없다. 그러면 C/D 만 추측에 의존하게 되어
+                   A vs C 비교가 projection 효과가 아니라 발견 실패를 측정한다.
+                   (과제 문구에 record id 가 직접 적혀 있으면 예외)
 B8 raw 민감값    : success_validator/review_notes 가 **그 행이 forbidden 으로 지정한 필드**의
                    값과 6자 이상 연속 일치하면 실패 (README 라벨 합격 기준 5).
                    허용 필드에도 나타나는 표현은 제외한다 — 기준 1이 데이터에서 얻은 값을
@@ -57,6 +62,11 @@ RAW_SENSITIVE_MIN_LEN = 6
 #: Explicit reviewer acknowledgement that a legacy-identical record set was
 #: reached independently rather than copied.
 LEGACY_MATCH_ACK = "legacy-match-verified"
+
+#: Detail tools need an exact record id, which the model can only learn from the
+#: matching search tool.  Granting the detail tool alone leaves conditions C/D with
+#: no in-band way to discover the id, so those arms can only succeed by guessing.
+DISCOVERY_TOOL_FOR = {"get_contact": "search_contacts", "get_email": "search_emails"}
 
 PERSONAL_CATEGORIES = {"개인", "개인/건강"}
 # 과제 자체가 개인정보/스팸 식별인 시나리오는 B5 예외
@@ -249,6 +259,18 @@ def check_row(row, contacts, emails, calendar) -> tuple[list[str], list[str]]:
             cat = emails.get(rid, {}).get("category")
             if cat in PERSONAL_CATEGORIES:
                 blocks.append(f"B5 개인 카테고리 레코드를 필수로 지정: {rid}({emails[rid]['subject']})")
+
+    # B9 상세조회 도구만 부여하고 id 발견 경로가 없음
+    allowed_tools = {p.split(".", 1)[0] for p in parse_json(row["allowed_field_paths"], []) if "." in p}
+    for detail_tool, discovery_tool in DISCOVERY_TOOL_FOR.items():
+        if detail_tool in allowed_tools and discovery_tool not in allowed_tools:
+            # 과제 문구가 record id 를 직접 알려주면 발견 경로가 필요 없다.
+            if any(rid in task for rid in rec_ids):
+                continue
+            blocks.append(
+                f"B9 '{detail_tool}' 만 허용하고 '{discovery_tool}' 가 없음 "
+                f"(C/D 에서 id 를 알 수 없어 추측으로만 성공 -> 조건 비대칭)"
+            )
 
     # B7 legacy 그대로 복사 (README 라벨 합격 기준 4)
     legacy = set(parse_json(row["legacy_minimum_ids"], []))

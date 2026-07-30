@@ -27,6 +27,22 @@ from collections import defaultdict
 
 NESTED_SEPARATOR = "[]."
 
+#: Which record family a tool reads.  Sensitivity is a property of the *field*
+#: (an email body is sensitive however it was fetched), so forbidden labels are
+#: resolved per record family rather than per tool name.  Without this, a label
+#: reading ``get_email.body`` would leave ``search_emails`` free to deliver the
+#: same body uncounted, and the reviewer's correct judgement becomes a no-op.
+RECORD_DOMAIN_KEYWORDS = (("contact", "contact"), ("email", "email"), ("calendar", "calendar"))
+
+
+def record_domain(tool_name: str) -> str | None:
+    """Record family a tool belongs to, or None for tools that read no records."""
+    lowered = (tool_name or "").lower()
+    for keyword, domain in RECORD_DOMAIN_KEYWORDS:
+        if keyword in lowered:
+            return domain
+    return None
+
 
 def _sha256(value: object) -> str:
     encoded = json.dumps(value, ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode("utf-8")
