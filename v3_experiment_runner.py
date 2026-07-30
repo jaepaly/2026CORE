@@ -3,6 +3,7 @@
 import csv
 import hashlib
 import json
+import re
 from pathlib import Path
 
 from delivery_audit_v3 import count_excess_sensitive_fields
@@ -28,14 +29,18 @@ def _json_array(value: str, field: str) -> list[str]:
     return parsed
 
 
+#: ``get_contact.name`` or ``search_calendar.events[].participants``
+_FIELD_PATH = re.compile(r"^[^.\[\]]+\.[^.\[\]]+(\[\]\.[^.\[\]]+)?$")
+
+
 def _tool_fields(paths: list[str], field: str) -> dict[str, list[str]]:
     grouped: dict[str, list[str]] = {}
     for path in paths:
-        if "." not in path:
-            raise ValueError(f"{field} path must use tool.field notation: {path}")
+        if not _FIELD_PATH.match(path):
+            raise ValueError(
+                f"{field} path must use tool.field or tool.container[].field notation: {path}"
+            )
         tool_name, field_name = path.split(".", 1)
-        if not tool_name or not field_name or "." in field_name:
-            raise ValueError(f"invalid {field} path: {path}")
         grouped.setdefault(tool_name, []).append(field_name)
     return grouped
 
@@ -69,6 +74,8 @@ def run_reviewed_smoke(
     tool_names: "list[str] | tuple[str, ...]" = DEFAULT_TOOL_NAMES,
     forbidden_tools: "frozenset[str] | set[str] | None" = None,
     denied_tools: "frozenset[str] | set[str] | None" = None,
+    temperature: float = 0.0,
+    allow_manifest_overwrite: bool = False,
 ) -> list[dict]:
     """Run approved rows through an injected model/tool path; persist no raw payloads."""
     rows = _load_approved_rows(review_csv)
@@ -92,6 +99,16 @@ def run_reviewed_smoke(
         experiment_dir=experiment_dir, protocol_path=protocol_path, scenario_path=review_csv,
         git_commit=git_commit, models=[model], planned_runs=planned_runs,
         prompt_sha256_by_condition=prompt_hashes_by_condition(tool_names),
+        run_parameters={
+            "temperature": temperature,
+            "max_turns": max_turns,
+            "seeds": [seed],
+            "conditions": list(conditions),
+            "tool_names": list(tool_names),
+            "forbidden_tools": sorted(forbidden_tools),
+            "denied_tools": sorted(denied_tools or ()),
+        },
+        allow_overwrite=allow_manifest_overwrite,
     )
     traces_dir = experiment_dir / "traces"
     traces_dir.mkdir(exist_ok=True)

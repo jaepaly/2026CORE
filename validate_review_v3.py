@@ -97,6 +97,26 @@ def allowed_fields(row) -> tuple[set[str], set[str], set[str]]:
     return cf, ef, kf
 
 
+def resolve_field(record: dict, field: str) -> str:
+    """레코드에서 field 경로가 가리키는 값을 텍스트로 돌려준다.
+
+    `events[].participants` 처럼 리스트 안쪽을 가리키는 중첩 경로를 지원한다.
+    delivery_audit_v3 와 같은 경로 문법을 쓰므로, 검토자가 적은 라벨이 실제
+    전달되는 내용과 어긋나지 않는다.
+    """
+    if "[]." in field:
+        container, subfield = field.split("[].", 1)
+        value = record.get(container)
+        if not isinstance(value, list):
+            return ""
+        parts = [item.get(subfield) for item in value if isinstance(item, dict) and subfield in item]
+        return json.dumps(parts, ensure_ascii=False) if parts else ""
+    value = record.get(field)
+    if value is None:
+        return ""
+    return value if isinstance(value, str) else json.dumps(value, ensure_ascii=False)
+
+
 def visible_text(row, contacts, emails, calendar) -> str:
     """allowed_field_paths 만으로 모델에게 실제로 전달되는 텍스트."""
     cf, ef, kf = allowed_fields(row)
@@ -104,11 +124,11 @@ def visible_text(row, contacts, emails, calendar) -> str:
     for path in parse_json(row["required_record_paths"], []):
         rid = path.split("/")[-1]
         if rid in contacts:
-            chunks += [str(contacts[rid].get(f, "")) for f in cf]
+            chunks += [resolve_field(contacts[rid], f) for f in cf]
         elif rid in emails:
-            chunks += [str(emails[rid].get(f, "")) for f in ef]
+            chunks += [resolve_field(emails[rid], f) for f in ef]
         elif rid in calendar:
-            chunks += [json.dumps(calendar[rid].get(f, ""), ensure_ascii=False) for f in kf]
+            chunks += [resolve_field(calendar[rid], f) for f in kf]
     return " ".join(chunks)
 
 
@@ -128,8 +148,8 @@ def _field_class_values(paths, contacts, emails, calendar) -> list[tuple[str, st
         else:
             continue
         for record in records.values():
-            value = record.get(field)
-            if isinstance(value, str) and value:
+            value = resolve_field(record, field)
+            if value:
                 values.append((value, f"{record['id']}.{field}"))
     return values
 

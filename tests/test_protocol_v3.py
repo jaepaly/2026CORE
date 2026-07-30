@@ -14,6 +14,9 @@ from protocol_v3 import (
 
 ROOT = Path(__file__).resolve().parents[1]
 
+#: Minimal frozen run settings every manifest must record.
+RUN_PARAMETERS = {"temperature": 0.0, "max_turns": 4, "seeds": [0]}
+
 
 class ProtocolV3Tests(unittest.TestCase):
     def test_committed_protocol_defines_unconfounded_primary_factorial_conditions(self):
@@ -53,6 +56,7 @@ class ProtocolV3Tests(unittest.TestCase):
             scenario_path.write_text(json.dumps({"scenarios": []}), encoding="utf-8")
 
             manifest = initialize_manifest(
+                run_parameters=RUN_PARAMETERS,
                 experiment_dir=experiment_dir,
                 protocol_path=ROOT / "protocols" / "v3_protocol.json",
                 scenario_path=scenario_path,
@@ -84,6 +88,7 @@ class ProtocolV3Tests(unittest.TestCase):
                 "git_commit": "abc123",
                 "models": [{"name": "qwen3:8b", "digest": "sha256:model"}],
                 "planned_runs": [],
+                "run_parameters": RUN_PARAMETERS,
             }
 
             manifest = initialize_manifest(
@@ -110,6 +115,7 @@ class ProtocolV3Tests(unittest.TestCase):
 
             with self.assertRaisesRegex(ValueError, "missing prompt hash"):
                 initialize_manifest(
+                run_parameters=RUN_PARAMETERS,
                     experiment_dir=Path(temporary_directory) / "experiment",
                     protocol_path=ROOT / "protocols" / "v3_protocol.json",
                     scenario_path=scenario_path,
@@ -126,6 +132,7 @@ class ProtocolV3Tests(unittest.TestCase):
 
             with self.assertRaisesRegex(ValueError, "model digest"):
                 initialize_manifest(
+                run_parameters=RUN_PARAMETERS,
                     experiment_dir=Path(temporary_directory) / "experiment",
                     protocol_path=ROOT / "protocols" / "v3_protocol.json",
                     scenario_path=scenario_path,
@@ -148,6 +155,7 @@ class ProtocolV3Tests(unittest.TestCase):
 
             with self.assertRaisesRegex(ValueError, "duplicate planned run"):
                 initialize_manifest(
+                run_parameters=RUN_PARAMETERS,
                     experiment_dir=Path(temporary_directory) / "experiment",
                     protocol_path=ROOT / "protocols" / "v3_protocol.json",
                     scenario_path=scenario_path,
@@ -167,6 +175,7 @@ class ProtocolV3Tests(unittest.TestCase):
             scenario_path = root / "scenarios.json"
             scenario_path.write_text(json.dumps({"scenarios": []}), encoding="utf-8")
             manifest = initialize_manifest(
+                run_parameters=RUN_PARAMETERS,
                 experiment_dir=root / "experiment",
                 protocol_path=protocol_path,
                 scenario_path=scenario_path,

@@ -41,17 +41,11 @@ def apply_policy_to_tool_result(
             ),
         )
 
-    allowed_fields = decision["allowed_field_paths"]
-    if allowed_fields is None:
-        if isinstance(raw_result, list):
-            allowed_fields = {
-                key for item in raw_result if isinstance(item, dict) for key in item
-            }
-        else:
-            allowed_fields = set(raw_result)
+    # ``None`` means "no projection": project_and_audit delivers the record as-is
+    # and still reports every raw path, including nested ones.
     return project_and_audit(
         raw_result=raw_result,
-        allowed_field_paths=allowed_fields,
+        allowed_field_paths=decision["allowed_field_paths"],
         sensitive_field_paths=sensitive_field_paths,
         run_id=run_id,
         model=model,
