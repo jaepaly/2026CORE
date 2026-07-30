@@ -5,6 +5,10 @@ import json
 from pathlib import Path
 
 
+#: Settings that change what a run measures and must therefore be frozen with it.
+REQUIRED_RUN_PARAMETERS = frozenset({"temperature", "max_turns", "seeds"})
+
+
 def load_protocol(path: str | Path) -> dict:
     with Path(path).open(encoding="utf-8") as handle:
         return json.load(handle)
@@ -59,8 +63,13 @@ def initialize_manifest(
     models: list[dict],
     planned_runs: list[dict],
     prompt_sha256_by_condition: dict[str, str] | None = None,
+    run_parameters: dict | None = None,
+    allow_overwrite: bool = False,
 ) -> dict:
     protocol = validate_protocol(load_protocol(protocol_path))
+    missing_parameters = REQUIRED_RUN_PARAMETERS - set(run_parameters or {})
+    if missing_parameters:
+        raise ValueError(f"run_parameters must record: {', '.join(sorted(missing_parameters))}")
     for model in models:
         if not isinstance(model, dict) or not model.get("name") or not model.get("digest"):
             raise ValueError("model digest is required for every planned model")
@@ -79,14 +88,26 @@ def initialize_manifest(
         "scenario_sha256": _file_sha256(scenario_path),
         "protocol": protocol,
         "prompt_sha256_by_condition": prompt_sha256_by_condition or {},
+        "run_parameters": dict(run_parameters or {}),
         "models": models,
         "planned_runs": planned_runs,
     }
     experiment_dir = Path(experiment_dir)
     experiment_dir.mkdir(parents=True, exist_ok=True)
-    (experiment_dir / "manifest.json").write_text(
-        json.dumps(manifest, ensure_ascii=False, indent=2), encoding="utf-8"
-    )
+    manifest_path = experiment_dir / "manifest.json"
+
+    # A manifest is a freeze, not a scratch file.  Re-running with different
+    # settings must not silently rewrite what earlier runs were executed under.
+    if manifest_path.exists() and not allow_overwrite:
+        existing = json.loads(manifest_path.read_text(encoding="utf-8"))
+        if existing != manifest:
+            raise ValueError(
+                "manifest already exists with different settings; "
+                "use a new experiment_dir or pass allow_overwrite=True"
+            )
+        return existing
+
+    manifest_path.write_text(json.dumps(manifest, ensure_ascii=False, indent=2), encoding="utf-8")
     return manifest
 
 
