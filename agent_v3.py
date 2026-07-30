@@ -17,11 +17,13 @@ def apply_policy_to_tool_result(
     turn: int,
     tool_name: str,
     requested_args: dict,
+    denied_tools: "frozenset[str] | set[str] | None" = None,
 ) -> tuple[dict, dict]:
     decision = resolve_delivery_policy(
         condition=condition,
         tool_name=tool_name,
         projection_by_tool=projection_by_tool,
+        denied_tools=denied_tools,
     )
     if decision["decision"] == "denied":
         return (
@@ -59,4 +61,5 @@ def apply_policy_to_tool_result(
         turn=turn,
         tool_name=tool_name,
         requested_args=requested_args,
+        projection_source=decision.get("projection_source", "none"),
     )

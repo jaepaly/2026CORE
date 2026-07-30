@@ -3,6 +3,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
+from prompt_v3 import prompt_hashes_by_condition
 from protocol_v3 import (
     initialize_manifest,
     load_protocol,
@@ -71,6 +72,52 @@ class ProtocolV3Tests(unittest.TestCase):
             self.assertEqual(64, len(manifest["scenario_sha256"]))
             self.assertEqual(1, len(manifest["planned_runs"]))
             self.assertEqual(manifest, load_protocol(experiment_dir / "manifest.json"))
+
+    def test_manifest_freezes_prompt_hashes_and_rejects_a_collapsed_prompt_axis(self):
+        """A manifest may not declare a prompt factor the code does not apply."""
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            scenario_path = Path(temporary_directory) / "scenarios.json"
+            scenario_path.write_text(json.dumps({"scenarios": []}), encoding="utf-8")
+            arguments = {
+                "protocol_path": ROOT / "protocols" / "v3_protocol.json",
+                "scenario_path": scenario_path,
+                "git_commit": "abc123",
+                "models": [{"name": "qwen3:8b", "digest": "sha256:model"}],
+                "planned_runs": [],
+            }
+
+            manifest = initialize_manifest(
+                experiment_dir=Path(temporary_directory) / "good",
+                prompt_sha256_by_condition=prompt_hashes_by_condition(),
+                **arguments,
+            )
+            frozen = manifest["prompt_sha256_by_condition"]
+            self.assertEqual(frozen["A"], frozen["C"])
+            self.assertNotEqual(frozen["A"], frozen["B"])
+
+            # B/D identical to A/C is exactly the defect this gate exists to catch.
+            with self.assertRaisesRegex(ValueError, "prompt factor is not implemented"):
+                initialize_manifest(
+                    experiment_dir=Path(temporary_directory) / "collapsed",
+                    prompt_sha256_by_condition={condition: "same" for condition in "ABCD"},
+                    **arguments,
+                )
+
+    def test_manifest_rejects_missing_prompt_hash(self):
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            scenario_path = Path(temporary_directory) / "scenarios.json"
+            scenario_path.write_text(json.dumps({"scenarios": []}), encoding="utf-8")
+
+            with self.assertRaisesRegex(ValueError, "missing prompt hash"):
+                initialize_manifest(
+                    experiment_dir=Path(temporary_directory) / "experiment",
+                    protocol_path=ROOT / "protocols" / "v3_protocol.json",
+                    scenario_path=scenario_path,
+                    git_commit="abc123",
+                    models=[{"name": "qwen3:8b", "digest": "sha256:model"}],
+                    planned_runs=[],
+                    prompt_sha256_by_condition={"A": "a", "B": "b"},
+                )
 
     def test_manifest_rejects_model_without_digest(self):
         with tempfile.TemporaryDirectory() as temporary_directory:
