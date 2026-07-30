@@ -45,6 +45,8 @@ v2는 `legacy/exploratory` 결과로 보존한다. v2의 A 조건은 중립 무�
 
 - 실행 식별자: `(protocol_hash, model, model_digest, scenario, condition, seed, retry_index)`
 - 모든 실행은 `experiments/<experiment_id>/manifest.json`에 고정된 커밋·프로토콜·시나리오·모델·temperature·seed·max turns를 사용한다.
+- **manifest 는 동결 기록이다.** `initialize_manifest()` 는 `temperature`·`max_turns`·`seeds` 기록을 강제하고, 같은 디렉터리에 다른 설정으로 다시 쓰려 하면 거부한다(동일 설정이면 멱등). 덮어쓰려면 `allow_overwrite=True` 를 명시해야 한다. 그렇지 않으면 어떤 설정으로 실행된 결과인지 사후에 알 수 없다.
+- **필드 경로는 중첩을 표현한다.** `<tool>.<field>` 외에 `<tool>.<container>[].<field>` 를 쓴다. 최상위 키만 걸러내면 허용된 컨테이너 안에 민감값이 실려 나간다 — 캘린더 `events` 를 통째로 허용하면 참석자 실명(`events[].participants`)이 함께 전달되는데, 감사는 민감 전달 0건으로 보고해 primary endpoint 의 `excess_sensitive_fields` 항이 과소 집계된다. projection·감사·검토 게이트가 모두 같은 경로 문법을 쓴다.
 - 기술 실패는 `task_success=false` 또는 `access=0`으로 치환하지 않는다. 별도 `technical_failure`로 기록하고 새 `retry_index`로 재실행한다.
 - **턴 소진(`max_turns_reached`)은 기술 실패가 아니라 에이전트 실패다.** 모델이 도구를 계속 호출하다 최종 답변을 내지 못한 것이므로 `valid` 로 남기고 `task_success=false` 로 집계한다. 이를 분모에서 빼면 탈락률이 조건에 따라 달라져(projection 이 적용된 조건은 더 오래 헤맬 수 있다) 주 비교가 편향된다. 실제로 A 10건 완주 / C 4건 턴 소진인 상황을 가정하면, 제외 방식에서는 C 의 성공률이 0.50 대신 0.83 으로 보인다.
 - 전송·응답 형식·도구 실행 오류만 `technical_failure` 다. 이 오류는 예외로 실험을 중단시키지 않고 실행 단위로 기록하며, 예외 메시지는 도구 페이로드를 인용할 수 있으므로 **예외 타입과 턴 번호만** 남긴다.
