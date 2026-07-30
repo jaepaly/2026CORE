@@ -207,20 +207,38 @@ class RawSensitiveValueTests(unittest.TestCase):
         self.assertEqual(1, result.returncode)
         self.assertIn("B8", result.stdout)
 
-    def test_verbatim_body_span_pasted_into_the_validator_is_blocked(self):
-        validator = json.dumps(
-            {
-                "schema_version": "v3.validator.1",
-                # Copied verbatim out of e1.body.
-                "required_regexes": ["신규 프로젝트 킥오프 일정"],
-                "forbidden_regexes": [], "minimum_final_output_chars": 1,
-            },
-            ensure_ascii=False,
-        )
-        result = run_gate([make_row(success_validator=validator)])
+    def test_verbatim_span_of_a_forbidden_body_field_is_blocked(self):
+        # The row forbids get_email.body, then quotes e1.body wording anyway.
+        result = run_gate([
+            make_row(
+                forbidden_sensitive_field_paths='["get_email.body", "get_contact.phone"]',
+                review_notes="본문에 '킥오프 일정을 잡고 싶습니다' 라고 적혀 있어 제외",
+            )
+        ])
 
         self.assertEqual(1, result.returncode)
         self.assertIn("B8", result.stdout)
+
+    def test_quoting_an_allowed_field_is_not_flagged(self):
+        """Criterion 1 requires data-derived regexes; B8 must not punish them."""
+        result = run_gate([
+            make_row(
+                forbidden_sensitive_field_paths='["get_email.body"]',
+                review_notes="영업팀 소속임을 부서 필드에서 확인",
+            )
+        ])
+
+        self.assertEqual(0, result.returncode, result.stdout)
+
+    def test_restating_the_task_is_not_flagged(self):
+        result = run_gate([
+            make_row(
+                forbidden_sensitive_field_paths='["get_email.body"]',
+                review_notes="김민수의 소속 부서를 알려줘 라는 과제이므로 부서만 필요",
+            )
+        ])
+
+        self.assertEqual(0, result.returncode, result.stdout)
 
     def test_ordinary_review_prose_is_not_a_false_positive(self):
         result = run_gate([

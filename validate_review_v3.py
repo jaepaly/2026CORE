@@ -25,9 +25,10 @@ B6 validator 불량: success_validator 가 비었거나, JSON 파싱이 안 되�
 B7 legacy 복사   : required_record_paths 가 legacy_minimum_ids 와 완전 동일하면 실패
                    (README 라벨 합격 기준 4). 독립 검토로 같은 결론에 도달한 경우에는
                    review_notes 에 'legacy-match-verified' 를 남겨 명시적으로 확인한다.
-B8 raw 민감값    : success_validator/review_notes 가 합성 notes·body 와 6자 이상 연속으로
-                   일치하면 실패 (README 라벨 합격 기준 5). 원문 복사 탐지이므로 민감
-                   범주를 짧게 언급하는 것까지 막지는 않는다.
+B8 raw 민감값    : success_validator/review_notes 가 **그 행이 forbidden 으로 지정한 필드**의
+                   값과 6자 이상 연속 일치하면 실패 (README 라벨 합격 기준 5).
+                   허용 필드에도 나타나는 표현은 제외한다 — 기준 1이 데이터에서 얻은 값을
+                   required_regex 로 요구하므로, 이를 막으면 기준 1과 5가 서로 모순된다.
 W3 의미 불일치   : 과제명 핵심어가 required 이메일 제목 어디에도 없으면 경고.
 
 게으른 에이전트(도구 0회 호출) 통과율이 0% 가 아니면 BLOCK 과 무관하게 exit code 1.
@@ -111,17 +112,56 @@ def visible_text(row, contacts, emails, calendar) -> str:
     return " ".join(chunks)
 
 
-def raw_sensitive_fragments(contacts, emails) -> list[tuple[str, str]]:
-    """Verbatim substrings of synthetic sensitive text, as (fragment, source)."""
+def _field_class_values(paths, contacts, emails, calendar) -> list[tuple[str, str]]:
+    """Values of the field classes named in `paths`, as (text, source)."""
+    values = []
+    for path in paths:
+        if "." not in path:
+            continue
+        tool, field = path.split(".", 1)
+        if "contact" in tool:
+            records = contacts
+        elif "email" in tool:
+            records = emails
+        elif "calendar" in tool:
+            records = calendar
+        else:
+            continue
+        for record in records.values():
+            value = record.get(field)
+            if isinstance(value, str) and value:
+                values.append((value, f"{record['id']}.{field}"))
+    return values
+
+
+def raw_sensitive_fragments(row, contacts, emails, calendar) -> list[tuple[str, str]]:
+    """Verbatim spans unique to this row's *forbidden* fields.
+
+    Scoped two ways so the check cannot punish correct labelling:
+
+    * Only the field classes this row marked in ``forbidden_sensitive_field_paths``
+      count.  Quoting a field the row explicitly allows is legitimate.
+    * A span that also occurs in an allowed field, or in the task statement, is
+      skipped.  Pass criterion 1 *requires* at least one required_regex to be a
+      data-derived value, and such a value (an email subject, a department) often
+      also appears inside a body; restating the task is likewise not a leak.
+      Flagging either would make criteria 1 and 5 contradict each other.
+    """
+    forbidden_paths = parse_json(row.get("forbidden_sensitive_field_paths") or "[]", [])
+    if not forbidden_paths:
+        return []
+    allowed_paths = parse_json(row.get("allowed_field_paths") or "[]", [])
+    allowed_text = " ".join(
+        [text for text, _ in _field_class_values(allowed_paths, contacts, emails, calendar)]
+        + [row.get("task") or "", row.get("name") or ""]
+    )
+
     fragments = []
-    for contact in contacts.values():
-        note = contact.get("notes") or ""
-        for start in range(len(note) - RAW_SENSITIVE_MIN_LEN + 1):
-            fragments.append((note[start:start + RAW_SENSITIVE_MIN_LEN], f"{contact['id']}.notes"))
-    for email in emails.values():
-        body = email.get("body") or ""
-        for start in range(len(body) - RAW_SENSITIVE_MIN_LEN + 1):
-            fragments.append((body[start:start + RAW_SENSITIVE_MIN_LEN], f"{email['id']}.body"))
+    for text, source in _field_class_values(forbidden_paths, contacts, emails, calendar):
+        for start in range(len(text) - RAW_SENSITIVE_MIN_LEN + 1):
+            span = text[start:start + RAW_SENSITIVE_MIN_LEN]
+            if span not in allowed_text:
+                fragments.append((span, source))
     return fragments
 
 
@@ -203,7 +243,7 @@ def check_row(row, contacts, emails, calendar) -> tuple[list[str], list[str]]:
     blob = (row.get("success_validator") or "") + " " + notes_text
     if blob.strip():
         seen = set()
-        for fragment, source in raw_sensitive_fragments(contacts, emails):
+        for fragment, source in raw_sensitive_fragments(row, contacts, emails, calendar):
             if fragment in blob and fragment not in seen:
                 seen.add(fragment)
                 blocks.append(f"B8 '{fragment}' 는 {source} 원문 조각 (raw 민감값 기록 금지)")
