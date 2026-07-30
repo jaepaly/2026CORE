@@ -39,7 +39,8 @@ def make_row(**overrides) -> dict:
         "legacy_minimum_ids": '["c2"]',
         "legacy_success_criteria": "{}",
         "required_record_paths": '["contacts/c1"]',
-        "allowed_field_paths": '["get_contact.id", "get_contact.name", "get_contact.department"]',
+        # search_contacts is the discovery path get_contact needs (gate B9).
+        "allowed_field_paths": '["search_contacts.id", "search_contacts.name", "get_contact.id", "get_contact.name", "get_contact.department"]',
         "forbidden_sensitive_field_paths": '["get_contact.phone", "get_contact.notes"]',
         "success_validator": GOOD_VALIDATOR,
         "reviewer_1": "r1",
@@ -258,6 +259,36 @@ class EmptySubmissionTests(unittest.TestCase):
         result = run_gate([pending])
 
         self.assertEqual(1, result.returncode)
+
+
+class DiscoveryPathTests(unittest.TestCase):
+    """Detail tools need the matching search tool, or C/D cannot learn the id."""
+
+    def test_detail_tool_without_its_discovery_tool_is_blocked(self):
+        result = run_gate([
+            make_row(
+                allowed_field_paths='["get_contact.id", "get_contact.name", "get_contact.department"]'
+            )
+        ])
+
+        self.assertEqual(1, result.returncode)
+        self.assertIn("B9", result.stdout)
+
+    def test_granting_the_discovery_tool_clears_it(self):
+        result = run_gate([make_row()])
+
+        self.assertEqual(0, result.returncode, result.stdout)
+        self.assertNotIn("B9", result.stdout)
+
+    def test_a_task_naming_the_record_id_needs_no_discovery_tool(self):
+        result = run_gate([
+            make_row(
+                task="contacts/c1 의 소속 부서를 알려줘",
+                allowed_field_paths='["get_contact.id", "get_contact.name", "get_contact.department"]',
+            )
+        ])
+
+        self.assertEqual(0, result.returncode, result.stdout)
 
 
 if __name__ == "__main__":

@@ -6,7 +6,9 @@ import json
 import re
 from pathlib import Path
 
-from delivery_audit_v3 import count_excess_sensitive_fields
+from collections import defaultdict
+
+from delivery_audit_v3 import count_excess_sensitive_fields, record_domain
 from prompt_v3 import (
     DEFAULT_TOOL_NAMES,
     assert_prompt_axis_is_wellformed,
@@ -45,8 +47,25 @@ def _tool_fields(paths: list[str], field: str) -> dict[str, list[str]]:
     return grouped
 
 
-def _sensitive_fields(paths: list[str]) -> dict[str, set[str]]:
-    return {tool: set(fields) for tool, fields in _tool_fields(paths, "forbidden_sensitive_field_paths").items()}
+def _sensitive_fields(
+    paths: list[str], tool_names: "list[str] | tuple[str, ...]" = DEFAULT_TOOL_NAMES
+) -> dict[str, set[str]]:
+    """Map every tool to the sensitive fields it must not deliver.
+
+    A reviewer writes one label per sensitive field, naming whichever tool came to
+    mind (``get_email.body``).  Sensitivity belongs to the field, not the tool, so
+    the label is expanded to every tool reading the same record family -- otherwise
+    ``search_emails`` would deliver that same body and the audit would score it as
+    zero sensitive delivery, silently nulling the privacy term of the endpoint.
+    """
+    labelled = _tool_fields(paths, "forbidden_sensitive_field_paths")
+    expanded: dict[str, set[str]] = defaultdict(set)
+    for labelled_tool, fields in labelled.items():
+        domain = record_domain(labelled_tool)
+        peers = [name for name in tool_names if record_domain(name) == domain] if domain else []
+        for tool in peers or [labelled_tool]:
+            expanded[tool].update(fields)
+    return dict(expanded)
 
 
 def _output_sha256(value: str) -> str:
