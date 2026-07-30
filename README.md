@@ -353,8 +353,6 @@ git push -u origin HEAD
 
 **알려진 미결 항목**
 
-- `max_turns_reached`가 `technical_failure`로 분류되어 조건별 탈락 편향 가능
-- `stats_v3.py`의 pair key에 `seed`가 포함되어 seed 반복이 독립 표본으로 계산됨
 - projection·전달 감사가 top-level 필드 전용 — 중첩 `events[].participants` 누수가 0으로 집계
 - manifest에 temperature·max_turns 미기록, 매 실행 덮어쓰기
 - 상용·대형 모델 확장, LLM judge 결과의 사람 검증, 라이브 데모의 커밋된 run replay 모드
