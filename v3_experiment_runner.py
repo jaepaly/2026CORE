@@ -5,6 +5,13 @@ import hashlib
 import json
 from pathlib import Path
 
+from delivery_audit_v3 import count_excess_sensitive_fields
+from prompt_v3 import (
+    DEFAULT_TOOL_NAMES,
+    assert_prompt_axis_is_wellformed,
+    build_system_prompt,
+    prompt_hashes_by_condition,
+)
 from protocol_v3 import initialize_manifest
 from scenario_review_v3 import select_approved_scenarios
 from v3_runner import run_agent_turns
@@ -59,6 +66,9 @@ def run_reviewed_smoke(
     max_turns: int,
     model_step,
     tool_executor,
+    tool_names: "list[str] | tuple[str, ...]" = DEFAULT_TOOL_NAMES,
+    forbidden_tools: "frozenset[str] | set[str] | None" = None,
+    denied_tools: "frozenset[str] | set[str] | None" = None,
 ) -> list[dict]:
     """Run approved rows through an injected model/tool path; persist no raw payloads."""
     rows = _load_approved_rows(review_csv)
@@ -67,6 +77,10 @@ def run_reviewed_smoke(
     for condition in conditions:
         if condition not in {"A", "B", "C", "D"}:
             raise ValueError(f"unknown v3 condition: {condition}")
+
+    # Stop before any model request if the pre-registered prompt axis is broken.
+    assert_prompt_axis_is_wellformed(tool_names)
+    forbidden_tools = frozenset(forbidden_tools or ())
 
     planned_runs = [
         {"model": model["name"], "scenario": row["scenario_id"], "condition": condition,
@@ -77,6 +91,7 @@ def run_reviewed_smoke(
     initialize_manifest(
         experiment_dir=experiment_dir, protocol_path=protocol_path, scenario_path=review_csv,
         git_commit=git_commit, models=[model], planned_runs=planned_runs,
+        prompt_sha256_by_condition=prompt_hashes_by_condition(tool_names),
     )
     traces_dir = experiment_dir / "traces"
     traces_dir.mkdir(exist_ok=True)
@@ -93,11 +108,19 @@ def run_reviewed_smoke(
                 initial_messages=[{"role": "user", "content": row["task"]}], condition=condition,
                 projection_by_tool=projection, sensitive_fields_by_tool=sensitive, run_id=run_id,
                 model=model["name"], scenario=row["scenario_id"], seed=seed, max_turns=max_turns,
+                system_prompt=build_system_prompt(condition=condition, tool_names=tool_names),
+                denied_tools=denied_tools,
             )
             (traces_dir / f"{run_id}.json").write_text(
                 json.dumps(outcome["delivery_events"], ensure_ascii=False, indent=2), encoding="utf-8"
             )
-            validation = validate_run_outcome(outcome["status"], outcome["final_output"], validator)
+            excess_sensitive = count_excess_sensitive_fields(outcome["delivery_events"])
+            forbidden_action = any(tool in forbidden_tools for tool in outcome["executed_tools"])
+            validation = validate_run_outcome(
+                outcome["status"], outcome["final_output"], validator,
+                excess_sensitive_field_count=excess_sensitive,
+                forbidden_action=forbidden_action,
+            )
             validation_event = {
                 "run_id": run_id, "model": model["name"], "scenario": row["scenario_id"],
                 "condition": condition, "seed": seed, "retry_index": 0,

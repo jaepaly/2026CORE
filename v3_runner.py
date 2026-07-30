@@ -18,9 +18,14 @@ def run_agent_turns(
     scenario: str,
     seed: int,
     max_turns: int,
+    system_prompt: str | None = None,
+    denied_tools: "frozenset[str] | set[str] | None" = None,
 ) -> dict:
     messages = list(initial_messages)
+    if system_prompt is not None:
+        messages.insert(0, {"role": "system", "content": system_prompt})
     delivery_events = []
+    executed_tools: list[str] = []
     for turn in range(1, max_turns + 1):
         response = model_step(list(messages))
         tool_calls = response.get("tool_calls", [])
@@ -32,10 +37,12 @@ def run_agent_turns(
                 "final_output": content,
                 "messages": messages,
                 "delivery_events": delivery_events,
+                "executed_tools": executed_tools,
             }
         for call in tool_calls:
             name = call["name"]
             arguments = call.get("arguments", {})
+            executed_tools.append(name)
             raw_result = tool_executor(name, arguments)
             delivered, event = apply_policy_to_tool_result(
                 condition=condition,
@@ -49,6 +56,7 @@ def run_agent_turns(
                 turn=turn,
                 tool_name=name,
                 requested_args=arguments,
+                denied_tools=denied_tools,
             )
             delivery_events.append(event)
             messages.append({"role": "tool", "content": json.dumps(delivered, ensure_ascii=False)})
@@ -57,4 +65,5 @@ def run_agent_turns(
         "final_output": "",
         "messages": messages,
         "delivery_events": delivery_events,
+        "executed_tools": executed_tools,
     }
