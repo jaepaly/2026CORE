@@ -127,6 +127,8 @@ def main(argv=None) -> int:
     parser.add_argument("--max-turns", type=int, default=6)
     parser.add_argument("--temperature", type=float, default=0.0)
     parser.add_argument("--think", action="store_true", help="enable reasoning mode")
+    parser.add_argument("--num-predict", type=int, default=1000,
+                        help="max tokens per turn; bounds a rambling model")
     parser.add_argument("--limit", type=int, help="use only the first N scenarios (smoke test)")
     parser.add_argument("--git-commit", default="uncommitted")
     parser.add_argument("--dry-run", action="store_true", help="plan only, call no model")
@@ -166,6 +168,7 @@ def main(argv=None) -> int:
             run_parameters={
                 "temperature": args.temperature, "max_turns": args.max_turns, "seeds": seeds,
                 "conditions": conditions, "think": args.think,
+                "num_predict": args.num_predict,
                 "tool_names": list(DEFAULT_TOOL_NAMES),
             },
         )
@@ -193,7 +196,8 @@ def main(argv=None) -> int:
         if key not in steps:
             steps[key] = make_ollama_model_step(
                 request_post=requests.post, model_name=plan["model"], tools=TOOLS_SCHEMA,
-                url=OLLAMA_URL, seed=plan["seed"], temperature=args.temperature, think=args.think,
+                url=OLLAMA_URL, seed=plan["seed"], temperature=args.temperature,
+                think=args.think, num_predict=args.num_predict,
             )
         summary = run_one(
             row=by_id[plan["scenario"]], condition=plan["condition"], model=plan["model"],

@@ -122,6 +122,7 @@ def main(argv=None) -> int:
     parser.add_argument("--probes", type=int, default=10, help="tasks per model")
     parser.add_argument("--temperature", type=float, default=0.0)
     parser.add_argument("--think", action="store_true")
+    parser.add_argument("--num-predict", type=int, default=1000)
     args = parser.parse_args(argv)
 
     gate = load_protocol(args.protocol)["model_pilot_gate"]
@@ -138,6 +139,7 @@ def main(argv=None) -> int:
         step = make_ollama_model_step(
             request_post=requests.post, model_name=name, tools=TOOLS_SCHEMA,
             url=OLLAMA_URL, seed=0, temperature=args.temperature, think=args.think,
+            num_predict=args.num_predict,
         )
         result = probe_model(model_step=step, tasks=tasks, system_prompt=system_prompt)
         included, reasons = judge(result, gate)
