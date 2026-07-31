@@ -42,13 +42,13 @@ def hero():
     ax.text(0.045, 0.90, "PRIVACY × AGENTIC AI", color=BLUE, fontsize=11, fontweight="bold")
     ax.text(0.045, 0.79, "AI 에이전트는 일을 위해 얼마나 많은 개인정보를 읽는가?",
             color=WHITE, fontsize=20, fontweight="bold")
-    ax.text(0.045, 0.685, "위험은 모델 성향이 아니라 인터페이스 설계에 있다 — 도구 권한이 노출 '용량'을 결정한다",
+    ax.text(0.045, 0.685, "\"적게 읽어라\"는 지시는 전달을 못 줄였다 — 인터페이스가 반환하지 않는 것만 전달되지 않았다",
             color=GRAY, fontsize=11.5)
 
     cards = [
-        (RED, "무방어 인터페이스 (A)", "151.5", "민감필드 노출 용량 (worst-case)", "악성 인젝션 전달 5건"),
-        (GREEN, "필드 최소권한 (C)", "10.5", "민감필드 노출 용량  (93%↓)", "악성 인젝션 전달 0건"),
-        (AMBER, "실제 모델 행동", "0.4", "평균 접근 (좁은 업무)", "과소접근 — 광범위도 1.1"),
+        (RED, "projection 없음 (A·B)", "0.50", "run당 실제 전달된 민감 필드", "최소화 지시(B)도 0.52 — 못 줄임"),
+        (GREEN, "task-aware projection (C·D)", "0.00", "run당 전달 민감 필드 (A-C CI 0.37~0.64)", "4모델 전 계열 동일"),
+        (AMBER, "primary  A vs C", "p=0.07", "safe_completion — 유의하지 않음", "task 성공 3~6% → 검정력 부족"),
     ]
     x0, w, gap, y, h = 0.045, 0.29, 0.022, 0.16, 0.40
     for i, (acc, title, big, lab, sub) in enumerate(cards):
@@ -59,7 +59,7 @@ def hero():
         ax.text(x + 0.018, y + 0.085, lab, color=GRAY, fontsize=10)
         ax.text(x + 0.018, y + 0.035, sub, color=WHITE, fontsize=10, fontweight="bold")
 
-    ax.text(0.045, 0.045, "4모델(검증통과) × 48시나리오 × 4조건 = 768 runs   ·   qwen2.5:3b/7b · qwen3:8b · llama3.1:8b",
+    ax.text(0.045, 0.045, "사전 등록 2×2 · 4모델 × 43시나리오 × 4조건 = 688 runs · 기술 실패 0   ·   qwen2.5:3b/7b · qwen3:8b · llama3.1:8b",
             color=GRAY, fontsize=9.5)
     out = os.path.join(FIG_DIR, "readme_hero.png")
     fig.savefig(out, facecolor=BG); plt.close(fig)
@@ -79,15 +79,15 @@ def method():
     ax = fig.add_axes([0, 0, 1, 1]); ax.axis("off")
     ax.add_patch(plt.Rectangle((0, 0), 1, 1, color="#F4F7FB"))
     ax.text(0.04, 0.90, "연구 설계", color="#13233A", fontsize=19, fontweight="bold")
-    ax.text(0.04, 0.815, "도구 인터페이스 권한 설계가 개인정보 노출 용량과 프롬프트 인젝션 위험에 미치는 영향 측정",
+    ax.text(0.04, 0.815, "사전 등록 2×2: 프롬프트 축(중립 vs 최소화 지시) × projection 축(없음 vs task-aware 필드 projection)",
             color="#5A6B7B", fontsize=11)
 
     steps = [
-        ("01", "업무 요청", "48 시나리오\n(40좁은+8광범위)"),
-        ("02", "실제 에이전트 루프", "plan → tool call →\nobserve → 최종답변"),
-        ("03", "세분화 도구", "연락처15·이메일33\n·캘린더7 (악성5)"),
-        ("04", "정책 미들웨어", "A 무방어 / B 프롬프트\nC 필드최소권한 / D 강함"),
-        ("05", "측정", "노출용량·접근범위\n인젝션 차단·성공률"),
+        ("01", "시나리오 라벨", "2인 독립 검토+게이트\n승인 43 / 폐기 5"),
+        ("02", "모델 파일럿", "tool-call ≥80%만 채택\nmistral·14b 제외"),
+        ("03", "사전 등록 2×2", "A중립 B지시\nC projection D둘다"),
+        ("04", "본 실험", "4모델×43×4 = 688 runs\nmanifest 해시 동결"),
+        ("05", "3계층 보고", "전달 / 행동 /\n엔드포인트 분리"),
     ]
     x0, w, gap, y, h = 0.04, 0.172, 0.018, 0.42, 0.27
     for i, (n, t, b) in enumerate(steps):
@@ -98,10 +98,10 @@ def method():
                         arrowprops=dict(arrowstyle="-|>", color="#9FB3C8", lw=1.6))
 
     chips = [
-        (BLUE, "노출 용량 (설계 상한)"),
-        (GREEN, "민감필드 접근 (실제 행동)"),
-        (RED, "인젝션 전달 차단"),
-        (AMBER, "업무 성공률"),
+        (BLUE, "전달: run당 민감 필드"),
+        (GREEN, "행동: task 성공률"),
+        (RED, "엔드포인트: safe_completion"),
+        (AMBER, "primary = A vs C만"),
     ]
     cx, cy, cw = 0.06, 0.20, 0.225
     for i, (col, lab) in enumerate(chips):
@@ -109,8 +109,8 @@ def method():
         ax.add_patch(plt.Circle((x, cy + 0.012), 0.008, color=col, transform=ax.transData))
         ax.text(x + 0.018, cy, lab, color="#1B2A3A", fontsize=9.5, fontweight="bold", va="center")
 
-    ax.text(0.04, 0.075, "현재: 768 runs(4모델·48시나리오) · 노출 용량 93%↓ · "
-            "광범위 업무 실현노출 5.3→0.0 · 인젝션 5→0건 구조 차단",
+    ax.text(0.04, 0.075, "결과: 전달 A 0.50 → C 0.00 (95% CI 0.37~0.64, 4모델 동일) · "
+            "프롬프트 지시 효과 없음(B 0.52) · primary p=0.070 유의하지 않음(정직 보고)",
             color=RED, fontsize=9.5, fontweight="bold")
     out = os.path.join(FIG_DIR, "readme_method.png")
     fig.savefig(out, facecolor="#F4F7FB"); plt.close(fig)
