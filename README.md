@@ -154,15 +154,39 @@ python -m http.server 8080
 
 ## 재현 방법
 
-### v3 (본 실험 — 현재 검토 단계)
+### v3 (본 실험)
 
 ```bash
-python -m pytest tests/ -q                        # 계측 코드 전체 테스트
-python validate_review_v3.py data/scenario_review_v3.csv   # 라벨 게이트 (exit 0 이어야 제출 가능)
+python -m pytest tests/ -q                                  # 계측 코드 전체 테스트
+python validate_review_v3.py data/scenario_review_v3.csv    # 라벨 게이트 (exit 0 이어야 진행)
 ```
 
-시나리오 검토가 끝나기 전에는 본 실험을 실행하지 않는다. 승인된 행이 없으면
-러너(`v3_experiment_runner.run_reviewed_smoke`)가 `no approved scenarios`로 거부한다.
+**1. 모델 파일럿** — 도구를 실제로 호출하는 모델만 본 실험에 넣는다.
+
+```bash
+python run_model_pilot_v3.py --experiment-dir experiments/pilot     --model qwen3:8b --model llama3.1:8b --model qwen2.5:7b --model qwen2.5:3b
+```
+
+중립 조건(A 프롬프트)으로만 측정하며, valid tool-call ≥80% / error ≤5%를 통과해야 한다.
+결과는 `experiments/pilot/model_inclusion.md`에 포함·제외 사유와 함께 남는다.
+
+**2. 스모크 테스트** — 비싼 본 실험 전에 계측이 맞는지 확인한다.
+
+```bash
+python run_experiment_v3.py --experiment-dir experiments/smoke     --model qwen3:8b --limit 3
+```
+
+**3. 본 실험** — 43시나리오 × 4조건 × 모델 수. 모델별로 나눠 돌릴 수 있다.
+
+```bash
+python run_experiment_v3.py --experiment-dir experiments/main --model qwen3:8b
+python run_experiment_v3.py --experiment-dir experiments/main --model llama3.1:8b
+```
+
+완료된 run은 즉시 `runs.jsonl`에 append되고, 다시 실행하면 이미 끝난 조합은 건너뛴다
+(중간에 끊겨도 처음부터 다시 돌리지 않는다). manifest는 첫 실행에 동결되며, 설정이
+다른 채로 같은 디렉터리에 다시 쓰려 하면 거부한다. `--dry-run`으로 계획만 확인할 수 있다.
+
 프로토콜은 [`protocols/v3_protocol.json`](protocols/v3_protocol.json), 설계는
 [`docs/experiment_design_v3.md`](docs/experiment_design_v3.md)를 따른다.
 
