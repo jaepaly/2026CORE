@@ -187,11 +187,15 @@ python run_experiment_v3.py --experiment-dir experiments/main --model llama3.1:8
 (중간에 끊겨도 처음부터 다시 돌리지 않는다). manifest는 첫 실행에 동결되며, 설정이
 다른 채로 같은 디렉터리에 다시 쓰려 하면 거부한다. `--dry-run`으로 계획만 확인할 수 있다.
 
-**4. 집계**
+**4. 집계와 그림**
 
 ```bash
-python analysis_experiment_v3.py --experiment-dir experiments/main
+python analysis_experiment_v3.py --experiment-dir experiments/main-<모델1> --experiment-dir experiments/main-<모델2>
+python figures_v3.py            --experiment-dir experiments/main-<모델1> --experiment-dir experiments/main-<모델2>
 ```
+
+모델별로 나눠 돌린 결과는 `--experiment-dir`를 반복해 합친다(같은 run 키는 중복 제거).
+그림은 `runs.jsonl`에서 바로 그리므로 포스터의 숫자를 항상 원본 run 까지 추적할 수 있다.
 
 정책 **용량**(라벨에서 계산) · 실제 **전달**(도구 경계) · 에이전트 **행동/결과**를 각각
 따로 보고한다. 사전 등록한 A vs C만 primary로 표시하고 나머지는 secondary이며, 기술 실패는
