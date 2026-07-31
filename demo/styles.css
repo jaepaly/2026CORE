@@ -1103,3 +1103,131 @@ footer a {
     white-space: normal;
   }
 }
+
+/* ---------- Run replay (v3 실측 재생) ---------- */
+.replay-shell {
+  border-top: 3px solid var(--accent, #2f6fed);
+}
+
+.rp-task {
+  margin: 4px 0 14px;
+  font-size: 15px;
+  color: var(--ink-soft, #555);
+}
+
+.rp-task::before {
+  content: "과제: ";
+  font-weight: 700;
+  color: var(--ink, #222);
+}
+
+.replay-stage .compare-card {
+  max-height: 560px;
+  overflow-y: auto;
+}
+
+.rp-badges {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.rp-badge {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  white-space: nowrap;
+}
+
+.rp-badge.ok { background: #e7f6ec; color: #14713d; border-color: #bfe5cc; }
+.rp-badge.no { background: #f3f4f6; color: #6b7280; border-color: #e5e7eb; }
+.rp-badge.warn { background: #fdecec; color: #b42318; border-color: #f5c6c2; }
+
+.rp-events { display: flex; flex-direction: column; gap: 12px; margin-top: 12px; }
+
+.rp-event {
+  border: 1px solid var(--line, #e5e7eb);
+  border-radius: 10px;
+  padding: 10px 12px;
+  background: rgba(255, 255, 255, 0.6);
+}
+
+.rp-event > header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
+}
+
+.rp-turn {
+  font-size: 11px;
+  font-weight: 800;
+  background: #eef2ff;
+  color: #3730a3;
+  border-radius: 6px;
+  padding: 2px 7px;
+}
+
+.rp-event code { font-size: 12px; }
+
+.rp-proj {
+  font-size: 11px;
+  color: #14713d;
+  background: #e7f6ec;
+  border-radius: 6px;
+  padding: 2px 7px;
+}
+
+.rp-record {
+  border-top: 1px dashed var(--line, #e5e7eb);
+  padding-top: 8px;
+  margin-top: 8px;
+}
+
+.rp-record header strong { font-size: 12px; color: #6b7280; }
+
+.rp-field {
+  display: grid;
+  grid-template-columns: 110px 1fr auto;
+  gap: 8px;
+  font-size: 13px;
+  padding: 3px 0;
+  align-items: baseline;
+}
+
+.rp-field b { font-weight: 600; color: #374151; word-break: break-all; }
+.rp-field span { word-break: break-all; }
+.rp-field i { font-size: 11px; font-style: normal; white-space: nowrap; }
+
+.rp-field.sensitive span { background: #fdecec; color: #b42318; border-radius: 4px; padding: 1px 5px; }
+.rp-field.sensitive i { color: #b42318; font-weight: 700; }
+
+.rp-field.removed b, .rp-field.removed .rp-strike { color: #9ca3af; }
+.rp-strike { text-decoration: line-through; opacity: 0.55; }
+.rp-field.removed i { color: #14713d; font-weight: 700; }
+
+.rp-denied {
+  font-size: 13px;
+  color: #b42318;
+  background: #fdecec;
+  border-radius: 8px;
+  padding: 8px 10px;
+}
+
+.rp-empty {
+  font-size: 13px;
+  color: #6b7280;
+  background: #f9fafb;
+  border-radius: 8px;
+  padding: 8px 10px;
+}
+
+.rp-status {
+  margin-top: 12px;
+  font-size: 12px;
+  color: #6b7280;
+  word-break: break-all;
+}

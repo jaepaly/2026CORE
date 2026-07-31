@@ -157,15 +157,26 @@ worst-case 용량(`interface_risk.py`). B는 프롬프트만 추가하고 필드
 - 악성 payload가 `body`가 아니라 subject·sender·calendar·notes에 있을 때도 같은 효과인지.
 - 더 크고 tool-eager한 상용 모델에서도 같은 양상인지.
 
-## 라이브 데모
-
-브라우저에서 A/B/C/D 정책을 바꿔 보며, 같은 업무 요청이라도 모델에게 전달되는 도구 결과가 어떻게 달라지는지 확인할 수 있다.
+## 라이브 데모 — 본 실험 run replay
 
 ```bash
 python -m http.server 8080
 ```
 
-실행 후 [`http://localhost:8080/demo/`](http://localhost:8080/demo/)를 열면 된다. 데모는 정적 HTML/CSS/JS로 구성되어 있으며, 가능하면 `output/interface_risk_summary.json`, `output/realized_exposure_summary.json`, `output/stats_summary_v2.json`의 최신 집계값을 읽어 표시한다.
+실행 후 [`http://localhost:8080/demo/`](http://localhost:8080/demo/)를 열면 된다. 두 부분으로 구성된다.
+
+**① Run replay (실측).** 커밋된 `experiments/main-*/runs.jsonl`의 실제 로그를 턴 단위로 재생한다.
+모델(4종)·시나리오(승인 43)·좌우 조건(A/B/C/D)을 고르면 같은 시나리오의 두 run이 나란히 나온다 —
+왼쪽 A에서는 `notes`(알레르기·병원)·`phone`이 "민감 필드 전달됨"으로 표시되고, 오른쪽 C에서는
+같은 도구 호출에서 그 필드들이 "모델에 전달 안 됨"으로 잘려 있다. run_id·task/safe 배지까지
+로그 그대로다. 로그에는 원문이 없으므로(경로·해시·카운트만) 화면의 원문은 공개 합성 데이터
+(`data/`)를 로그의 레코드 ID × 필드 경로와 조인해 재구성한다 — 이 재구성 규칙 자체가 계측
+설계(privacy-safe 로깅)의 시연이다. 시나리오 목록·v3 요약은 [`demo/build_replay_index.py`](demo/build_replay_index.py)가
+`runs.jsonl`에서 생성한 [`demo/replay_index.json`](demo/replay_index.json)에서 온다(run 추가 시 재실행).
+
+**② 개념 시연 (합성 예시).** 발표 도입용 — 가상의 레코드로 정책이 응답에서 무엇을 잘라내는지
+보여준다. 메트릭 카드의 실측값(전달 0.50→0.00, safe, p=0.070)은 `replay_index.json`의
+v3 집계를 읽는다.
 
 디자인 톤은 `npx getdesign@latest add notion`으로 생성한 [`DESIGN.md`](DESIGN.md)의 Notion 스타일 가이드를 적용했다.
 

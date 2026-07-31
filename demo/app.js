@@ -1,49 +1,51 @@
 const $ = (selector) => document.querySelector(selector);
 
+// realized/safe 는 v3 본 실험 688 runs 실측 (demo/replay_index.json 이 원천, 로드 시 덮어씀).
+// capacity/malicious 는 정책 정의에서 계산되는 설계값.
 const policies = {
   A: {
-    label: "A · 무방어",
-    short: "무방어",
-    method: "도구 결과를 거의 그대로 모델에게 전달",
+    label: "A · 중립(projection 없음)",
+    short: "중립",
+    method: "중립 프롬프트, 도구 결과를 그대로 모델에게 전달",
     capacity: 151.5,
-    realized: 5.31,
+    realized: 0.5,
     malicious: 5,
-    success: 0.25,
+    safe: 0.006,
     redacts: [],
     note: "A는 필드 필터가 없어 email body, phone, notes가 모두 모델 컨텍스트에 들어갑니다.",
   },
   B: {
-    label: "B · 프롬프트만",
+    label: "B · 최소화 지시만",
     short: "프롬프트 방어",
     method: "모델에게 최소 접근을 지시하지만 도구 결과는 그대로 전달",
     capacity: 151.5,
-    realized: 3.59,
+    realized: 0.52,
     malicious: 5,
-    success: 0.245,
+    safe: 0.0,
     redacts: [],
-    note: "B는 프롬프트 지시만 추가됩니다. 도구가 민감 필드를 반환하면 모델은 여전히 그 값을 보게 됩니다.",
+    note: "B는 프롬프트 지시만 추가됩니다. v3 실측에서 전달량이 A(0.50)와 같은 수준(0.52)이었습니다 — 지시는 전달을 줄이지 못했습니다.",
   },
   C: {
-    label: "C · 필드 최소권한",
-    short: "필드 최소권한",
-    method: "body, phone, notes를 인터페이스 단계에서 제거",
+    label: "C · 필드 projection",
+    short: "필드 projection",
+    method: "업무별 허용 필드만 반환 (body·phone·notes 제거)",
     capacity: 10.5,
     realized: 0,
     malicious: 0,
-    success: 0.203,
+    safe: 0.041,
     redacts: ["body", "phone", "notes"],
-    note: "C는 민감 필드를 도구 응답에서 제거합니다. 모델이 접근하더라도 핵심 PII와 body payload는 전달되지 않습니다.",
+    note: "C는 task-aware projection으로 민감 필드를 도구 응답에서 제거합니다. v3 실측에서 4모델 모두 전달 0이었습니다.",
   },
   D: {
-    label: "D · 강한 최소권한",
-    short: "강한 최소권한",
-    method: "C와 같은 필드 제거 + 더 엄격한 조회 경로 제한",
+    label: "D · 지시 + projection",
+    short: "지시+projection",
+    method: "최소화 지시와 필드 projection을 함께 적용",
     capacity: 10.5,
     realized: 0,
     malicious: 0,
-    success: 0.234,
+    safe: 0.029,
     redacts: ["body", "phone", "notes"],
-    note: "D는 C보다 강한 정책입니다. 현재 데이터에서는 민감 본문과 연락처 메모 노출을 동일하게 0으로 낮춥니다.",
+    note: "D는 C와 같은 projection에 프롬프트 지시를 더한 조건입니다. 전달은 동일하게 0입니다.",
   },
 };
 
@@ -206,10 +208,10 @@ async function fetchJson(path) {
 }
 
 async function loadExperimentSummaries() {
-  const [riskResult, realizedResult, statsResult] = await Promise.allSettled([
+  // 설계 용량은 정책 정의 계산(interface_risk), 실측 전달·safe 는 v3 본 실험 집계(replay_index).
+  const [riskResult, v3Result] = await Promise.allSettled([
     fetchJson("../output/interface_risk_summary.json"),
-    fetchJson("../output/realized_exposure_summary.json"),
-    fetchJson("../output/stats_summary_v2.json"),
+    fetchJson("./replay_index.json"),
   ]);
 
   if (riskResult.status === "fulfilled") {
@@ -218,19 +220,16 @@ async function loadExperimentSummaries() {
       policies[row.policy].capacity = row.sensitive_field_score;
       policies[row.policy].malicious = row.malicious_payloads_deliverable;
     }
+    // B 는 A 와 같은 설계(필드 필터 없음)
+    policies.B.capacity = policies.A.capacity;
+    policies.B.malicious = policies.A.malicious;
   }
 
-  if (realizedResult.status === "fulfilled") {
-    for (const [policyKey, row] of Object.entries(realizedResult.value.broad || {})) {
+  if (v3Result.status === "fulfilled") {
+    for (const [policyKey, row] of Object.entries(v3Result.value.summary || {})) {
       if (!policies[policyKey]) continue;
-      policies[policyKey].realized = row.realized_sensitive;
-    }
-  }
-
-  if (statsResult.status === "fulfilled") {
-    for (const [policyKey, successRate] of Object.entries(statsResult.value.success_rate_collapsed || {})) {
-      if (!policies[policyKey]) continue;
-      policies[policyKey].success = successRate;
+      policies[policyKey].realized = row.delivered_sensitive_per_run;
+      policies[policyKey].safe = row.safe_completion_rate;
     }
   }
 }
@@ -244,9 +243,9 @@ function renderMetrics(policyKey) {
   if ($("#realizedMetric")) $("#realizedMetric").textContent = formatNumber(realized);
   if ($("#realizedCaption")) $("#realizedCaption").textContent = `비교 정책 ${policyKey} · ${policy.short}`;
   if ($("#malMetric")) $("#malMetric").textContent = policy.malicious;
-  if ($("#successMetric")) $("#successMetric").textContent = formatNumber(policy.success);
+  if ($("#successMetric")) $("#successMetric").textContent = formatNumber(policy.safe);
   if ($("#meterValue")) $("#meterValue").textContent = formatNumber(realized);
-  if ($("#meterFill")) $("#meterFill").style.width = `${Math.min(100, (realized / 5.31) * 100)}%`;
+  if ($("#meterFill")) $("#meterFill").style.width = `${Math.min(100, (realized / 0.52) * 100)}%`;
 
   if ($("#phoneState")) $("#phoneState").textContent = sensitiveVisible ? "visible" : "redacted";
   if ($("#notesState")) $("#notesState").textContent = sensitiveVisible ? "visible" : "redacted";

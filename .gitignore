@@ -46,3 +46,4 @@ experiments/*/*.log
 !experiments/*/replay/*.json
 experiments/*/run.log
 experiments/*/run.err
+.claude/

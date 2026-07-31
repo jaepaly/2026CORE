@@ -21,7 +21,8 @@
         </span>
       </a>
       <nav class="nav">
-        <a href="#demo">Live demo</a>
+        <a href="#replay">Run replay</a>
+        <a href="#demo">개념 시연</a>
         <a href="#evidence">Evidence</a>
         <a href="../README.md">Research README</a>
       </nav>
@@ -56,25 +57,87 @@
           </div>
           <div class="dash-meter">
             <div>
-              <span>무방어 A</span>
-              <strong>5.31</strong>
+              <span>projection 없음 A·B</span>
+              <strong>0.50</strong>
             </div>
             <div class="dash-line" aria-hidden="true"><i></i></div>
             <div>
-              <span>최소권한 C/D</span>
+              <span>projection C·D</span>
               <strong>0.00</strong>
             </div>
           </div>
-          <p>광범위 업무에서 실현 민감노출이 필드 정책 적용 후 0으로 떨어집니다.</p>
+          <p>v3 본 실험 688 runs — run당 실제 전달된 민감 필드. 프롬프트 지시(B 0.52)는 줄이지 못했고, 필드 projection만 0으로 만들었습니다.</p>
         </aside>
+      </section>
+
+      <section class="demo-shell replay-shell" id="replay">
+        <div class="demo-header">
+          <div>
+            <p class="eyebrow">Run replay · 실측</p>
+            <h2>본 실험 688 runs를 그대로 재생</h2>
+            <p class="section-copy">
+              이 화면은 시뮬레이션이 아닙니다. 커밋된 <code>experiments/main-*/runs.jsonl</code>의
+              실제 로그를 턴 단위로 재생합니다. 로그에는 원문이 없으며(레코드 ID·필드 경로·해시만),
+              화면의 원문은 공개 합성 데이터(<code>data/</code>)를 로그와 조인해 재구성한 것입니다 —
+              즉 아래 내용이 그 run에서 모델이 실제로 받은 도구 응답입니다.
+            </p>
+          </div>
+          <div class="demo-controls">
+            <label>
+              <span>모델</span>
+              <select id="rpModel"></select>
+            </label>
+            <label>
+              <span>시나리오 (승인 43)</span>
+              <select id="rpScenario"></select>
+            </label>
+            <label>
+              <span>왼쪽 조건</span>
+              <select id="rpLeftCond"></select>
+            </label>
+            <label>
+              <span>오른쪽 조건</span>
+              <select id="rpRightCond"></select>
+            </label>
+            <button class="button primary" id="rpReload" type="button">재생</button>
+          </div>
+        </div>
+
+        <p class="rp-task" id="rpTask"></p>
+
+        <div class="comparison-stage replay-stage">
+          <article class="compare-card danger-card">
+            <div class="compare-head">
+              <span class="policy-pill danger" id="rpLeftLabel">조건 A</span>
+              <span class="rp-badges" id="rpLeftBadges"></span>
+            </div>
+            <div class="rp-events" id="rpLeftEvents"></div>
+          </article>
+
+          <div class="stage-verdict">
+            <span>실측</span>
+            <strong>같은 시나리오,<br />같은 모델</strong>
+            <p>바뀐 것은 인터페이스뿐입니다.</p>
+          </div>
+
+          <article class="compare-card safe-card">
+            <div class="compare-head">
+              <span class="policy-pill safe" id="rpRightLabel">조건 C</span>
+              <span class="rp-badges" id="rpRightBadges"></span>
+            </div>
+            <div class="rp-events" id="rpRightEvents"></div>
+          </article>
+        </div>
+
+        <p class="rp-status" id="rpStatus">초기화 중…</p>
       </section>
 
       <section class="demo-shell" id="demo">
         <div class="demo-header">
           <div>
-            <p class="eyebrow">Live comparison</p>
+            <p class="eyebrow">개념 시연 · 합성 예시</p>
             <h2>같은 요청, 다른 도구 응답</h2>
-            <p class="section-copy">왼쪽은 무방어 A, 오른쪽은 선택한 최소권한 정책입니다. 관객에게 “AI가 실제로 받는 데이터”가 어떻게 달라지는지 바로 보여줄 수 있습니다.</p>
+            <p class="section-copy">아래 레코드는 이해를 돕기 위한 <strong>합성 예시</strong>입니다(실측은 위 Run replay). 왼쪽은 무방어 A, 오른쪽은 선택한 정책이 같은 응답에서 무엇을 잘라내는지 보여줍니다.</p>
           </div>
           <div class="demo-controls">
             <label>
@@ -134,19 +197,19 @@
           <small>A/B는 필드 필터 없음</small>
         </article>
         <article class="metric-card">
-          <span>광범위 업무 실현 노출</span>
-          <strong id="realizedMetric">5.31</strong>
-          <small id="realizedCaption">현재 정책 A</small>
+          <span>run당 전달 민감 필드 (v3)</span>
+          <strong id="realizedMetric">0.50</strong>
+          <small id="realizedCaption">비교 정책 A · 688 runs</small>
         </article>
         <article class="metric-card">
           <span>악성 지시 전달 가능</span>
           <strong id="malMetric">5</strong>
-          <small>email body payload 기준</small>
+          <small>email body payload 기준 (설계)</small>
         </article>
         <article class="metric-card">
-          <span>성공률 차이</span>
-          <strong id="successMetric">0.25</strong>
-          <small>McNemar: 유의 차이 미검출</small>
+          <span>safe_completion (v3)</span>
+          <strong id="successMetric">0.01</strong>
+          <small>primary A vs C: p=0.070 (유의하지 않음)</small>
         </article>
       </section>
 
@@ -179,5 +242,12 @@
     </footer>
 
     <script src="./app.js"></script>
+    <script type="module">
+      import { initReplay } from "./replay.js";
+      initReplay().catch((err) => {
+        const status = document.querySelector("#rpStatus");
+        if (status) status.textContent = `replay 초기화 실패: ${err.message} — 저장소 루트에서 python -m http.server 8080 으로 여세요.`;
+      });
+    </script>
   </body>
 </html>
