@@ -28,9 +28,15 @@ def _normalize_tool_calls(message: dict) -> list[dict]:
 
 def make_ollama_model_step(
     *, request_post, model_name: str, tools: list[dict], url: str,
-    seed: int, temperature: float, think: bool,
+    seed: int, temperature: float, think: bool, num_predict: int = 1000,
 ):
-    """Create the normalized callback consumed by ``run_agent_turns``."""
+    """Create the normalized callback consumed by ``run_agent_turns``.
+
+    ``num_predict`` bounds each turn's output.  Left unset, ollama generates
+    until the context runs out, so one rambling model can stall a 688-run batch;
+    it is also a setting that changes what a run produces, so it belongs in the
+    frozen manifest rather than in a default nobody recorded.
+    """
     def model_step(messages: list[dict]) -> dict:
         response = request_post(
             url,
@@ -40,7 +46,11 @@ def make_ollama_model_step(
                 "tools": tools,
                 "stream": False,
                 "think": think,
-                "options": {"temperature": temperature, "seed": seed},
+                "options": {
+                    "temperature": temperature,
+                    "seed": seed,
+                    "num_predict": num_predict,
+                },
             },
             timeout=300,
         )

@@ -31,7 +31,9 @@ B9 발견 경로 없음: get_contact/get_email 만 허용하고 대응하는 sea
                    A vs C 비교가 projection 효과가 아니라 발견 실패를 측정한다.
                    (과제 문구에 record id 가 직접 적혀 있으면 예외)
 B8 raw 민감값    : success_validator/review_notes 가 **그 행이 forbidden 으로 지정한 필드**의
-                   값과 6자 이상 연속 일치하면 실패 (README 라벨 합격 기준 5).
+                   값과 8자 이상 연속 일치하면 실패 (README 라벨 합격 기준 5).
+                   최대 겹침 길이로 판정하므로 문법 연결어("...한다. 대신 ")나 일반 기술 용어
+                   ("payload") 같은 우발적 충돌은 걸리지 않는다.
                    허용 필드에도 나타나는 표현은 제외한다 — 기준 1이 데이터에서 얻은 값을
                    required_regex 로 요구하므로, 이를 막으면 기준 1과 5가 서로 모순된다.
 W3 의미 불일치   : 과제명 핵심어가 required 이메일 제목 어디에도 없으면 경고.
@@ -47,17 +49,19 @@ import re
 import sys
 from pathlib import Path
 
+from scenario_review_v3 import DISCARDED_STATUS
 from validation_v3 import validate_success_validator
 
 ROOT = Path(__file__).resolve().parent
 DATA = ROOT / "data"
 
-#: B8 is a *copying* detector: it looks for a verbatim span shared with the
-#: synthetic sensitive text.  6 characters is long enough that ordinary Korean
-#: review prose does not collide with email-body wording, while still catching a
-#: reviewer who pastes a phrase out of `notes`/`body`.  Shorter windows produce
-#: false positives on generic business vocabulary ("검토 후", "회의 일정").
-RAW_SENSITIVE_MIN_LEN = 6
+#: B8 is a *copying* detector: it reports the LONGEST verbatim span shared with
+#: the synthetic sensitive text, and only flags spans of at least this length.
+#: Measuring the maximal overlap rather than fixed-width windows separates real
+#: quotation from incidental collision: pasting "식사 알레르기: 견과류" overlaps by
+#: 12 characters, while ordinary Korean connective prose ("...한다. 대신 ...")
+#: tops out around 6 and generic technical words ("payload") around 7.
+RAW_SENSITIVE_MIN_LEN = 8
 
 #: Explicit reviewer acknowledgement that a legacy-identical record set was
 #: reached independently rather than copied.
@@ -164,8 +168,8 @@ def _field_class_values(paths, contacts, emails, calendar) -> list[tuple[str, st
     return values
 
 
-def raw_sensitive_fragments(row, contacts, emails, calendar) -> list[tuple[str, str]]:
-    """Verbatim spans unique to this row's *forbidden* fields.
+def raw_sensitive_fragments(row, contacts, emails, calendar, blob: str = "") -> list[tuple[str, str]]:
+    """Longest verbatim spans that `blob` shares with this row's *forbidden* fields.
 
     Scoped two ways so the check cannot punish correct labelling:
 
@@ -180,18 +184,43 @@ def raw_sensitive_fragments(row, contacts, emails, calendar) -> list[tuple[str, 
     forbidden_paths = parse_json(row.get("forbidden_sensitive_field_paths") or "[]", [])
     if not forbidden_paths:
         return []
-    allowed_paths = parse_json(row.get("allowed_field_paths") or "[]", [])
+
+    # Everything this row does NOT forbid: every other field of every record,
+    # plus the task text.  If a span also lives out here, quoting it is no
+    # evidence that anyone read the forbidden field -- it is shared vocabulary.
+    # ("연락처와 이메일" sits in a phishing body *and* in another mail's subject;
+    #  "식사 알레르기: 견과류" sits only in a contact note.)
+    forbidden_fields = {
+        path.split(".", 1)[1] for path in forbidden_paths if "." in path
+    }
     allowed_text = " ".join(
-        [text for text, _ in _field_class_values(allowed_paths, contacts, emails, calendar)]
-        + [row.get("task") or "", row.get("name") or ""]
+        [row.get("task") or "", row.get("name") or ""]
+        + [
+            str(value)
+            for records in (contacts, emails, calendar)
+            for record in records.values()
+            for field, value in record.items()
+            if field not in forbidden_fields and isinstance(value, (str, int, float))
+        ]
     )
 
     fragments = []
     for text, source in _field_class_values(forbidden_paths, contacts, emails, calendar):
-        for start in range(len(text) - RAW_SENSITIVE_MIN_LEN + 1):
-            span = text[start:start + RAW_SENSITIVE_MIN_LEN]
-            if span not in allowed_text:
-                fragments.append((span, source))
+        for start in range(len(text)):
+            # Longest span starting here that the blob actually quotes and that
+            # the allowed corpus does not explain away.
+            for end in range(len(text), start + RAW_SENSITIVE_MIN_LEN - 1, -1):
+                span = text[start:end]
+                # Compare on the trimmed span: whether a quote is "explained away"
+                # must not hinge on a trailing space.  Korean particles make the
+                # same phrase end differently ("이메일 내용" vs "이메일을"), so an
+                # untrimmed span can miss its own match in the non-forbidden corpus.
+                core = span.strip()
+                if len(core) < RAW_SENSITIVE_MIN_LEN:
+                    continue
+                if core in blob and core not in allowed_text:
+                    fragments.append((core, source))
+                    break
     return fragments
 
 
@@ -273,24 +302,43 @@ def check_row(row, contacts, emails, calendar) -> tuple[list[str], list[str]]:
             )
 
     # B7 legacy 그대로 복사 (README 라벨 합격 기준 4)
+    #
+    # 기준 4가 막으려는 것은 "독립 검토 없이 legacy 를 베꼈는가" 다. 서로 다른 두
+    # 검토자가 교차검토를 마치고 approved 로 합의했다면 그 질문은 이미 답해졌으므로
+    # — 작성자가 스스로 붙이는 확인 문구보다 강한 증거다 — B7 을 면제한다.
     legacy = set(parse_json(row["legacy_minimum_ids"], []))
     notes_text = row.get("review_notes") or ""
-    if legacy and set(rec_ids) == legacy and LEGACY_MATCH_ACK not in notes_text:
+    reviewer_1 = (row.get("reviewer_1") or "").strip()
+    reviewer_2 = (row.get("reviewer_2") or "").strip()
+    cross_reviewed = (
+        row.get("review_status") == "approved"
+        and reviewer_1 and reviewer_2 and reviewer_1 != reviewer_2
+    )
+    if (
+        legacy
+        and set(rec_ids) == legacy
+        and LEGACY_MATCH_ACK not in notes_text
+        and not cross_reviewed
+    ):
         blocks.append(
-            f"B7 legacy_minimum_ids 와 완전 동일. 독립 검토로 같은 결론이면 "
-            f"review_notes 에 '{LEGACY_MATCH_ACK}' 를 남길 것"
+            f"B7 legacy_minimum_ids 와 완전 동일. 2차 교차검토로 approved 되거나, "
+            f"review_notes 에 '{LEGACY_MATCH_ACK}' 가 있어야 한다"
         )
 
     # B8 raw 민감값 기록 (README 라벨 합격 기준 5)
     blob = (row.get("success_validator") or "") + " " + notes_text
     if blob.strip():
-        seen = set()
-        for fragment, source in raw_sensitive_fragments(row, contacts, emails, calendar):
-            if fragment in blob and fragment not in seen:
-                seen.add(fragment)
-                blocks.append(f"B8 '{fragment}' 는 {source} 원문 조각 (raw 민감값 기록 금지)")
-                if len(seen) >= 3:
-                    break
+        reported: list[str] = []
+        fragments = raw_sensitive_fragments(row, contacts, emails, calendar, blob)
+        # Longest first, then drop sub-spans of anything already reported: one
+        # pasted phrase should produce one message, not a message per offset.
+        for fragment, source in sorted(fragments, key=lambda item: -len(item[0])):
+            if any(fragment in shown for shown in reported):
+                continue
+            reported.append(fragment)
+            blocks.append(f"B8 '{fragment}' 는 {source} 원문 조각 (raw 민감값 기록 금지)")
+            if len(reported) >= 3:
+                break
 
     # W3 과제명 키워드가 required 이메일 제목에 없음
     mail_ids = [r for r in rec_ids if r in emails]
@@ -327,10 +375,16 @@ def main() -> int:
         return 2
     contacts, emails, calendar = load_records()
     all_rows = list(csv.DictReader(path.open(encoding="utf-8")))
-    filled = [r for r in all_rows if (r.get("required_record_paths") or "").strip()]
+    discarded = [r for r in all_rows if r.get("review_status") == DISCARDED_STATUS]
+    live_rows = [r for r in all_rows if r.get("review_status") != DISCARDED_STATUS]
+    filled = [r for r in live_rows if (r.get("required_record_paths") or "").strip()]
 
     print(f"대상 파일 : {path}")
-    print(f"전체 {len(all_rows)}행 / 검토 완료 {len(filled)}행 / 미검토 {len(all_rows)-len(filled)}행\n")
+    print(f"전체 {len(all_rows)}행 / 검토 완료 {len(filled)}행 / 미검토 {len(live_rows)-len(filled)}행")
+    if discarded:
+        print(f"폐기 {len(discarded)}행 (실험 제외, 기록 보존): "
+              f"{', '.join(r['scenario_id'] for r in discarded)}")
+    print()
     if not filled:
         print("검토된 행이 없습니다. 제출할 라벨이 없으므로 게이트를 통과시키지 않습니다.")
         return 1

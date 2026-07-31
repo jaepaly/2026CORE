@@ -1,0 +1,245 @@
+{
+  "gate": {
+    "min_valid_tool_call_rate": 0.8,
+    "max_server_or_parser_error_rate": 0.05
+  },
+  "models": {
+    "qwen2.5:3b": {
+      "probes": 10,
+      "valid_tool_call_rate": 1.0,
+      "error_rate": 0.0,
+      "details": [
+        {
+          "task": "김민수와 신규 프로젝트 킥오프 회의 일정 조율 (6/23 월 오전 10시",
+          "outcome": "tool_call",
+          "tools": [
+            "search_calendar"
+          ]
+        },
+        {
+          "task": "김민수가 요청한 프로젝트 킥오프 회의실 예약 처리 (6/30 월 오전 1",
+          "outcome": "tool_call",
+          "tools": [
+            "search_calendar",
+            "get_contact"
+          ]
+        },
+        {
+          "task": "업무 이메일 중 중요도가 high인 메일을 모두 찾아 요약",
+          "outcome": "tool_call",
+          "tools": [
+            "search_emails"
+          ]
+        },
+        {
+          "task": "강태오의 6/24~6/25 연차 신청 확인서를 작성하고 인사팀(이지은)에",
+          "outcome": "tool_call",
+          "tools": [
+            "search_contacts"
+          ]
+        },
+        {
+          "task": "오동훈의 소속 부서와, 오동훈이 최근 보낸 업무 보고 메일의 제목·수신 ",
+          "outcome": "tool_call",
+          "tools": [
+            "search_contacts",
+            "search_emails"
+          ]
+        },
+        {
+          "task": "안서연과의 A사 미팅 자료를 준비하고 관련 이메일과 일정을 확인",
+          "outcome": "tool_call",
+          "tools": [
+            "search_contacts"
+          ]
+        },
+        {
+          "task": "최수연에게 6월 재무 보고서 검토 의견을 받고 예산 보고서를 작성",
+          "outcome": "tool_call",
+          "tools": [
+            "search_contacts"
+          ]
+        },
+        {
+          "task": "6월 인사 평가 회의(6/26 14:00) 참석자 명단 확인 및 자료 준",
+          "outcome": "tool_call",
+          "tools": [
+            "search_calendar"
+          ]
+        },
+        {
+          "task": "윤재민의 서버 접속 이슈를 확인하고 필요한 권한 요청 절차를 안내",
+          "outcome": "tool_call",
+          "tools": [
+            "search_contacts"
+          ]
+        },
+        {
+          "task": "신미영에게 사내 정기 건강검진 예약을 6/25 09:00에서 6/26 1",
+          "outcome": "tool_call",
+          "tools": [
+            "search_calendar"
+          ]
+        }
+      ],
+      "included": true,
+      "reasons": []
+    },
+    "qwen3:8b": {
+      "probes": 10,
+      "valid_tool_call_rate": 0.8,
+      "error_rate": 0.0,
+      "details": [
+        {
+          "task": "김민수와 신규 프로젝트 킥오프 회의 일정 조율 (6/23 월 오전 10시",
+          "outcome": "tool_call",
+          "tools": [
+            "search_contacts"
+          ]
+        },
+        {
+          "task": "김민수가 요청한 프로젝트 킥오프 회의실 예약 처리 (6/30 월 오전 1",
+          "outcome": "tool_call",
+          "tools": [
+            "search_contacts"
+          ]
+        },
+        {
+          "task": "업무 이메일 중 중요도가 high인 메일을 모두 찾아 요약",
+          "outcome": "no_tool_call"
+        },
+        {
+          "task": "강태오의 6/24~6/25 연차 신청 확인서를 작성하고 인사팀(이지은)에",
+          "outcome": "tool_call",
+          "tools": [
+            "search_contacts"
+          ]
+        },
+        {
+          "task": "오동훈의 소속 부서와, 오동훈이 최근 보낸 업무 보고 메일의 제목·수신 ",
+          "outcome": "tool_call",
+          "tools": [
+            "search_contacts"
+          ]
+        },
+        {
+          "task": "안서연과의 A사 미팅 자료를 준비하고 관련 이메일과 일정을 확인",
+          "outcome": "tool_call",
+          "tools": [
+            "search_contacts"
+          ]
+        },
+        {
+          "task": "최수연에게 6월 재무 보고서 검토 의견을 받고 예산 보고서를 작성",
+          "outcome": "no_tool_call"
+        },
+        {
+          "task": "6월 인사 평가 회의(6/26 14:00) 참석자 명단 확인 및 자료 준",
+          "outcome": "tool_call",
+          "tools": [
+            "search_calendar"
+          ]
+        },
+        {
+          "task": "윤재민의 서버 접속 이슈를 확인하고 필요한 권한 요청 절차를 안내",
+          "outcome": "tool_call",
+          "tools": [
+            "search_contacts"
+          ]
+        },
+        {
+          "task": "신미영에게 사내 정기 건강검진 예약을 6/25 09:00에서 6/26 1",
+          "outcome": "tool_call",
+          "tools": [
+            "search_contacts"
+          ]
+        }
+      ],
+      "included": true,
+      "reasons": []
+    },
+    "llama3.1:8b": {
+      "probes": 10,
+      "valid_tool_call_rate": 1.0,
+      "error_rate": 0.0,
+      "details": [
+        {
+          "task": "김민수와 신규 프로젝트 킥오프 회의 일정 조율 (6/23 월 오전 10시",
+          "outcome": "tool_call",
+          "tools": [
+            "search_contacts"
+          ]
+        },
+        {
+          "task": "김민수가 요청한 프로젝트 킥오프 회의실 예약 처리 (6/30 월 오전 1",
+          "outcome": "tool_call",
+          "tools": [
+            "search_contacts",
+            "create_event",
+            "search_emails"
+          ]
+        },
+        {
+          "task": "업무 이메일 중 중요도가 high인 메일을 모두 찾아 요약",
+          "outcome": "tool_call",
+          "tools": [
+            "search_emails"
+          ]
+        },
+        {
+          "task": "강태오의 6/24~6/25 연차 신청 확인서를 작성하고 인사팀(이지은)에",
+          "outcome": "tool_call",
+          "tools": [
+            "search_contacts"
+          ]
+        },
+        {
+          "task": "오동훈의 소속 부서와, 오동훈이 최근 보낸 업무 보고 메일의 제목·수신 ",
+          "outcome": "tool_call",
+          "tools": [
+            "search_contacts",
+            "search_emails"
+          ]
+        },
+        {
+          "task": "안서연과의 A사 미팅 자료를 준비하고 관련 이메일과 일정을 확인",
+          "outcome": "tool_call",
+          "tools": [
+            "search_emails",
+            "search_calendar"
+          ]
+        },
+        {
+          "task": "최수연에게 6월 재무 보고서 검토 의견을 받고 예산 보고서를 작성",
+          "outcome": "tool_call",
+          "tools": [
+            "search_contacts"
+          ]
+        },
+        {
+          "task": "6월 인사 평가 회의(6/26 14:00) 참석자 명단 확인 및 자료 준",
+          "outcome": "tool_call",
+          "tools": [
+            "search_calendar"
+          ]
+        },
+        {
+          "task": "윤재민의 서버 접속 이슈를 확인하고 필요한 권한 요청 절차를 안내",
+          "outcome": "tool_call",
+          "tools": [
+            "search_contacts"
+          ]
+        },
+        {
+          "task": "신미영에게 사내 정기 건강검진 예약을 6/25 09:00에서 6/26 1",
+          "outcome": "tool_call",
+          "tools": [
+            "create_event"
+          ]
+        }
+      ],
+      "included": true,
+      "reasons": []
+    }
+  }
+}

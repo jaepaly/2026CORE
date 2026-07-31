@@ -35,7 +35,8 @@ class OllamaV3AdapterTests(unittest.TestCase):
 
         self.assertEqual("http://ollama.test/api/chat", captured["url"])
         self.assertEqual("stub-model", captured["payload"]["model"])
-        self.assertEqual({"temperature": 0.2, "seed": 7}, captured["payload"]["options"])
+        self.assertEqual({"temperature": 0.2, "seed": 7, "num_predict": 1000},
+                         captured["payload"]["options"])
         wire_call = captured["payload"]["messages"][0]["tool_calls"][0]
         self.assertEqual("search_contacts", wire_call["function"]["name"])
         self.assertEqual({"query": "김민수"}, wire_call["function"]["arguments"])
@@ -44,3 +45,25 @@ class OllamaV3AdapterTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class OutputBoundTests(unittest.TestCase):
+    """num_predict is a run parameter, not an unrecorded default."""
+
+    def test_num_predict_is_forwarded(self):
+        captured = {}
+
+        def request_post(url, json=None, timeout=None):
+            captured["payload"] = json
+            class R:
+                def raise_for_status(self): pass
+                def json(self): return {"message": {"content": "ok", "tool_calls": []}}
+            return R()
+
+        step = make_ollama_model_step(
+            request_post=request_post, model_name="m", tools=[], url="http://x",
+            seed=0, temperature=0.0, think=False, num_predict=42,
+        )
+        step([{"role": "user", "content": "hi"}])
+
+        self.assertEqual(42, captured["payload"]["options"]["num_predict"])

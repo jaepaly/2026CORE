@@ -181,8 +181,10 @@ class LazyAgentGateTests(unittest.TestCase):
 
 
 class LegacyCopyTests(unittest.TestCase):
-    def test_record_set_identical_to_legacy_is_blocked(self):
-        result = run_gate([make_row(legacy_minimum_ids='["c1"]')])
+    def test_record_set_identical_to_legacy_is_blocked_before_cross_review(self):
+        result = run_gate([
+            make_row(legacy_minimum_ids='["c1"]', reviewer_2="", review_status="pending")
+        ])
 
         self.assertEqual(1, result.returncode)
         self.assertIn("B7", result.stdout)
@@ -289,6 +291,61 @@ class DiscoveryPathTests(unittest.TestCase):
         ])
 
         self.assertEqual(0, result.returncode, result.stdout)
+
+
+class CrossReviewWaivesLegacyMatchTests(unittest.TestCase):
+    """B7 asks 'was this copied without independent thought?' -- a second
+    reviewer's approval answers that more strongly than a self-declared ack."""
+
+    def test_cross_reviewed_approval_waives_b7(self):
+        result = run_gate([
+            make_row(legacy_minimum_ids='["c1"]', reviewer_1="장승우",
+                     reviewer_2="이예찬", review_status="approved", review_notes="독립 확인")
+        ])
+
+        self.assertEqual(0, result.returncode, result.stdout)
+
+    def test_same_person_as_both_reviewers_does_not_waive_b7(self):
+        result = run_gate([
+            make_row(legacy_minimum_ids='["c1"]', reviewer_1="장승우",
+                     reviewer_2="장승우", review_status="approved", review_notes="확인")
+        ])
+
+        self.assertEqual(1, result.returncode)
+        self.assertIn("B7", result.stdout)
+
+    def test_unresolved_disagreement_does_not_waive_b7(self):
+        result = run_gate([
+            make_row(legacy_minimum_ids='["c1"]', reviewer_1="장승우", reviewer_2="이예찬",
+                     review_status="needs_adjudication", review_notes="이견 있음")
+        ])
+
+        self.assertEqual(1, result.returncode)
+        self.assertIn("B7", result.stdout)
+
+
+class B8SharedVocabularyTests(unittest.TestCase):
+    """A span that also lives outside the forbidden fields is shared vocabulary."""
+
+    def test_phrase_also_present_in_a_non_forbidden_field_is_not_flagged(self):
+        # "연락처와 이메일" occurs in e17.body (forbidden here) but also in
+        # e31.subject, which this row does not forbid -- so quoting it proves
+        # nothing about having read a body.
+        result = run_gate([
+            make_row(
+                forbidden_sensitive_field_paths='["get_email.body"]',
+                review_notes="연락처와 이메일 민감 필드는 제외함",
+            )
+        ])
+
+        self.assertEqual(0, result.returncode, result.stdout)
+
+    def test_phrase_unique_to_a_forbidden_field_is_still_flagged(self):
+        # "식사 알레르기: 견과류" exists only in c1.notes.
+        result = run_gate([make_row(review_notes="메모에 '식사 알레르기: 견과류' 라고 되어 있음")])
+
+        self.assertEqual(1, result.returncode)
+        self.assertIn("B8", result.stdout)
 
 
 if __name__ == "__main__":
