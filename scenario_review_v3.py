@@ -60,7 +60,19 @@ def export_review_csv(legacy: dict, csv_path: str | Path) -> None:
         writer.writerows(rows)
 
 
+#: Scenarios withdrawn before any run because the synthetic data cannot support
+#: the task.  The rows stay in the CSV so the withdrawal is auditable -- silently
+#: deleting pre-registered scenarios would leave no record of what was dropped or
+#: why.  They are excluded from the experiment but never counted as failures.
+DISCARDED_STATUS = "discarded"
+
+
 def select_approved_scenarios(rows: list[dict]) -> list[dict]:
+    """Return the rows admitted to the experiment.
+
+    Fails closed on unfinished review (``pending`` / ``needs_adjudication``);
+    ``discarded`` rows are skipped rather than rejected.
+    """
     required_review_fields = {
         "required_record_paths",
         "allowed_field_paths",
@@ -68,6 +80,7 @@ def select_approved_scenarios(rows: list[dict]) -> list[dict]:
         "reviewer_1",
         "reviewer_2",
     }
+    rows = [row for row in rows if row.get("review_status") != DISCARDED_STATUS]
     for row in rows:
         if row.get("review_status") != "approved":
             raise ValueError(f"scenario {row.get('scenario_id', '')} is not approved")

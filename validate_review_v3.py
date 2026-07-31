@@ -47,6 +47,7 @@ import re
 import sys
 from pathlib import Path
 
+from scenario_review_v3 import DISCARDED_STATUS
 from validation_v3 import validate_success_validator
 
 ROOT = Path(__file__).resolve().parent
@@ -342,10 +343,16 @@ def main() -> int:
         return 2
     contacts, emails, calendar = load_records()
     all_rows = list(csv.DictReader(path.open(encoding="utf-8")))
-    filled = [r for r in all_rows if (r.get("required_record_paths") or "").strip()]
+    discarded = [r for r in all_rows if r.get("review_status") == DISCARDED_STATUS]
+    live_rows = [r for r in all_rows if r.get("review_status") != DISCARDED_STATUS]
+    filled = [r for r in live_rows if (r.get("required_record_paths") or "").strip()]
 
     print(f"대상 파일 : {path}")
-    print(f"전체 {len(all_rows)}행 / 검토 완료 {len(filled)}행 / 미검토 {len(all_rows)-len(filled)}행\n")
+    print(f"전체 {len(all_rows)}행 / 검토 완료 {len(filled)}행 / 미검토 {len(live_rows)-len(filled)}행")
+    if discarded:
+        print(f"폐기 {len(discarded)}행 (실험 제외, 기록 보존): "
+              f"{', '.join(r['scenario_id'] for r in discarded)}")
+    print()
     if not filled:
         print("검토된 행이 없습니다. 제출할 라벨이 없으므로 게이트를 통과시키지 않습니다.")
         return 1
