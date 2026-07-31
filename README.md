@@ -222,6 +222,11 @@ python legacy_delivery_scan_v2.py                 # 조건별 민감 필드 실�
 팀 분산 실행 방법은 [`TASK_DISTRIBUTION.md`](TASK_DISTRIBUTION.md), 개별 패킷은 [`team/`](team/).
 
 ## 📌 팀원 실행 매뉴얼 — 본 실험
+>
+> **다른 머신에서 이어받는 경우(에이전트 포함)는 [`HANDOFF.md`](HANDOFF.md)를 먼저 읽으세요.**
+> 현재 상태, 이번에 할 일, 사전 등록 실험이라 건드리면 안 되는 것이 정리돼 있습니다.
+
+
 
 > 시나리오 라벨과 모델 파일럿이 끝났습니다. 이제 배정된 모델로 본 실험을 돌리면 됩니다.
 
