@@ -1,10 +1,14 @@
 {
   "experiment_dirs": [
-    "experiments\\main-qwen2.5-3b"
+    "experiments\\main-qwen2.5-3b",
+    "experiments\\main-qwen2.5-7b",
+    "experiments\\main-llama3.1-8b"
   ],
-  "total_runs": 172,
+  "total_runs": 516,
   "models": [
-    "qwen2.5:3b"
+    "llama3.1:8b",
+    "qwen2.5:3b",
+    "qwen2.5:7b"
   ],
   "capacity": {
     "scenarios": 43,
@@ -14,81 +18,107 @@
   },
   "delivery": {
     "A": {
-      "runs": 43,
-      "mean_delivered_sensitive_fields": 0.395,
-      "mean_delivered_field_paths": 3.465,
+      "runs": 129,
+      "mean_delivered_sensitive_fields": 0.512,
+      "mean_delivered_field_paths": 3.705,
       "mean_removed_field_paths": 0.0,
-      "runs_with_any_sensitive_delivery": 8,
+      "runs_with_any_sensitive_delivery": 34,
       "tool_denials": 0
     },
     "B": {
-      "runs": 43,
-      "mean_delivered_sensitive_fields": 0.302,
-      "mean_delivered_field_paths": 2.326,
+      "runs": 129,
+      "mean_delivered_sensitive_fields": 0.519,
+      "mean_delivered_field_paths": 3.403,
       "mean_removed_field_paths": 0.0,
-      "runs_with_any_sensitive_delivery": 6,
+      "runs_with_any_sensitive_delivery": 32,
       "tool_denials": 0
     },
     "C": {
-      "runs": 43,
+      "runs": 129,
       "mean_delivered_sensitive_fields": 0.0,
-      "mean_delivered_field_paths": 1.349,
-      "mean_removed_field_paths": 1.698,
+      "mean_delivered_field_paths": 1.0,
+      "mean_removed_field_paths": 2.667,
       "runs_with_any_sensitive_delivery": 0,
       "tool_denials": 0
     },
     "D": {
-      "runs": 43,
+      "runs": 129,
       "mean_delivered_sensitive_fields": 0.0,
-      "mean_delivered_field_paths": 0.86,
-      "mean_removed_field_paths": 2.07,
+      "mean_delivered_field_paths": 0.829,
+      "mean_removed_field_paths": 2.535,
       "runs_with_any_sensitive_delivery": 0,
       "tool_denials": 0
     }
   },
   "behaviour": {
     "A": {
-      "runs": 43,
+      "runs": 129,
       "technical_failures": 0,
-      "max_turns_reached": 1,
-      "mean_tool_calls": 1.442,
-      "mean_distinct_records": 0.651,
-      "task_success_rate": 0.023,
-      "safe_completion_rate": 0.023,
-      "valid_runs": 43
+      "max_turns_reached": 3,
+      "mean_tool_calls": 1.488,
+      "mean_distinct_records": 0.822,
+      "task_success_rate": 0.062,
+      "safe_completion_rate": 0.008,
+      "valid_runs": 129
     },
     "B": {
-      "runs": 43,
+      "runs": 129,
       "technical_failures": 0,
-      "max_turns_reached": 2,
-      "mean_tool_calls": 1.442,
-      "mean_distinct_records": 0.302,
-      "task_success_rate": 0.0,
+      "max_turns_reached": 3,
+      "mean_tool_calls": 1.535,
+      "mean_distinct_records": 0.775,
+      "task_success_rate": 0.054,
       "safe_completion_rate": 0.0,
-      "valid_runs": 43
+      "valid_runs": 129
     },
     "C": {
-      "runs": 43,
+      "runs": 129,
       "technical_failures": 0,
-      "max_turns_reached": 0,
-      "mean_tool_calls": 1.302,
-      "mean_distinct_records": 0.419,
-      "task_success_rate": 0.07,
-      "safe_completion_rate": 0.07,
-      "valid_runs": 43
+      "max_turns_reached": 3,
+      "mean_tool_calls": 1.481,
+      "mean_distinct_records": 0.558,
+      "task_success_rate": 0.039,
+      "safe_completion_rate": 0.039,
+      "valid_runs": 129
     },
     "D": {
-      "runs": 43,
+      "runs": 129,
       "technical_failures": 0,
-      "max_turns_reached": 5,
-      "mean_tool_calls": 1.698,
-      "mean_distinct_records": 0.372,
-      "task_success_rate": 0.0,
-      "safe_completion_rate": 0.0,
-      "valid_runs": 43
+      "max_turns_reached": 9,
+      "mean_tool_calls": 1.581,
+      "mean_distinct_records": 0.512,
+      "task_success_rate": 0.016,
+      "safe_completion_rate": 0.016,
+      "valid_runs": 129
     }
   },
   "by_model": {
+    "llama3.1:8b": {
+      "A": {
+        "valid_runs": 43,
+        "safe_completion_rate": 0.0,
+        "task_success_rate": 0.116,
+        "mean_delivered_sensitive_fields": 0.581
+      },
+      "B": {
+        "valid_runs": 43,
+        "safe_completion_rate": 0.0,
+        "task_success_rate": 0.116,
+        "mean_delivered_sensitive_fields": 0.721
+      },
+      "C": {
+        "valid_runs": 43,
+        "safe_completion_rate": 0.023,
+        "task_success_rate": 0.023,
+        "mean_delivered_sensitive_fields": 0.0
+      },
+      "D": {
+        "valid_runs": 43,
+        "safe_completion_rate": 0.023,
+        "task_success_rate": 0.023,
+        "mean_delivered_sensitive_fields": 0.0
+      }
+    },
     "qwen2.5:3b": {
       "A": {
         "valid_runs": 43,
@@ -114,6 +144,32 @@
         "task_success_rate": 0.0,
         "mean_delivered_sensitive_fields": 0.0
       }
+    },
+    "qwen2.5:7b": {
+      "A": {
+        "valid_runs": 43,
+        "safe_completion_rate": 0.0,
+        "task_success_rate": 0.047,
+        "mean_delivered_sensitive_fields": 0.558
+      },
+      "B": {
+        "valid_runs": 43,
+        "safe_completion_rate": 0.0,
+        "task_success_rate": 0.047,
+        "mean_delivered_sensitive_fields": 0.535
+      },
+      "C": {
+        "valid_runs": 43,
+        "safe_completion_rate": 0.023,
+        "task_success_rate": 0.023,
+        "mean_delivered_sensitive_fields": 0.0
+      },
+      "D": {
+        "valid_runs": 43,
+        "safe_completion_rate": 0.023,
+        "task_success_rate": 0.023,
+        "mean_delivered_sensitive_fields": 0.0
+      }
     }
   },
   "primary": {
@@ -123,23 +179,23 @@
     ],
     "endpoint": "safe_completion",
     "analysis_unit": "model x scenario (seeds collapsed by majority, retries by latest valid)",
-    "paired_valid_unit_count": 43,
+    "paired_valid_unit_count": 129,
     "a_only_success_count": 1,
-    "c_only_success_count": 3,
-    "paired_risk_difference_a_minus_c": -0.046511627906976744,
-    "mcnemar_exact_two_sided_p": 0.625,
+    "c_only_success_count": 5,
+    "paired_risk_difference_a_minus_c": -0.031007751937984496,
+    "mcnemar_exact_two_sided_p": 0.21875,
     "excluded_unpaired_or_invalid_count": 0,
     "seed_agreement": {
-      "condition_groups": 86,
+      "condition_groups": 258,
       "replicated_groups": 0,
       "unanimous_replicated_groups": 0,
       "note": "Seeds are collapsed, never treated as independent observations. A high unanimous share means repeated seeds were near-duplicates."
     },
     "delivered_sensitive_fields_a_minus_c": {
-      "mean_difference_a_minus_c": 0.3953488372093023,
+      "mean_difference_a_minus_c": 0.5116279069767442,
       "bootstrap_95_ci": [
-        0.16279069767441862,
-        0.6744186046511628
+        0.3488372093023256,
+        0.689922480620155
       ],
       "bootstrap_iterations": 2000,
       "bootstrap_seed": 1
