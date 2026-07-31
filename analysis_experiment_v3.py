@@ -31,16 +31,31 @@ ROOT = Path(__file__).resolve().parent
 CONDITIONS = ("A", "B", "C", "D")
 
 
-def load_runs(experiment_dir: Path) -> list[dict]:
-    path = experiment_dir / "runs.jsonl"
-    if not path.exists():
-        return []
-    rows = []
-    with path.open(encoding="utf-8") as handle:
-        for line in handle:
-            line = line.strip()
-            if line:
-                rows.append(json.loads(line))
+def load_runs(experiment_dirs: list[Path]) -> list[dict]:
+    """Merge runs from one or more experiment directories.
+
+    The study is split by model across machines, so the evidence arrives as
+    several runs.jsonl files.  Merging here means the paired analysis still sees
+    one dataset; duplicate run keys are dropped so a re-pushed file cannot
+    double-count a unit.
+    """
+    rows, seen = [], set()
+    for experiment_dir in experiment_dirs:
+        path = experiment_dir / "runs.jsonl"
+        if not path.exists():
+            continue
+        with path.open(encoding="utf-8") as handle:
+            for line in handle:
+                line = line.strip()
+                if not line:
+                    continue
+                row = json.loads(line)
+                key = (row["model"], row["scenario"], row["condition"],
+                       row["seed"], row.get("retry_index", 0))
+                if key in seen:
+                    continue
+                seen.add(key)
+                rows.append(row)
     return rows
 
 
@@ -171,12 +186,15 @@ def primary_analysis(runs: list[dict]) -> dict:
     return result
 
 
-def analyse(experiment_dir: Path, review_csv: Path) -> dict:
-    runs = load_runs(experiment_dir)
+def analyse(experiment_dirs, review_csv: Path) -> dict:
+    if isinstance(experiment_dirs, (str, Path)):
+        experiment_dirs = [Path(experiment_dirs)]
+    experiment_dirs = [Path(d) for d in experiment_dirs]
+    runs = load_runs(experiment_dirs)
     if not runs:
-        raise SystemExit(f"no runs found in {experiment_dir}/runs.jsonl")
+        raise SystemExit(f"no runs found in: {', '.join(str(d) for d in experiment_dirs)}")
     return {
-        "experiment_dir": str(experiment_dir),
+        "experiment_dirs": [str(d) for d in experiment_dirs],
         "total_runs": len(runs),
         "models": sorted({r["model"] for r in runs}),
         "capacity": capacity_by_condition(review_csv),
@@ -217,14 +235,15 @@ def print_summary(summary: dict) -> None:
 
 def main(argv=None) -> int:
     parser = argparse.ArgumentParser(description="v3 experiment aggregation")
-    parser.add_argument("--experiment-dir", required=True)
+    parser.add_argument("--experiment-dir", action="append", required=True,
+                        help="repeat to merge results split across machines")
     parser.add_argument("--review-csv", default=str(ROOT / "data" / "scenario_review_v3.csv"))
-    parser.add_argument("--out", help="summary JSON path (default: <experiment-dir>/analysis_v3.json)")
+    parser.add_argument("--out", help="summary JSON path (default: <first dir>/analysis_v3.json)")
     args = parser.parse_args(argv)
 
-    experiment_dir = Path(args.experiment_dir)
-    summary = analyse(experiment_dir, Path(args.review_csv))
-    out = Path(args.out) if args.out else experiment_dir / "analysis_v3.json"
+    dirs = [Path(d) for d in args.experiment_dir]
+    summary = analyse(dirs, Path(args.review_csv))
+    out = Path(args.out) if args.out else dirs[0] / "analysis_v3.json"
     out.write_text(json.dumps(summary, ensure_ascii=False, indent=2), encoding="utf-8")
     print_summary(summary)
     print(f"\nsaved -> {out}")

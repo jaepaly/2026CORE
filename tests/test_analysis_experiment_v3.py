@@ -124,7 +124,7 @@ class EndToEndTests(unittest.TestCase):
                 "".join(json.dumps(r, ensure_ascii=False) + "\n" for r in runs), encoding="utf-8"
             )
 
-            summary = analyse(experiment_dir, REVIEW_CSV)
+            summary = analyse([experiment_dir], REVIEW_CSV)
 
         self.assertEqual(2, summary["total_runs"])
         self.assertIn("capacity", summary)
@@ -136,8 +136,39 @@ class EndToEndTests(unittest.TestCase):
     def test_missing_runs_file_is_an_explicit_error(self):
         with tempfile.TemporaryDirectory() as directory:
             with self.assertRaises(SystemExit):
-                analyse(Path(directory), REVIEW_CSV)
+                analyse([Path(directory)], REVIEW_CSV)
 
+
+
+class MergeTests(unittest.TestCase):
+    """Model-split evidence arrives as several runs.jsonl files."""
+
+    def _write(self, directory: Path, rows):
+        directory.mkdir(parents=True, exist_ok=True)
+        (directory / "runs.jsonl").write_text(
+            "".join(json.dumps(r, ensure_ascii=False) + "\n" for r in rows), encoding="utf-8")
+
+    def test_runs_from_several_directories_are_merged(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            self._write(root / "a", [run("v3_s1", "A", model="m1"), run("v3_s1", "C", model="m1")])
+            self._write(root / "b", [run("v3_s1", "A", model="m2"), run("v3_s1", "C", model="m2")])
+
+            summary = analyse([root / "a", root / "b"], REVIEW_CSV)
+
+        self.assertEqual(4, summary["total_runs"])
+        self.assertEqual(["m1", "m2"], summary["models"])
+
+    def test_a_repushed_file_does_not_double_count(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            rows = [run("v3_s1", "A"), run("v3_s1", "C")]
+            self._write(root / "a", rows)
+            self._write(root / "b", rows)  # same tuples pushed twice
+
+            summary = analyse([root / "a", root / "b"], REVIEW_CSV)
+
+        self.assertEqual(2, summary["total_runs"])
 
 if __name__ == "__main__":
     unittest.main()
