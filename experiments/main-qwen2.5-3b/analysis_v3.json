@@ -1,0 +1,149 @@
+{
+  "experiment_dirs": [
+    "experiments\\main-qwen2.5-3b"
+  ],
+  "total_runs": 172,
+  "models": [
+    "qwen2.5:3b"
+  ],
+  "capacity": {
+    "scenarios": 43,
+    "reviewed_allowed_field_paths": 369,
+    "declared_sensitive_field_paths": 109,
+    "note": "A/B apply no projection, so any declared-sensitive field is deliverable; C/D can deliver only the reviewed allowed set. This layer never depends on runs."
+  },
+  "delivery": {
+    "A": {
+      "runs": 43,
+      "mean_delivered_sensitive_fields": 0.395,
+      "mean_delivered_field_paths": 3.465,
+      "mean_removed_field_paths": 0.0,
+      "runs_with_any_sensitive_delivery": 8,
+      "tool_denials": 0
+    },
+    "B": {
+      "runs": 43,
+      "mean_delivered_sensitive_fields": 0.302,
+      "mean_delivered_field_paths": 2.326,
+      "mean_removed_field_paths": 0.0,
+      "runs_with_any_sensitive_delivery": 6,
+      "tool_denials": 0
+    },
+    "C": {
+      "runs": 43,
+      "mean_delivered_sensitive_fields": 0.0,
+      "mean_delivered_field_paths": 1.349,
+      "mean_removed_field_paths": 1.698,
+      "runs_with_any_sensitive_delivery": 0,
+      "tool_denials": 0
+    },
+    "D": {
+      "runs": 43,
+      "mean_delivered_sensitive_fields": 0.0,
+      "mean_delivered_field_paths": 0.86,
+      "mean_removed_field_paths": 2.07,
+      "runs_with_any_sensitive_delivery": 0,
+      "tool_denials": 0
+    }
+  },
+  "behaviour": {
+    "A": {
+      "runs": 43,
+      "technical_failures": 0,
+      "max_turns_reached": 1,
+      "mean_tool_calls": 1.442,
+      "mean_distinct_records": 0.651,
+      "task_success_rate": 0.023,
+      "safe_completion_rate": 0.023,
+      "valid_runs": 43
+    },
+    "B": {
+      "runs": 43,
+      "technical_failures": 0,
+      "max_turns_reached": 2,
+      "mean_tool_calls": 1.442,
+      "mean_distinct_records": 0.302,
+      "task_success_rate": 0.0,
+      "safe_completion_rate": 0.0,
+      "valid_runs": 43
+    },
+    "C": {
+      "runs": 43,
+      "technical_failures": 0,
+      "max_turns_reached": 0,
+      "mean_tool_calls": 1.302,
+      "mean_distinct_records": 0.419,
+      "task_success_rate": 0.07,
+      "safe_completion_rate": 0.07,
+      "valid_runs": 43
+    },
+    "D": {
+      "runs": 43,
+      "technical_failures": 0,
+      "max_turns_reached": 5,
+      "mean_tool_calls": 1.698,
+      "mean_distinct_records": 0.372,
+      "task_success_rate": 0.0,
+      "safe_completion_rate": 0.0,
+      "valid_runs": 43
+    }
+  },
+  "by_model": {
+    "qwen2.5:3b": {
+      "A": {
+        "valid_runs": 43,
+        "safe_completion_rate": 0.023,
+        "task_success_rate": 0.023,
+        "mean_delivered_sensitive_fields": 0.395
+      },
+      "B": {
+        "valid_runs": 43,
+        "safe_completion_rate": 0.0,
+        "task_success_rate": 0.0,
+        "mean_delivered_sensitive_fields": 0.302
+      },
+      "C": {
+        "valid_runs": 43,
+        "safe_completion_rate": 0.07,
+        "task_success_rate": 0.07,
+        "mean_delivered_sensitive_fields": 0.0
+      },
+      "D": {
+        "valid_runs": 43,
+        "safe_completion_rate": 0.0,
+        "task_success_rate": 0.0,
+        "mean_delivered_sensitive_fields": 0.0
+      }
+    }
+  },
+  "primary": {
+    "comparison": [
+      "A",
+      "C"
+    ],
+    "endpoint": "safe_completion",
+    "analysis_unit": "model x scenario (seeds collapsed by majority, retries by latest valid)",
+    "paired_valid_unit_count": 43,
+    "a_only_success_count": 1,
+    "c_only_success_count": 3,
+    "paired_risk_difference_a_minus_c": -0.046511627906976744,
+    "mcnemar_exact_two_sided_p": 0.625,
+    "excluded_unpaired_or_invalid_count": 0,
+    "seed_agreement": {
+      "condition_groups": 86,
+      "replicated_groups": 0,
+      "unanimous_replicated_groups": 0,
+      "note": "Seeds are collapsed, never treated as independent observations. A high unanimous share means repeated seeds were near-duplicates."
+    },
+    "delivered_sensitive_fields_a_minus_c": {
+      "mean_difference_a_minus_c": 0.3953488372093023,
+      "bootstrap_95_ci": [
+        0.16279069767441862,
+        0.6744186046511628
+      ],
+      "bootstrap_iterations": 2000,
+      "bootstrap_seed": 1
+    }
+  },
+  "layer_note": "capacity / delivery / behaviour are separate layers. A blocked payload that was never fetched is a capacity result, not evidence that an attack was stopped."
+}
