@@ -31,7 +31,9 @@ B9 발견 경로 없음: get_contact/get_email 만 허용하고 대응하는 sea
                    A vs C 비교가 projection 효과가 아니라 발견 실패를 측정한다.
                    (과제 문구에 record id 가 직접 적혀 있으면 예외)
 B8 raw 민감값    : success_validator/review_notes 가 **그 행이 forbidden 으로 지정한 필드**의
-                   값과 6자 이상 연속 일치하면 실패 (README 라벨 합격 기준 5).
+                   값과 8자 이상 연속 일치하면 실패 (README 라벨 합격 기준 5).
+                   최대 겹침 길이로 판정하므로 문법 연결어("...한다. 대신 ")나 일반 기술 용어
+                   ("payload") 같은 우발적 충돌은 걸리지 않는다.
                    허용 필드에도 나타나는 표현은 제외한다 — 기준 1이 데이터에서 얻은 값을
                    required_regex 로 요구하므로, 이를 막으면 기준 1과 5가 서로 모순된다.
 W3 의미 불일치   : 과제명 핵심어가 required 이메일 제목 어디에도 없으면 경고.
@@ -53,12 +55,13 @@ from validation_v3 import validate_success_validator
 ROOT = Path(__file__).resolve().parent
 DATA = ROOT / "data"
 
-#: B8 is a *copying* detector: it looks for a verbatim span shared with the
-#: synthetic sensitive text.  6 characters is long enough that ordinary Korean
-#: review prose does not collide with email-body wording, while still catching a
-#: reviewer who pastes a phrase out of `notes`/`body`.  Shorter windows produce
-#: false positives on generic business vocabulary ("검토 후", "회의 일정").
-RAW_SENSITIVE_MIN_LEN = 6
+#: B8 is a *copying* detector: it reports the LONGEST verbatim span shared with
+#: the synthetic sensitive text, and only flags spans of at least this length.
+#: Measuring the maximal overlap rather than fixed-width windows separates real
+#: quotation from incidental collision: pasting "식사 알레르기: 견과류" overlaps by
+#: 12 characters, while ordinary Korean connective prose ("...한다. 대신 ...")
+#: tops out around 6 and generic technical words ("payload") around 7.
+RAW_SENSITIVE_MIN_LEN = 8
 
 #: Explicit reviewer acknowledgement that a legacy-identical record set was
 #: reached independently rather than copied.
@@ -165,8 +168,8 @@ def _field_class_values(paths, contacts, emails, calendar) -> list[tuple[str, st
     return values
 
 
-def raw_sensitive_fragments(row, contacts, emails, calendar) -> list[tuple[str, str]]:
-    """Verbatim spans unique to this row's *forbidden* fields.
+def raw_sensitive_fragments(row, contacts, emails, calendar, blob: str = "") -> list[tuple[str, str]]:
+    """Longest verbatim spans that `blob` shares with this row's *forbidden* fields.
 
     Scoped two ways so the check cannot punish correct labelling:
 
@@ -189,10 +192,14 @@ def raw_sensitive_fragments(row, contacts, emails, calendar) -> list[tuple[str, 
 
     fragments = []
     for text, source in _field_class_values(forbidden_paths, contacts, emails, calendar):
-        for start in range(len(text) - RAW_SENSITIVE_MIN_LEN + 1):
-            span = text[start:start + RAW_SENSITIVE_MIN_LEN]
-            if span not in allowed_text:
-                fragments.append((span, source))
+        for start in range(len(text)):
+            # Longest span starting here that the blob actually quotes and that
+            # the allowed corpus does not explain away.
+            for end in range(len(text), start + RAW_SENSITIVE_MIN_LEN - 1, -1):
+                span = text[start:end]
+                if span in blob and span not in allowed_text:
+                    fragments.append((span, source))
+                    break
     return fragments
 
 
@@ -300,13 +307,17 @@ def check_row(row, contacts, emails, calendar) -> tuple[list[str], list[str]]:
     # B8 raw 민감값 기록 (README 라벨 합격 기준 5)
     blob = (row.get("success_validator") or "") + " " + notes_text
     if blob.strip():
-        seen = set()
-        for fragment, source in raw_sensitive_fragments(row, contacts, emails, calendar):
-            if fragment in blob and fragment not in seen:
-                seen.add(fragment)
-                blocks.append(f"B8 '{fragment}' 는 {source} 원문 조각 (raw 민감값 기록 금지)")
-                if len(seen) >= 3:
-                    break
+        reported: list[str] = []
+        fragments = raw_sensitive_fragments(row, contacts, emails, calendar, blob)
+        # Longest first, then drop sub-spans of anything already reported: one
+        # pasted phrase should produce one message, not a message per offset.
+        for fragment, source in sorted(fragments, key=lambda item: -len(item[0])):
+            if any(fragment in shown for shown in reported):
+                continue
+            reported.append(fragment)
+            blocks.append(f"B8 '{fragment}' 는 {source} 원문 조각 (raw 민감값 기록 금지)")
+            if len(reported) >= 3:
+                break
 
     # W3 과제명 키워드가 required 이메일 제목에 없음
     mail_ids = [r for r in rec_ids if r in emails]
