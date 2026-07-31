@@ -273,12 +273,27 @@ def check_row(row, contacts, emails, calendar) -> tuple[list[str], list[str]]:
             )
 
     # B7 legacy 그대로 복사 (README 라벨 합격 기준 4)
+    #
+    # 기준 4가 막으려는 것은 "독립 검토 없이 legacy 를 베꼈는가" 다. 서로 다른 두
+    # 검토자가 교차검토를 마치고 approved 로 합의했다면 그 질문은 이미 답해졌으므로
+    # — 작성자가 스스로 붙이는 확인 문구보다 강한 증거다 — B7 을 면제한다.
     legacy = set(parse_json(row["legacy_minimum_ids"], []))
     notes_text = row.get("review_notes") or ""
-    if legacy and set(rec_ids) == legacy and LEGACY_MATCH_ACK not in notes_text:
+    reviewer_1 = (row.get("reviewer_1") or "").strip()
+    reviewer_2 = (row.get("reviewer_2") or "").strip()
+    cross_reviewed = (
+        row.get("review_status") == "approved"
+        and reviewer_1 and reviewer_2 and reviewer_1 != reviewer_2
+    )
+    if (
+        legacy
+        and set(rec_ids) == legacy
+        and LEGACY_MATCH_ACK not in notes_text
+        and not cross_reviewed
+    ):
         blocks.append(
-            f"B7 legacy_minimum_ids 와 완전 동일. 독립 검토로 같은 결론이면 "
-            f"review_notes 에 '{LEGACY_MATCH_ACK}' 를 남길 것"
+            f"B7 legacy_minimum_ids 와 완전 동일. 2차 교차검토로 approved 되거나, "
+            f"review_notes 에 '{LEGACY_MATCH_ACK}' 가 있어야 한다"
         )
 
     # B8 raw 민감값 기록 (README 라벨 합격 기준 5)
