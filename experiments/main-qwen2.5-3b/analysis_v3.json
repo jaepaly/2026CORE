@@ -1,10 +1,12 @@
 {
   "experiment_dirs": [
     "experiments\\main-qwen2.5-3b",
-    "experiments\\main-qwen2.5-7b"
+    "experiments\\main-qwen2.5-7b",
+    "experiments\\main-llama3.1-8b"
   ],
-  "total_runs": 344,
+  "total_runs": 516,
   "models": [
+    "llama3.1:8b",
     "qwen2.5:3b",
     "qwen2.5:7b"
   ],
@@ -16,81 +18,107 @@
   },
   "delivery": {
     "A": {
-      "runs": 86,
-      "mean_delivered_sensitive_fields": 0.477,
-      "mean_delivered_field_paths": 3.733,
+      "runs": 129,
+      "mean_delivered_sensitive_fields": 0.512,
+      "mean_delivered_field_paths": 3.705,
       "mean_removed_field_paths": 0.0,
-      "runs_with_any_sensitive_delivery": 22,
+      "runs_with_any_sensitive_delivery": 34,
       "tool_denials": 0
     },
     "B": {
-      "runs": 86,
-      "mean_delivered_sensitive_fields": 0.419,
-      "mean_delivered_field_paths": 3.023,
+      "runs": 129,
+      "mean_delivered_sensitive_fields": 0.519,
+      "mean_delivered_field_paths": 3.403,
       "mean_removed_field_paths": 0.0,
-      "runs_with_any_sensitive_delivery": 19,
+      "runs_with_any_sensitive_delivery": 32,
       "tool_denials": 0
     },
     "C": {
-      "runs": 86,
+      "runs": 129,
       "mean_delivered_sensitive_fields": 0.0,
-      "mean_delivered_field_paths": 1.047,
-      "mean_removed_field_paths": 2.628,
+      "mean_delivered_field_paths": 1.0,
+      "mean_removed_field_paths": 2.667,
       "runs_with_any_sensitive_delivery": 0,
       "tool_denials": 0
     },
     "D": {
-      "runs": 86,
+      "runs": 129,
       "mean_delivered_sensitive_fields": 0.0,
-      "mean_delivered_field_paths": 0.779,
-      "mean_removed_field_paths": 2.407,
+      "mean_delivered_field_paths": 0.829,
+      "mean_removed_field_paths": 2.535,
       "runs_with_any_sensitive_delivery": 0,
       "tool_denials": 0
     }
   },
   "behaviour": {
     "A": {
-      "runs": 86,
+      "runs": 129,
       "technical_failures": 0,
       "max_turns_reached": 3,
-      "mean_tool_calls": 1.442,
-      "mean_distinct_records": 0.651,
-      "task_success_rate": 0.035,
-      "safe_completion_rate": 0.012,
-      "valid_runs": 86
+      "mean_tool_calls": 1.488,
+      "mean_distinct_records": 0.822,
+      "task_success_rate": 0.062,
+      "safe_completion_rate": 0.008,
+      "valid_runs": 129
     },
     "B": {
-      "runs": 86,
+      "runs": 129,
       "technical_failures": 0,
-      "max_turns_reached": 2,
-      "mean_tool_calls": 1.407,
-      "mean_distinct_records": 0.558,
-      "task_success_rate": 0.023,
+      "max_turns_reached": 3,
+      "mean_tool_calls": 1.535,
+      "mean_distinct_records": 0.775,
+      "task_success_rate": 0.054,
       "safe_completion_rate": 0.0,
-      "valid_runs": 86
+      "valid_runs": 129
     },
     "C": {
-      "runs": 86,
+      "runs": 129,
       "technical_failures": 0,
-      "max_turns_reached": 0,
-      "mean_tool_calls": 1.372,
-      "mean_distinct_records": 0.372,
-      "task_success_rate": 0.047,
-      "safe_completion_rate": 0.047,
-      "valid_runs": 86
+      "max_turns_reached": 3,
+      "mean_tool_calls": 1.481,
+      "mean_distinct_records": 0.558,
+      "task_success_rate": 0.039,
+      "safe_completion_rate": 0.039,
+      "valid_runs": 129
     },
     "D": {
-      "runs": 86,
+      "runs": 129,
       "technical_failures": 0,
-      "max_turns_reached": 5,
-      "mean_tool_calls": 1.465,
-      "mean_distinct_records": 0.407,
-      "task_success_rate": 0.012,
-      "safe_completion_rate": 0.012,
-      "valid_runs": 86
+      "max_turns_reached": 9,
+      "mean_tool_calls": 1.581,
+      "mean_distinct_records": 0.512,
+      "task_success_rate": 0.016,
+      "safe_completion_rate": 0.016,
+      "valid_runs": 129
     }
   },
   "by_model": {
+    "llama3.1:8b": {
+      "A": {
+        "valid_runs": 43,
+        "safe_completion_rate": 0.0,
+        "task_success_rate": 0.116,
+        "mean_delivered_sensitive_fields": 0.581
+      },
+      "B": {
+        "valid_runs": 43,
+        "safe_completion_rate": 0.0,
+        "task_success_rate": 0.116,
+        "mean_delivered_sensitive_fields": 0.721
+      },
+      "C": {
+        "valid_runs": 43,
+        "safe_completion_rate": 0.023,
+        "task_success_rate": 0.023,
+        "mean_delivered_sensitive_fields": 0.0
+      },
+      "D": {
+        "valid_runs": 43,
+        "safe_completion_rate": 0.023,
+        "task_success_rate": 0.023,
+        "mean_delivered_sensitive_fields": 0.0
+      }
+    },
     "qwen2.5:3b": {
       "A": {
         "valid_runs": 43,
@@ -151,23 +179,23 @@
     ],
     "endpoint": "safe_completion",
     "analysis_unit": "model x scenario (seeds collapsed by majority, retries by latest valid)",
-    "paired_valid_unit_count": 86,
+    "paired_valid_unit_count": 129,
     "a_only_success_count": 1,
-    "c_only_success_count": 4,
-    "paired_risk_difference_a_minus_c": -0.03488372093023256,
-    "mcnemar_exact_two_sided_p": 0.375,
+    "c_only_success_count": 5,
+    "paired_risk_difference_a_minus_c": -0.031007751937984496,
+    "mcnemar_exact_two_sided_p": 0.21875,
     "excluded_unpaired_or_invalid_count": 0,
     "seed_agreement": {
-      "condition_groups": 172,
+      "condition_groups": 258,
       "replicated_groups": 0,
       "unanimous_replicated_groups": 0,
       "note": "Seeds are collapsed, never treated as independent observations. A high unanimous share means repeated seeds were near-duplicates."
     },
     "delivered_sensitive_fields_a_minus_c": {
-      "mean_difference_a_minus_c": 0.47674418604651164,
+      "mean_difference_a_minus_c": 0.5116279069767442,
       "bootstrap_95_ci": [
-        0.29069767441860467,
-        0.6744186046511628
+        0.3488372093023256,
+        0.689922480620155
       ],
       "bootstrap_iterations": 2000,
       "bootstrap_seed": 1
