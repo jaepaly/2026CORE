@@ -44,3 +44,5 @@ experiments/*/*.log
 !experiments/*/figures/*.png
 !experiments/*/replay/
 !experiments/*/replay/*.json
+experiments/*/run.log
+experiments/*/run.err

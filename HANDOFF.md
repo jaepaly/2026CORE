@@ -18,17 +18,24 @@
 | 시나리오 라벨 | ✅ 완료 — 승인 43 / 폐기 5, 게이트 exit 0 |
 | 모델 파일럿 | ✅ 통과 — qwen2.5:3b 100%, qwen3:8b 80%, llama3.1:8b 100% |
 | 계측 코드 | ✅ 완료 — 테스트 135개 통과 |
-| **본 실험** | 🔄 4개 모델 중 **3개 완료 (516 runs, 기술 실패 0)** |
+| **본 실험** | ✅ **완료 — 4개 모델 688 runs, 기술 실패 0** |
 
 | 모델 | 실험 디렉터리 | 상태 |
 |---|---|---|
 | `qwen2.5:3b` | `experiments/main-qwen2.5-3b` | ✅ 172/172 |
 | `qwen2.5:7b` | `experiments/main-qwen2.5-7b` | ✅ 172/172 (장승우) |
 | `llama3.1:8b` | `experiments/main-llama3.1-8b` | ✅ 172/172 (이예찬) |
-| **`qwen3:8b`** | `experiments/main-qwen3-8b` | ⬅ **이 머신에서 할 일** |
+| `qwen3:8b` | `experiments/main-qwen3-8b` | ✅ 172/172 |
 
-세 모델 모두 `max_turns=4` / `temperature=0.0` / `num_predict=1000` / `seed=0`,
+네 모델 모두 `max_turns=4` / `temperature=0.0` / `num_predict=1000` / `seed=0`,
 프롬프트 해시 A==C·A≠B 로 동일하다. 같은 설정으로 돌려야 비교가 성립한다.
+
+> **manifest 의 `protocol_sha256` 불일치는 무해하다.** `qwen2.5:7b`·`llama3.1:8b` 는
+> `9cf3bb14…`, `qwen2.5:3b`·`qwen3:8b` 는 `4dafae62…` 를 기록했다. 프로토콜 *내용*은
+> 네 모델이 동일하다(각 manifest 에 박힌 `protocol` 객체가 현재 파일과 일치). 원인은
+> Windows 의 `core.autocrlf=true` 가 체크아웃 때 `protocols/v3_protocol.json` 을 CRLF 로
+> 바꿔 바이트 해시만 달라진 것이다. `.gitattributes` 에 해당 파일 `eol=lf` 를 고정해
+> 재발을 막았으므로, 이후 실행은 모두 `4dafae62…` 로 기록된다.
 
 ## 2. 이 머신에서 할 일
 
