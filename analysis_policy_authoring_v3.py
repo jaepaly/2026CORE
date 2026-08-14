@@ -82,6 +82,59 @@ def summarise(rows: list[dict]) -> dict:
     }
 
 
+def _collapse_to_domain(paths) -> set[str]:
+    collapsed = set()
+    for path in paths or ():
+        tool, _, field = path.partition(".")
+        collapsed.add(f"{record_domain(tool)}.{field}")
+    return collapsed
+
+
+def rescore_by_domain(rows: list[dict]) -> list[dict]:
+    """Re-score ignoring which tool of a domain was named.
+
+    The reviewers split the two contact tools deliberately -- in all 17 scenarios
+    where both are labelled, ``search_contacts`` carries the discovery fields and
+    ``get_contact`` the detail fields.  A model that asks for the right fields on
+    the wrong tool is then charged twice, once as over-permission and once as
+    over-restriction, though it withheld nothing and exposed nothing extra.
+
+    Collapsing ``<tool>.<field>`` to ``<domain>.<field>`` separates the two
+    questions: the tool-level score answers "did it write the policy the
+    reviewers wrote", this one answers "did it pick the right fields at all".
+    Both are reported; neither replaces the other.
+    """
+    rescored = []
+    for row in rows:
+        if row.get("parse_status") != "ok":
+            rescored.append(row)
+            continue
+        model = _collapse_to_domain(row["model_allowed_field_paths"])
+        reviewer = _collapse_to_domain(row["reviewer_allowed_field_paths"])
+        forbidden = _collapse_to_domain(row["reviewer_forbidden_sensitive_field_paths"])
+        over = model - reviewer
+        under = reviewer - model
+        sensitive = over & forbidden
+        intersection = model & reviewer
+        union = model | reviewer
+        rescored.append({
+            **row,
+            "model_field_count": len(model),
+            "reviewer_field_count": len(reviewer),
+            "over_permission": sorted(over),
+            "over_permission_count": len(over),
+            "sensitive_over_permission": sorted(sensitive),
+            "sensitive_over_permission_count": len(sensitive),
+            "over_restriction": sorted(under),
+            "over_restriction_count": len(under),
+            "exact_match": model == reviewer,
+            "jaccard": len(intersection) / len(union) if union else 1.0,
+            "precision": len(intersection) / len(model) if model else 0.0,
+            "recall": len(intersection) / len(reviewer) if reviewer else 1.0,
+        })
+    return rescored
+
+
 def by_model(rows: list[dict]) -> dict:
     grouped = defaultdict(list)
     for row in rows:
@@ -168,6 +221,7 @@ def scenario_agreement(rows: list[dict]) -> dict:
 
 def analyse(experiment_dirs: list[Path]) -> dict:
     rows = load_policies(experiment_dirs)
+    domain_rows = rescore_by_domain(rows)
     return {
         "total_calls": len(rows),
         "models": sorted({r["model"] for r in rows}),
@@ -176,6 +230,12 @@ def analyse(experiment_dirs: list[Path]) -> dict:
         "field_errors": field_error_profile(rows),
         "sensitive_fields": sensitive_field_profile(rows),
         "agreement": scenario_agreement(rows),
+        # Same calls, scored without holding the model to the reviewers' split
+        # between discovery and detail tools.
+        "domain_level": {
+            "overall": summarise(domain_rows),
+            "by_model": by_model(domain_rows),
+        },
     }
 
 
@@ -213,7 +273,17 @@ def main(argv=None) -> int:
     print(line("ALL", overall))
     print("  over=과잉 허용  over-sens=그중 민감 필드  under=과잉 차단  (시나리오당 필드 수)")
 
-    print(f"\n민감 필드를 한 번이라도 허용한 비율: {overall['any_sensitive_over_permission_rate']:.1%}")
+    domain = summary["domain_level"]
+    print("\n[도메인 단위] 발견/상세 도구 구분을 무시하고 같은 응답을 다시 채점")
+    print(header)
+    print("-" * len(header))
+    for model, stats in domain["by_model"].items():
+        print(line(model, stats))
+    print("-" * len(header))
+    print(line("ALL", domain["overall"]))
+
+    print(f"\n민감 필드를 한 번이라도 허용한 비율: {overall['any_sensitive_over_permission_rate']:.1%}"
+          f"  (도메인 단위 {domain['overall']['any_sensitive_over_permission_rate']:.1%})")
     print(f"어휘에 없는 필드를 지어낸 비율: {overall['invented_path_rate']:.1%}")
 
     sensitive = summary["sensitive_fields"]
