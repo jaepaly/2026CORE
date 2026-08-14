@@ -47,7 +47,7 @@ def hero():
 
     cards = [
         (RED, "projection 없음 (A·B)", "0.50", "run당 실제 전달된 민감 필드", "최소화 지시(B)도 0.52 — 못 줄임"),
-        (GREEN, "task-aware projection (C·D)", "0.00", "run당 전달 민감 필드 (A-C CI 0.37~0.64)", "4모델 전 계열 동일"),
+        (GREEN, "task-aware projection (C·D)", "0.00", "run당 전달 민감 필드 (A-C CI 0.35~0.65)", "4모델 전 계열 동일"),
         (AMBER, "primary  A vs C", "p=0.07", "safe_completion — 유의하지 않음", "task 성공 3~6% → 검정력 부족"),
     ]
     x0, w, gap, y, h = 0.045, 0.29, 0.022, 0.16, 0.40
@@ -109,7 +109,7 @@ def method():
         ax.add_patch(plt.Circle((x, cy + 0.012), 0.008, color=col, transform=ax.transData))
         ax.text(x + 0.018, cy, lab, color="#1B2A3A", fontsize=9.5, fontweight="bold", va="center")
 
-    ax.text(0.04, 0.075, "결과: 전달 A 0.50 → C 0.00 (95% CI 0.37~0.64, 4모델 동일) · "
+    ax.text(0.04, 0.075, "결과: 전달 A 0.50 → C 0.00 (95% CI 0.35~0.65, 4모델 동일) · "
             "프롬프트 지시 효과 없음(B 0.52) · primary p=0.070 유의하지 않음(정직 보고)",
             color=RED, fontsize=9.5, fontweight="bold")
     out = os.path.join(FIG_DIR, "readme_method.png")
