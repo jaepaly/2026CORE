@@ -34,6 +34,7 @@ from prompt_v3 import (
     prompt_hashes_by_condition,
 )
 from protocol_v3 import initialize_manifest
+from safe_failure_v3 import classify_outcome
 from scenario_review_v3 import select_approved_scenarios
 from tools_v3 import TOOLS_SCHEMA, WorkspaceTools
 from v3_experiment_runner import _json_array, _sensitive_fields, _tool_fields
@@ -78,6 +79,10 @@ def completed_keys(runs_path: Path) -> set[tuple]:
     return done
 
 
+def _records_of(tools: WorkspaceTools) -> dict:
+    return {**tools.contacts, **tools.emails, **tools.calendar}
+
+
 def run_one(*, row, condition, model, seed, tools, model_step, tool_names, max_turns,
             forbidden_tools, retry_index=0) -> dict:
     projection = _tool_fields(_json_array(row["allowed_field_paths"], "allowed_field_paths"),
@@ -101,6 +106,18 @@ def run_one(*, row, condition, model, seed, tools, model_step, tool_names, max_t
         excess_sensitive_field_count=count_excess_sensitive_fields(outcome["delivery_events"]),
         forbidden_action=any(tool in forbidden_tools for tool in outcome["executed_tools"]),
     )
+    # Classified here, while the text is still in memory, so the artifact can
+    # record *how* a run ended without the artifact ever holding the reply.
+    ending = classify_outcome(
+        output=outcome["final_output"],
+        task_success=bool(validation.get("task_success")),
+        delivery_events=outcome["delivery_events"],
+        records=_records_of(tools),
+        forbidden_sensitive_field_paths=_json_array(
+            row.get("forbidden_sensitive_field_paths") or "[]",
+            "forbidden_sensitive_field_paths"),
+        task_text=row["task"],
+    )
     return {
         "run_id": run_id, "model": model, "scenario": row["scenario_id"],
         "condition": condition, "seed": seed, "retry_index": retry_index,
@@ -112,6 +129,7 @@ def run_one(*, row, condition, model, seed, tools, model_step, tool_names, max_t
         "failure_stage": outcome.get("failure_stage"),
         "failure_type": outcome.get("failure_type"),
         **validation,
+        **ending,
     }
 
 

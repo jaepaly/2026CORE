@@ -38,6 +38,7 @@ experiments/*
 !experiments/*/policies.jsonl
 !experiments/*/analysis_policy_authoring.json
 !experiments/*/lint_evaluation.json
+!experiments/*/safe_failure.json
 experiments/*/traces/
 experiments/*/raw/
 experiments/*/*.log
