@@ -338,6 +338,36 @@ python figures_v3.py --experiment-dir ... (동일하게 반복)
 - run이 없는 조합을 그럴듯하게 채우지 말 것. 없으면 "해당 run 없음"으로 표시한다.
 - 데모를 위해 `data/`나 라벨을 수정하지 말 것.
 
+## 5-c. 모델 digest — 기록 공백과 수정 (2026-08-14)
+
+**증상.** `main-*` · `rerun-*` 의 모든 manifest 가 `"digest": "unknown:<모델명>"` 으로 적혀 있다.
+digest 는 "두 실행이 같은 모델 빌드였는가"를 답하려고 두는 값인데, 전 실험 기간 한 번도
+기록되지 않았다.
+
+**원인.** `model_digest()` 가 `/api/show` 를 조회했으나 **그 응답에는 `digest` 필드가 없다**
+(`license` · `modelfile` · `parameters` · `template` · `details` · `model_info` · `tensors` ·
+`capabilities` · `modified_at`). 그래서 매번 조용히 `unknown:` fallback 으로 떨어졌다.
+digest 는 `/api/tags` 의 태그 목록에 있다. → `run_experiment_v3.py` 를 `/api/tags` 조회로
+고쳤고 회귀 테스트 3개를 붙였다(정상 조회 · 미설치 모델 · 서버 오류).
+
+**이 데스크탑에 설치된 빌드 (2026-08-14 확인).**
+
+| 모델 | digest | 크기 | 설치일 |
+|---|---|---:|---|
+| `qwen3:8b` | `500a1f067a9f…` | 5.2GB | 2026-05-07 |
+| `qwen2.5:7b` | `845dbda0ea48…` | 4.7GB | 2026-05-07 |
+| `llama3.1:8b` | `46e0c10c039e…` | 4.9GB | 2026-05-07 |
+| `qwen2.5:3b` | `357c53fb659c…` | 1.9GB | 2026-06-28 |
+
+**재실행 원인 규명에 쓰이는 부분.** 위 세 값은 팀원이 본 실험 당시 보고한 digest 와 일치한다
+(이예찬 `qwen3:8b` = `500a1f067a9f`, 장승우 `llama3.1:8b` = `46e0c10c039e` ·
+`qwen2.5:7b` = `845dbda0ea48`). 즉 **8/14 재실행에서 `qwen2.5:7b` 의 전달량이
+0.558 → 0.349 로 움직인 것은 모델 빌드가 바뀐 탓이 아니다.** 남은 후보는 로컬 추론의
+비결정성(같은 재실행에서 4모델 모두 출력이 92~159/172 건 달라졌다)과 실행 머신 차이다.
+
+> 기존 manifest 는 고치지 않는다. 그 실행들이 digest 를 기록하지 못한 것은 사실이며,
+> 사후에 값을 채워 넣으면 산출물이 거짓을 말하게 된다. 위 표는 별도 관측 기록으로 남긴다.
+
 ## 6. 문제 대처
 
 | 증상 | 원인 / 대처 |
@@ -345,7 +375,8 @@ python figures_v3.py --experiment-dir ... (동일하게 반복)
 | `no approved scenarios` | `git pull`이 안 됨. 최신 master인지 확인 |
 | `manifest 거부: ...` | 다른 설정으로 같은 폴더에 실행. 폴더 이름을 바꿀 것 |
 | `technical_failure` 반복 | ollama가 죽었거나 모델이 없음. `ollama list` 확인 |
-| 테스트 실패 | `python -m pytest tests/ -q` 로 재현. 135개가 통과해야 정상 |
+| manifest 의 digest 가 `unknown:` | ollama 미기동 상태로 실행됨. `/api/tags` 가 응답하는지 확인 |
+| 테스트 실패 | `python -m pytest tests/ -q` 로 재현. 190개가 통과해야 정상 |
 
 ## 7. 더 읽을 것
 

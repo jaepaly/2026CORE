@@ -52,12 +52,27 @@ def load_approved(review_csv: Path) -> list[dict]:
         return select_approved_scenarios(list(csv.DictReader(handle)))
 
 
-def model_digest(name: str, request_post=requests.post) -> str:
-    """Pin the exact model build; the protocol requires a digest per model."""
+def model_digest(name: str, request_get=requests.get) -> str:
+    """Pin the exact model build; the protocol requires a digest per model.
+
+    Read from ``/api/tags``, not ``/api/show``.  ``/api/show`` describes the
+    model (license, template, ``model_info``, ``details``) but carries no
+    ``digest`` field at all, so the previous lookup silently fell through to the
+    ``unknown:`` fallback on every run.  Every manifest written so far records
+    ``unknown:<name>``, which means the artifacts cannot answer the one question
+    the digest exists for -- whether two runs used the same model build.  That
+    gap surfaced when a re-run moved the delivery layer and we could not rule out
+    a changed model.  ``/api/tags`` lists each installed tag with its digest.
+    """
     try:
-        response = request_post("http://localhost:11434/api/show", json={"model": name}, timeout=30)
+        response = request_get("http://localhost:11434/api/tags", timeout=30)
         response.raise_for_status()
-        return response.json().get("digest") or f"unknown:{name}"
+        for entry in response.json().get("models", []):
+            if entry.get("name") == name:
+                digest = entry.get("digest")
+                if digest:
+                    return digest
+        return f"unknown:{name}"
     except Exception:
         return f"unknown:{name}"
 

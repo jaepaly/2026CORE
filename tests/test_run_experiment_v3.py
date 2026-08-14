@@ -3,7 +3,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from run_experiment_v3 import completed_keys, main, run_one
+from run_experiment_v3 import completed_keys, main, model_digest, run_one
 from tools_v3 import WorkspaceTools
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -125,6 +125,51 @@ class DryRunTests(unittest.TestCase):
             ])
 
         self.assertEqual(2, code)
+
+
+class _Response:
+    def __init__(self, payload):
+        self._payload = payload
+
+    def raise_for_status(self):
+        return None
+
+    def json(self):
+        return self._payload
+
+
+class ModelDigestTest(unittest.TestCase):
+    """The digest pins the model build, so a silent fallback is not acceptable.
+
+    ``/api/show`` carries no ``digest`` field, so an earlier lookup there wrote
+    ``unknown:<name>`` into every manifest of the study.  These tests fix the
+    source (``/api/tags``) and the failure mode.
+    """
+
+    TAGS = {"models": [
+        {"name": "other:1b", "digest": "aaa"},
+        {"name": "stub:1b", "digest": "d3adbeef"},
+    ]}
+
+    def test_digest_comes_from_tags_listing(self):
+        captured = {}
+
+        def request_get(url, timeout=None):
+            captured["url"] = url
+            return _Response(self.TAGS)
+
+        self.assertEqual("d3adbeef", model_digest("stub:1b", request_get=request_get))
+        self.assertTrue(captured["url"].endswith("/api/tags"))
+
+    def test_model_not_installed_falls_back(self):
+        digest = model_digest("missing:1b", request_get=lambda url, timeout=None: _Response(self.TAGS))
+        self.assertEqual("unknown:missing:1b", digest)
+
+    def test_server_error_falls_back_without_raising(self):
+        def boom(url, timeout=None):
+            raise OSError("ollama down")
+
+        self.assertEqual("unknown:stub:1b", model_digest("stub:1b", request_get=boom))
 
 
 if __name__ == "__main__":
