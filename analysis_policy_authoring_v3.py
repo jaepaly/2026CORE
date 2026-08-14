@@ -28,6 +28,8 @@ from collections import Counter, defaultdict
 from pathlib import Path
 
 from delivery_audit_v3 import record_domain
+from policy_authoring_v3 import build_field_vocabulary, flatten_vocabulary
+from tools_v3 import WorkspaceTools
 
 ROOT = Path(__file__).resolve().parent
 
@@ -193,6 +195,42 @@ def sensitive_field_profile(rows: list[dict]) -> dict:
     }
 
 
+def unknown_path_profile(rows: list[dict], vocabulary: set[str]) -> dict:
+    """Separate path-syntax slips from genuinely invented data.
+
+    The distinction changes the conclusion.  ``search_calendar.time`` and
+    ``events[].participants[]`` name fields that exist -- the model knew what it
+    wanted and mis-spelled the path.  That is a policy-grammar problem, fixable
+    by validating the authored policy against the schema before it is applied.
+    A field that exists nowhere in the workspace would be a different failure:
+    the model reasoning about data it imagined.
+
+    A path counts as a near miss when its bare field name (trailing ``[]``
+    stripped, container prefix dropped) exists somewhere in the vocabulary.
+    """
+    bare_fields = set()
+    for path in vocabulary:
+        _, _, field = path.partition(".")
+        bare_fields.add(field.rsplit("[].", 1)[-1].rstrip("[]"))
+
+    near_miss: Counter = Counter()
+    invented: Counter = Counter()
+    for row in rows:
+        for path in row.get("unknown_paths", ()):
+            _, _, field = path.partition(".")
+            leaf = field.rsplit("[].", 1)[-1].rstrip("[]")
+            (near_miss if leaf in bare_fields else invented)[path] += 1
+    total = sum(near_miss.values()) + sum(invented.values())
+    return {
+        "total_unknown_paths": total,
+        "near_miss_count": sum(near_miss.values()),
+        "invented_count": sum(invented.values()),
+        "near_miss_share": sum(near_miss.values()) / total if total else 0.0,
+        "near_miss": dict(near_miss.most_common()),
+        "invented": dict(invented.most_common()),
+    }
+
+
 def scenario_agreement(rows: list[dict]) -> dict:
     """Scenarios where every model over-permits are a label-difficulty signal.
 
@@ -230,6 +268,8 @@ def analyse(experiment_dirs: list[Path]) -> dict:
         "field_errors": field_error_profile(rows),
         "sensitive_fields": sensitive_field_profile(rows),
         "agreement": scenario_agreement(rows),
+        "unknown_paths": unknown_path_profile(
+            rows, flatten_vocabulary(build_field_vocabulary(WorkspaceTools()))),
         # Same calls, scored without holding the model to the reviewers' split
         # between discovery and detail tools.
         "domain_level": {
@@ -284,7 +324,14 @@ def main(argv=None) -> int:
 
     print(f"\n민감 필드를 한 번이라도 허용한 비율: {overall['any_sensitive_over_permission_rate']:.1%}"
           f"  (도메인 단위 {domain['overall']['any_sensitive_over_permission_rate']:.1%})")
-    print(f"어휘에 없는 필드를 지어낸 비율: {overall['invented_path_rate']:.1%}")
+    print(f"어휘에 없는 필드를 쓴 비율: {overall['invented_path_rate']:.1%}")
+    unknown = summary["unknown_paths"]
+    if unknown["total_unknown_paths"]:
+        print(f"  그중 실재 필드의 경로 문법 오류: "
+              f"{unknown['near_miss_count']}/{unknown['total_unknown_paths']}"
+              f" ({unknown['near_miss_share']:.0%}) — 없는 데이터를 지어낸 것이 아니다")
+        for path, count in list(unknown["invented"].items())[:5]:
+            print(f"  실재하지 않는 필드: {path} ({count})")
 
     sensitive = summary["sensitive_fields"]
     if sensitive:
