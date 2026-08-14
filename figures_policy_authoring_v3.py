@@ -36,31 +36,48 @@ REVIEWER = "#7F7F7F"
 
 
 def figure_error_directions(summary: dict, out_dir: Path) -> Path:
-    """Per model: how many fields granted vs the reviewer, split by direction."""
+    """Per model: how many fields granted vs the reviewer, split by direction.
+
+    The domain-level score is drawn as a hatched overlay inside each bar, so the
+    gap between the two is readable as a quantity: it is the part of the error
+    that comes from naming the wrong tool of a domain rather than from picking
+    the wrong field.  Plotting only the tool-level bar would present a
+    tool-vocabulary slip as a privacy misjudgement.
+    """
     models = list(summary["by_model"])
-    over = [summary["by_model"][m]["mean_over_permission"] for m in models]
-    sensitive = [summary["by_model"][m]["mean_sensitive_over_permission"] for m in models]
-    under = [summary["by_model"][m]["mean_over_restriction"] for m in models]
+    tool = summary["by_model"]
+    domain = summary["domain_level"]["by_model"]
+    over = [tool[m]["mean_over_permission"] for m in models]
+    under = [tool[m]["mean_over_restriction"] for m in models]
+    over_domain = [domain.get(m, {}).get("mean_over_permission", 0) for m in models]
+    under_domain = [domain.get(m, {}).get("mean_over_restriction", 0) for m in models]
+    sensitive = [tool[m]["mean_sensitive_over_permission"] for m in models]
 
-    fig, axes = plt.subplots(1, 2, figsize=(12, 4.4))
-    positions = range(len(models))
-    width = 0.36
+    fig, axes = plt.subplots(1, 2, figsize=(12.5, 4.6))
+    positions = list(range(len(models)))
+    width = 0.34
 
-    axes[0].bar([p - width / 2 for p in positions], over, width,
-                label="과잉 허용 (검토자가 뺀 필드를 줌)", color=OVER_PERMISSION)
-    axes[0].bar([p + width / 2 for p in positions], under, width,
-                label="과잉 차단 (검토자가 준 필드를 뺌)", color=OVER_RESTRICTION)
-    axes[0].set_xticks(list(positions))
+    left = [p - width / 2 for p in positions]
+    right = [p + width / 2 for p in positions]
+    axes[0].bar(left, over, width, label="과잉 허용", color=OVER_PERMISSION)
+    axes[0].bar(right, under, width, label="과잉 차단", color=OVER_RESTRICTION)
+    axes[0].bar(left, over_domain, width, color="none", edgecolor="white",
+                hatch="///", linewidth=0)
+    axes[0].bar(right, under_domain, width, color="none", edgecolor="white",
+                hatch="///", linewidth=0, label="빗금: 도메인 단위 (도구 혼동 제외)")
+    axes[0].set_xticks(positions)
     axes[0].set_xticklabels(models, rotation=12, fontsize=8)
+    axes[0].set_xlim(-0.6, len(models) - 0.4)
     axes[0].set_ylabel("시나리오당 필드 수", fontsize=9)
     axes[0].set_title("두 오류는 결과가 반대다 — 합치지 않는다", fontsize=11)
     axes[0].legend(fontsize=8)
 
-    axes[1].bar(list(positions), sensitive, width * 1.6, color=OVER_PERMISSION)
+    axes[1].bar(positions, sensitive, width * 1.5, color=OVER_PERMISSION)
     for index, value in enumerate(sensitive):
         axes[1].text(index, value, f"{value:.2f}", ha="center", va="bottom", fontsize=9)
-    axes[1].set_xticks(list(positions))
+    axes[1].set_xticks(positions)
     axes[1].set_xticklabels(models, rotation=12, fontsize=8)
+    axes[1].set_xlim(-0.6, len(models) - 0.4)
     axes[1].set_ylabel("시나리오당 민감 필드 수", fontsize=9)
     axes[1].set_title("검토자가 금지한 민감 필드를 허용한 양", fontsize=11)
     axes[1].set_ylim(0, max(sensitive + [0.05]) * 1.3)
@@ -85,8 +102,9 @@ def figure_policy_size(summary: dict, out_dir: Path) -> Path:
         ax.text(bar.get_x() + bar.get_width() / 2, value, f"{value:.1f}",
                 ha="center", va="bottom", fontsize=9)
     ax.axhline(reviewer, color=REVIEWER, linestyle="--", linewidth=1.4)
-    ax.text(len(models) - 0.5, reviewer, f" 인간 검토자 {reviewer:.1f}",
+    ax.text(len(models) - 0.45, reviewer, f"인간 검토자 {reviewer:.1f} ",
             va="bottom", ha="right", fontsize=9, color=REVIEWER)
+    ax.set_xlim(-0.6, len(models) - 0.4)
     ax.set_ylabel("시나리오당 허용 필드 수", fontsize=9)
     ax.set_title("모델이 쓴 정책의 폭 vs 사람이 쓴 정책의 폭", fontsize=11)
     ax.tick_params(axis="x", rotation=12, labelsize=8)
