@@ -1,7 +1,9 @@
 import json
+import os
 import unittest
 
-from delivery_audit_v3 import audit_denial, count_excess_sensitive_fields, project_and_audit
+from delivery_audit_v3 import (audit_denial, count_excess_sensitive_fields,
+                               project_and_audit, project_record)
 
 
 class DeliveryAuditV3Tests(unittest.TestCase):
@@ -168,3 +170,46 @@ class ExcessSensitiveCountTests(unittest.TestCase):
 
         self.assertEqual(1, count_excess_sensitive_fields([leaky]))
         self.assertEqual(0, count_excess_sensitive_fields([clean]))
+
+
+class ProjectionDeterminismTests(unittest.TestCase):
+    """The projected record is serialised into the model's input verbatim.
+
+    Key order therefore has to be a property of the policy, not of the process
+    that happened to run it.
+    """
+
+    def test_nested_subfields_come_out_sorted(self):
+        record = {"id": "cal1", "events": [
+            {"title": "t", "time": "09:00", "location": "3F", "participants": ["a"]}]}
+        allowed = {"id", "events[].title", "events[].time",
+                   "events[].location", "events[].participants"}
+
+        projected = project_record(record, allowed)
+
+        self.assertEqual(["location", "participants", "time", "title"],
+                         list(projected["events"][0]))
+
+    def test_the_same_policy_serialises_identically_across_processes(self):
+        import json
+        import subprocess
+        import sys
+        from pathlib import Path
+
+        script = (
+            "import json,sys;sys.path.insert(0,%r)\n"
+            "from delivery_audit_v3 import project_record\n"
+            "rec={'id':'c','events':[{'title':'t','time':'9','location':'L','participants':['a']}]}\n"
+            "allowed={'id','events[].title','events[].time','events[].location','events[].participants'}\n"
+            "print(json.dumps(project_record(rec,allowed),ensure_ascii=False,sort_keys=False))\n"
+        ) % str(Path(__file__).resolve().parents[1])
+
+        outputs = set()
+        for hash_seed in ("1", "2", "3"):
+            env = {**os.environ, "PYTHONHASHSEED": hash_seed, "PYTHONIOENCODING": "utf-8"}
+            result = subprocess.run([sys.executable, "-c", script], capture_output=True,
+                                    text=True, encoding="utf-8", env=env)
+            self.assertEqual(0, result.returncode, result.stderr)
+            outputs.add(result.stdout.strip())
+
+        self.assertEqual(1, len(outputs), f"key order drifted across processes: {outputs}")

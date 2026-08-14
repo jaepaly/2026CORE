@@ -77,7 +77,18 @@ def record_field_paths(record: dict) -> set[str]:
 
 
 def project_record(record: dict, allowed_field_paths) -> dict:
-    """Keep only allowed paths. ``None`` means no projection (deliver as-is)."""
+    """Keep only allowed paths. ``None`` means no projection (deliver as-is).
+
+    Subfields are emitted in sorted order.  ``split_projection`` returns them as
+    a set, and iterating a set of strings gives an order that depends on the
+    process's hash seed -- which Python randomises per run.  The projected record
+    is serialised straight into the tool message, so an unsorted set meant the
+    model received the same fields under a different key order on every process:
+    condition C/D runs touching nested paths were not reproducible, and the input
+    carried variation nothing in the design intended.  Top-level keys were never
+    affected (they follow the record's own insertion order), which is why only
+    projected nested records drifted.
+    """
     if not isinstance(record, dict):
         return record
     if allowed_field_paths is None:
@@ -88,7 +99,7 @@ def project_record(record: dict, allowed_field_paths) -> dict:
         if key in whole:
             projected[key] = value
         elif key in nested and isinstance(value, list):
-            subfields = nested[key]
+            subfields = sorted(nested[key])
             projected[key] = [
                 {sub: item[sub] for sub in subfields if sub in item}
                 for item in value
