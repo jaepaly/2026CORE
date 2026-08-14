@@ -37,36 +37,73 @@
 > 바꿔 바이트 해시만 달라진 것이다. `.gitattributes` 에 해당 파일 `eol=lf` 를 고정해
 > 재발을 막았으므로, 이후 실행은 모두 `4dafae62…` 로 기록된다.
 
-## 2. 이 머신에서 할 일
+## 2. 지금 할 일 — 조교님 피드백 반영 (결과보고서까지 1주)
+
+본 실험은 끝났다. 남은 것은 **노벨티 보강과 보고서**다.
+
+### 2.1 왜 방향을 바꿨나
+
+조교님 지적의 핵심은 두 개이고 둘 다 타당하다.
+
+1. **"field projection 되는 건 당연한 거 아니냐."** 맞다. 허용 필드를 정하고 나머지를
+   지우면 전달되지 않는 것은 정의상 당연하고, C·D = 0.00 은 발견이 아니라 **구현 검증**이다.
+   내세울 수 있는 것은 그 옆의 대조다 — 현장 기본 방어인 "AI에게 조심하라고 지시한다"가
+   무효이고 모델에 따라 역효과(4모델 중 2개에서 B > A)라는 것.
+2. **"공존에 기여하는 게 있나."** 소주제가 'AI시대, 인간과 기술의 공존'인데 노출을
+   측정하고 끝나면 인간의 자리가 없다.
+
+그래서 본 실험은 **일절 건드리지 않고**, 답하지 못한 질문 하나를 따로 실험한다.
+본 실험에서 `allowed_field_paths` 는 43개 시나리오 전부 사람이 썼다. 그 작성 단계가
+항상 사람이어야 한다면 최소권한은 검토 인력에 비례해서만 확장된다.
+
+**→ 사람이 쓴 그 정책을, 모델이 쓸 수 있는가?**
+
+### 2.2 정책 작성 실험
+
+설계 문서: [`docs/policy_authoring_v3.md`](docs/policy_authoring_v3.md) ← **먼저 읽을 것**
 
 ```bash
-git pull
-pip install requests matplotlib
-ollama pull qwen3:8b
+python run_policy_authoring_v3.py --experiment-dir experiments/policy-authoring     --model qwen2.5:3b --model qwen2.5:7b --model llama3.1:8b --model qwen3:8b
 
-python run_experiment_v3.py --experiment-dir experiments/main-qwen3-8b \
-    --model qwen3:8b --max-turns 4 --git-commit $(git rev-parse --short HEAD)
+python analysis_policy_authoring_v3.py --experiment-dir experiments/policy-authoring
+python figures_policy_authoring_v3.py --experiment-dir experiments/policy-authoring
 ```
 
-172 runs(43시나리오 × 4조건). GPU면 2~3시간, CPU면 8시간 이상.
-**중단해도 된다.** 완료된 run은 즉시 저장되고 같은 명령을 다시 실행하면 이어서 돌아간다.
+172콜(43시나리오 × 4모델), 도구 없는 단발 호출이라 본 실험보다 훨씬 빠르다.
+중단해도 이어서 돈다. 산출물은 `policies.jsonl`.
 
-완료 확인:
+**어떤 결과가 나와도 기여가 성립하도록** 설계했다.
 
-```bash
-python -c "print(sum(1 for _ in open('experiments/main-qwen3-8b/runs.jsonl', encoding='utf-8')))"
-# 172 가 나와야 한다
-```
+| 결과 | 결론 |
+|---|---|
+| 과잉 허용이 크다 | 정책 작성을 AI에 맡기면 뚫린다 → 사람이 승인해야 할 **필드 우선순위** 제안 |
+| 과잉 차단이 크다 | AI 정책은 업무를 막는다 → 사람이 보완해야 할 **개입 지점** 제안 |
+| 사람과 근접 | 정책 작성 비용을 낮출 수 있다 → AI 초안 + 사람 검토 파이프라인 근거 |
 
-결과 공유:
+세 경우 모두 **인간·AI·시스템·감사로그의 분업 경계**를 수치로 제안하는 것이 결론이 된다.
+감사로그 축은 이미 실물이 있다 — 값 없는 `runs.jsonl` 688건과 replay 데모.
 
-```bash
-git add experiments/main-qwen3-8b/
-git commit -m "run: v3 main study qwen3:8b"
-git push
-```
+### 2.3 합성 데이터 근거 (완료)
 
-`runs.jsonl`에는 원문 값이 없다 — 필드 경로·레코드 ID·해시·카운트만 저장되고 최종 답변과 도구 응답은 sha256으로만 남는다. 커밋해도 안전하다.
+조교님이 지적한 "합성 데이터에 근거가 있어야 한다"는
+[`docs/data_provenance_v3.md`](docs/data_provenance_v3.md) 로 정리했다. 스키마를 Google
+People/Gmail/Calendar API 에 대응시킨 표, 민감도 판단의 이론 근거(contextual integrity),
+데이터 규모의 한계와 그 편향 방향이 들어 있다. **인용 3건은 실재 확인했다.**
+
+### 2.4 보고서 서사 (6단계)
+
+1. 문제 — 도구를 주면 업무에 불필요한 민감정보가 컨텍스트로 흘러든다 (A: run당 0.50)
+2. 통념 반박 — 모델에게 지시하는 방식은 무효·불안정 (B ≈ A, 2/4 모델 역효과)
+3. 구조 검증 — 정책은 인터페이스가 집행해야 한다 (C·D = 0.00, 4모델 결정론적)
+4. **남는 질문** — 그 정책은 누가 쓰나? → 정책 작성 실험
+5. 결론 — 인간(정의·검토) · 시스템(집행) · AI(수행·초안) · 감사로그(검증) 분업 프레임워크
+6. 한계 — 효용 축 저검정력(task ~5%), 소형 모델 4종, 합성 단일 도메인
+
+### 2.5 버린 것
+
+**공격 실험(clean/poisoned)은 폐기.** 주입 공격은 "누구나 할 수 있는" 영역이라
+노벨티 비판을 더 세게 맞고, 소주제와의 연결도 정책 실험보다 약하다. 1주는 정책 실험과
+보고서에 쓴다.
 
 ## 3. 절대 하면 안 되는 것 ⚠️
 
@@ -78,6 +115,8 @@ git push
 4. **성공률이 낮다고 validator를 손보지 말 것.** 현재 `task_success`가 매우 낮다(qwen2.5:3b에서 A 1/43, C 3/43). 이것을 "고치려고" `success_validator`의 정규식을 완화하는 것은 **결과를 본 뒤 채점 기준을 바꾸는 행위**이며 사후 조작이다. 낮은 성공률 자체가 보고할 결과다.
 5. **v2 수치를 이 연구의 발견으로 쓰지 말 것.** README의 "탐색 결과 (v2 · legacy)" 절은 교란된 설계에서 나온 값이다(조건 A가 중립이 아니었고, C/D가 필드 필터와 도구 차단을 함께 바꿨다). 인과적 근거로 인용 금지.
 6. **`experiments/main-*` 디렉터리를 모델끼리 공유하지 말 것.** manifest가 모델마다 달라 동결 규칙이 거부한다. 모델당 하나씩 쓴다.
+7. **본 실험(2×2, 688 runs)을 다시 돌리거나 라벨을 고치지 말 것.** 정책 작성 실험은 같은 라벨을 *읽기만* 한다. 정책 실험 결과가 마음에 안 든다고 `allowed_field_paths` 를 손대면 본 실험의 projection 정의까지 같이 바뀐다.
+8. **정책 실험 프롬프트를 결과를 본 뒤 바꾸지 말 것.** manifest 가 프롬프트 해시를 동결하며, 다른 프롬프트로 같은 디렉터리에 덧쓰려 하면 거부한다. 바꿔야 한다면 전체를 새 디렉터리에서 다시 돌리고 그 사실을 기록한다.
 
 ## 4. 이미 나온 결과 (해석 주의)
 
