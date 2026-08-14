@@ -37,6 +37,7 @@ experiments/*
 # counts and response hashes only, never reply text or record values.
 !experiments/*/policies.jsonl
 !experiments/*/analysis_policy_authoring.json
+!experiments/*/lint_evaluation.json
 experiments/*/traces/
 experiments/*/raw/
 experiments/*/*.log

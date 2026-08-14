@@ -1,0 +1,18 @@
+{
+  "reviewer_policies": 43,
+  "reviewer_flagged_any": 0,
+  "reviewer_flagged_error": 0,
+  "model_policies": 172,
+  "model_rejected": 118,
+  "model_passed": 54,
+  "diagnostic_counts": {
+    "P3": 151,
+    "P2": 127
+  },
+  "passed_mean_recall": 0.38803515233253794,
+  "rejected_mean_recall": 0.22147423862279295,
+  "passed_mean_jaccard": 0.2385437396058311,
+  "rejected_mean_jaccard": 0.155846583953382,
+  "passed_sensitive_rate": 0.07407407407407407,
+  "rejected_sensitive_rate": 0.2288135593220339
+}
