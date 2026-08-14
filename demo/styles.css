@@ -1231,3 +1231,61 @@ footer a {
   color: #6b7280;
   word-break: break-all;
 }
+
+
+/* ---------- 연구 2: 정책 작성 패널 ----------
+   칩 색은 오류의 결과를 따른다 — 붉은 계열은 노출 방향(과잉 허용), 푸른 계열은
+   업무 저해 방향(과잉 차단). 두 실패의 처방이 반대이므로 한 색으로 묶지 않는다. */
+.pol-summary {
+  display: flex; flex-wrap: wrap; gap: 10px 22px;
+  padding: 14px 18px; margin: 0 0 16px;
+  border: 1px solid rgba(148, 163, 184, 0.28); border-radius: 12px;
+  background: rgba(15, 23, 42, 0.35);
+  font-size: 0.92rem; color: #CBD5E1;
+}
+.pol-summary b { color: #F1F5F9; font-size: 1.05rem; }
+.pol-summary .warn b { color: #FCA5A5; }
+
+.pol-legend { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 18px; }
+
+.pol-chip {
+  display: inline-block; padding: 3px 9px; margin: 2px;
+  border-radius: 6px; font-size: 0.82rem; font-family: ui-monospace, monospace;
+  border: 1px solid transparent;
+  /* 카드가 좁아지면 search_calendar.events[].participants 같은 긴 경로가 칸을
+     넘어간다. 줄바꿈을 허용해 가로 스크롤 대신 두 줄로 접히게 한다. */
+  overflow-wrap: anywhere;
+}
+.pol-chip.match       { background: rgba(84, 162, 75, 0.16);  color: #A7F3C0; border-color: rgba(84, 162, 75, 0.4); }
+.pol-chip.over        { background: rgba(228, 87, 86, 0.14);  color: #FCA5A5; border-color: rgba(228, 87, 86, 0.38); }
+.pol-chip.over-sensitive { background: rgba(228, 87, 86, 0.34); color: #FFE4E6; border-color: #E45756; font-weight: 600; }
+.pol-chip.under       { background: rgba(76, 120, 168, 0.18); color: #BFDBFE; border-color: rgba(76, 120, 168, 0.45); }
+.pol-chip.unknown     { background: rgba(148, 163, 184, 0.14); color: #CBD5E1; border-color: rgba(148, 163, 184, 0.4); text-decoration: line-through; }
+
+.pol-standard {
+  padding: 14px 18px; margin-bottom: 18px;
+  border: 1px solid rgba(148, 163, 184, 0.24); border-radius: 12px;
+  background: rgba(15, 23, 42, 0.28);
+}
+.pol-row { display: flex; gap: 14px; align-items: baseline; padding: 6px 0; }
+.pol-rowlabel { flex: 0 0 150px; font-size: 0.85rem; color: #94A3B8; }
+.pol-chips { flex: 1; min-width: 0; }
+.pol-none { color: #64748B; font-size: 0.85rem; }
+
+.pol-grid { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); }
+.pol-card {
+  border: 1px solid rgba(148, 163, 184, 0.24); border-radius: 12px;
+  background: rgba(15, 23, 42, 0.32); padding: 14px 16px;
+}
+.pol-card > header { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 10px; }
+.pol-card > header strong { font-size: 1rem; color: #F1F5F9; }
+.pol-card > footer { margin-top: 10px; font-size: 0.75rem; color: #64748B; }
+.pol-counts { margin-left: auto; font-size: 0.82rem; color: #94A3B8; }
+.pol-verdict { padding: 2px 9px; border-radius: 999px; font-size: 0.78rem; }
+.pol-verdict.ok  { background: rgba(84, 162, 75, 0.18); color: #A7F3C0; }
+.pol-verdict.bad { background: rgba(228, 87, 86, 0.24); color: #FFE4E6; font-weight: 600; }
+
+@media (max-width: 720px) {
+  .pol-row { flex-direction: column; gap: 4px; }
+  .pol-rowlabel { flex: none; }
+}
