@@ -1,0 +1,85 @@
+{
+  "experiment": "policy_authoring_v3",
+  "scenario_csv_sha256": "6d3346f4db5a8029d97cb187c93e93577a5a4055b3d04df3bc99ac5a668d9cb0",
+  "prompt_sha256": "480f11acbbba5fc6f6b411b5d6ad79b34c945191b522bba5212b9daec20bb068",
+  "vocabulary": {
+    "search_contacts": [
+      "department",
+      "email",
+      "id",
+      "name",
+      "notes",
+      "phone",
+      "role"
+    ],
+    "get_contact": [
+      "department",
+      "email",
+      "id",
+      "name",
+      "notes",
+      "phone",
+      "role"
+    ],
+    "search_emails": [
+      "body",
+      "category",
+      "date",
+      "from",
+      "id",
+      "priority",
+      "subject",
+      "to"
+    ],
+    "get_email": [
+      "body",
+      "category",
+      "date",
+      "from",
+      "id",
+      "priority",
+      "subject",
+      "to"
+    ],
+    "search_calendar": [
+      "date",
+      "day",
+      "events",
+      "events[].location",
+      "events[].participants",
+      "events[].time",
+      "events[].title",
+      "events[].type",
+      "id",
+      "slots"
+    ]
+  },
+  "models": [
+    {
+      "name": "qwen2.5:3b",
+      "digest": "unknown:qwen2.5:3b"
+    },
+    {
+      "name": "qwen2.5:7b",
+      "digest": "unknown:qwen2.5:7b"
+    },
+    {
+      "name": "llama3.1:8b",
+      "digest": "unknown:llama3.1:8b"
+    },
+    {
+      "name": "qwen3:8b",
+      "digest": "unknown:qwen3:8b"
+    }
+  ],
+  "run_parameters": {
+    "temperature": 0.0,
+    "seeds": [
+      0
+    ],
+    "num_predict": 1000,
+    "think": false
+  },
+  "git_commit": "b09e61b",
+  "planned_calls": 172
+}

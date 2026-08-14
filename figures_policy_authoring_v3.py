@@ -144,6 +144,50 @@ def figure_sensitive_grants(summary: dict, out_dir: Path) -> Path | None:
     return out
 
 
+def figure_omitted_fields(summary: dict, out_dir: Path, top: int = 10) -> Path | None:
+    """Which required fields the models withhold, as a share of times required.
+
+    The bars are uniformly high -- the models omit most of what the reviewers
+    required, not one unlucky field.  The identifier fields are coloured apart
+    not because they are omitted more (``contact.role`` is omitted more) but
+    because omitting them costs something different in kind: without ``id`` a
+    search hit cannot become a detail lookup, so the policy does not merely lose
+    a display field, it severs the retrieval chain.  Claiming identifiers are
+    *the* omission would misread this chart; they are the consequential subset
+    of a broad omission.
+    """
+    errors = summary["field_errors"]
+    occurrences = errors["reviewer_allowed_occurrences"]
+    rates = [
+        (field, count / occurrences[field], count, occurrences[field])
+        for field, count in errors["over_restriction"].items()
+        if occurrences.get(field, 0) >= 8
+    ]
+    if not rates:
+        return None
+    rates.sort(key=lambda row: -row[1])
+    rates = rates[:top]
+
+    labels = [row[0] for row in rates][::-1]
+    values = [row[1] for row in rates][::-1]
+    colours = ["#B4651B" if label.endswith(".id") else OVER_RESTRICTION for label in labels]
+
+    fig, ax = plt.subplots(figsize=(9, 3.4 + 0.32 * len(labels)))
+    ax.barh(labels, values, color=colours)
+    for index, (_, rate, count, total) in enumerate(rates[::-1]):
+        ax.text(rate, index, f"  {count}/{total}", va="center", fontsize=8)
+    ax.set_xlim(0, 1.08)
+    ax.set_xlabel("검토자가 필요하다고 한 시나리오 중 모델이 뺀 비율", fontsize=9)
+    ax.set_title("모델은 필요한 필드 대부분을 빠뜨린다 — 주황은 식별자", fontsize=11)
+    ax.text(1.0, -0.9, "식별자 누락은 표시 필드 하나를 잃는 것이 아니라 검색 연결이 끊기는 것",
+            fontsize=8, color="#B4651B", ha="right")
+    fig.tight_layout()
+    out = out_dir / "fig_policy_omitted_fields.png"
+    fig.savefig(out, dpi=180)
+    plt.close(fig)
+    return out
+
+
 def main(argv=None) -> int:
     parser = argparse.ArgumentParser(description="policy-authoring figures")
     parser.add_argument("--experiment-dir", action="append", required=True)
@@ -158,9 +202,10 @@ def main(argv=None) -> int:
     out_dir.mkdir(parents=True, exist_ok=True)
 
     made = [figure_error_directions(summary, out_dir), figure_policy_size(summary, out_dir)]
-    grants = figure_sensitive_grants(summary, out_dir)
-    if grants:
-        made.append(grants)
+    for optional in (figure_sensitive_grants(summary, out_dir),
+                     figure_omitted_fields(summary, out_dir)):
+        if optional:
+            made.append(optional)
 
     print(f"calls={summary['total_calls']}  models={', '.join(summary['models'])}")
     for path in made:
