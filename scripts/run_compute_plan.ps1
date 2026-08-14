@@ -42,6 +42,47 @@ function Save-State($s) {
 
 function Slug($model) { return ($model -replace ':', '-') }
 
+function Run-Count($dir) {
+  $f = Join-Path $Repo (Join-Path $dir 'runs.jsonl')
+  if (-not (Test-Path $f)) { return 0 }
+  return (Get-Content $f | Measure-Object -Line).Lines
+}
+
+# A phase that produced nothing must never be recorded as finished.  The first
+# unattended attempt ran as SYSTEM, where `python` is not on PATH, so every
+# runner failed in milliseconds and the driver marched on to the gate with 31 of
+# 688 runs in hand.  Checking the artifact -- not the exit code, not the absence
+# of an exception -- is the only thing that would have caught it.
+function Assert-Complete($dirs, $expected, $label) {
+  $short = @()
+  foreach ($d in $dirs) {
+    $n = Run-Count $d
+    if ($n -lt $expected) { $short += ("{0} has {1}/{2}" -f $d, $n, $expected) }
+  }
+  if ($short.Count -gt 0) {
+    Say ("$label INCOMPLETE - " + ($short -join '; '))
+    Say "$label not marked done; re-running the driver will resume it."
+    return $false
+  }
+  return $true
+}
+
+# Resolve the interpreter rather than trusting PATH, and stop outright if it is
+# missing: a driver that cannot run Python has nothing useful to do, and
+# continuing would only manufacture empty phases.
+$Python = (Get-Command python -EA SilentlyContinue).Source
+if (-not $Python) {
+  foreach ($c in @("$env:LOCALAPPDATA\Programs\Python\Python311\python.exe",
+                   "C:\Python311\python.exe", "C:\Program Files\Python311\python.exe")) {
+    if (Test-Path $c) { $Python = $c; break }
+  }
+}
+if (-not $Python) {
+  Say "FATAL: python not found (PATH or known locations). Driver cannot run."
+  exit 2
+}
+Say ("python: " + $Python)
+
 function Publish($message) {
   # Results are the point of the run; getting them off this machine matters more
   # than a tidy history, so each phase lands as its own commit.
@@ -63,9 +104,11 @@ if (-not $state.phase1) {
   foreach ($m in $Models) {
     $dir = "experiments/rerun-" + (Slug $m)
     Say "phase 1: $m -> $dir"
-    python run_experiment_v3.py --experiment-dir $dir --model $m --max-turns 4 `
+    & $Python run_experiment_v3.py --experiment-dir $dir --model $m --max-turns 4 `
       --git-commit (git rev-parse --short HEAD) | Out-File -FilePath $Log -Append -Encoding utf8
   }
+  $dirs = $Models | ForEach-Object { "experiments/rerun-" + (Slug $_) }
+  if (-not (Assert-Complete $dirs 172 "phase 1")) { exit 1 }
   $state.phase1 = $true; Save-State $state
   Publish "run: v3 re-run under determinism fix, with outcome classification"
   Say "phase 1 done"
@@ -79,7 +122,7 @@ if (-not $state.gate) {
     $origArgs += @('--original', ("experiments/main-" + (Slug $m)))
     $rerunArgs += @('--rerun', ("experiments/rerun-" + (Slug $m)))
   }
-  python verify_rerun_v3.py @origArgs @rerunArgs --out experiments/rerun_verification.json |
+  & $Python verify_rerun_v3.py @origArgs @rerunArgs --out experiments/rerun_verification.json |
     Out-File -FilePath $Log -Append -Encoding utf8
   if ($LASTEXITCODE -ne 0) {
     Say "GATE FAILED - delivery layer moved. Stopping before phase 2."
@@ -89,7 +132,7 @@ if (-not $state.gate) {
   $state.gate = $true; Save-State $state
   Say "gate passed"
 
-  python analysis_safe_failure_v3.py `
+  & $Python analysis_safe_failure_v3.py `
     ($Models | ForEach-Object { @('--experiment-dir', ("experiments/rerun-" + (Slug $_))) }) `
     | Out-File -FilePath $Log -Append -Encoding utf8
   Publish "analysis: safe-failure classification over the re-run"
@@ -101,9 +144,11 @@ if (-not $state.phase2) {
   foreach ($m in $Models) {
     $dir = "experiments/turns10-" + (Slug $m)
     Say "phase 2: $m -> $dir"
-    python run_experiment_v3.py --experiment-dir $dir --model $m --max-turns 10 `
+    & $Python run_experiment_v3.py --experiment-dir $dir --model $m --max-turns 10 `
       --git-commit (git rev-parse --short HEAD) | Out-File -FilePath $Log -Append -Encoding utf8
   }
+  $dirs = $Models | ForEach-Object { "experiments/turns10-" + (Slug $_) }
+  if (-not (Assert-Complete $dirs 172 "phase 2")) { exit 1 }
   $state.phase2 = $true; Save-State $state
   Publish "run: max_turns=10 sensitivity (exploratory, does not replace the pre-registered run)"
   Say "phase 2 done"
@@ -122,7 +167,7 @@ if (-not $state.phase3) {
     $pilotArgs = @()
     foreach ($c in $available) { $pilotArgs += @('--model', $c) }
     Say ("phase 3 pilot: " + ($available -join ', '))
-    python run_model_pilot_v3.py --experiment-dir experiments/pilot-round2 @pilotArgs |
+    & $Python run_model_pilot_v3.py --experiment-dir experiments/pilot-round2 @pilotArgs |
       Out-File -FilePath $Log -Append -Encoding utf8
     Publish "run: pilot gate for additional models"
 
@@ -141,11 +186,11 @@ if (-not $state.phase3) {
     Say ("phase 3 passed pilot: " + $(if ($passed) { $passed -join ', ' } else { 'none' }))
     foreach ($m in $passed) {
       Say "phase 3: $m main study"
-      python run_experiment_v3.py --experiment-dir ("experiments/main-" + (Slug $m)) `
+      & $Python run_experiment_v3.py --experiment-dir ("experiments/main-" + (Slug $m)) `
         --model $m --max-turns 4 --git-commit (git rev-parse --short HEAD) |
         Out-File -FilePath $Log -Append -Encoding utf8
       Say "phase 3: $m policy authoring"
-      python run_policy_authoring_v3.py --experiment-dir experiments/policy-authoring-round2 `
+      & $Python run_policy_authoring_v3.py --experiment-dir experiments/policy-authoring-round2 `
         --model $m --git-commit (git rev-parse --short HEAD) |
         Out-File -FilePath $Log -Append -Encoding utf8
     }
