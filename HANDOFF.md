@@ -284,6 +284,7 @@ python figures_v3.py --experiment-dir ... (동일하게 반복)
 
 ## 7. 더 읽을 것
 
-- [`README.md`](README.md) — 연구 현황, 팀원 실행 매뉴얼, v2 legacy 결과와 그 한계
+- [`README.md`](README.md) — **요약·결과·결론** (멘토·팀원에게 보여주는 문서)
+- [`docs/research_record.md`](docs/research_record.md) — 설계 경위·게이트·**재현 명령**·v2 legacy
 - [`docs/experiment_design_v3.md`](docs/experiment_design_v3.md) — 사전 등록 설계, 3계층 분리, **완료 전 금지 주장 목록**
 - `data/scenario_review_v3.csv` 의 `review_notes` — 각 라벨의 판단 근거가 1차 → 2차 → 조정 순으로 남아 있다
