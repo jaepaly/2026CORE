@@ -100,10 +100,13 @@ INSTRUCTION = (
     "필요 없는 도구는 빈 배열로 두세요."
 )
 
+#: The catalogue is printed above this block, so the constraint has to point
+#: back at it by name.  An earlier draft said "아래 목록" (the list below) and sent
+#: the model looking for a list that never comes.
 OUTPUT_CONTRACT = (
     "출력은 JSON 객체 하나만. 설명·주석 없이.\n"
     '형식: {"도구이름": ["필드", ...], ...}\n'
-    "필드 이름은 아래 목록에 있는 것만 사용하세요."
+    "필드 이름은 위 [도구별 반환 가능 필드] 목록에 있는 것만 사용하세요."
 )
 
 
