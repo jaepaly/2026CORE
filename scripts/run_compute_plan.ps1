@@ -95,6 +95,21 @@ function Publish($message) {
   Say ("publish: " + $message + " (push exit " + $LASTEXITCODE + ")")
 }
 
+# Single-instance lock.  The scheduler will happily start a second copy while
+# the first is mid-phase -- an explicit /run on an already-running task does
+# exactly that -- and two runners against one GPU means both crawl and the
+# manifest sees interleaved writers.  Owning a lock file is a property of this
+# script, so it holds no matter how the copy was launched.
+$LockFile = Join-Path $Repo 'compute_plan.lock'
+if (Test-Path $LockFile) {
+  $owner = (Get-Content $LockFile -Raw).Trim()
+  $alive = Get-Process -Id $owner -EA SilentlyContinue
+  if ($alive) { Say ("another driver holds the lock (pid " + $owner + "); exiting"); exit 0 }
+  Say ("stale lock from pid " + $owner + "; taking over")
+}
+$PID | Out-File -FilePath $LockFile -Encoding ascii
+try {
+
 $state = Load-State
 
 # Pin the commit for the whole plan.  The manifest freeze refuses to append runs
@@ -211,3 +226,7 @@ if (-not $state.phase3) {
 }
 
 Say "=== driver complete ==="
+
+} finally {
+  Remove-Item $LockFile -EA SilentlyContinue
+}
