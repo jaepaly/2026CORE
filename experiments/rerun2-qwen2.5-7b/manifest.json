@@ -1,0 +1,1288 @@
+{
+  "schema_version": "v3.0",
+  "git_commit": "5a105d3",
+  "protocol_sha256": "4dafae6269ebef62a0285cb5315102cbce43a99588b8e6cd7ed8b150ec4618a9",
+  "scenario_sha256": "6d3346f4db5a8029d97cb187c93e93577a5a4055b3d04df3bc99ac5a668d9cb0",
+  "protocol": {
+    "schema_version": "v3.0",
+    "study_scope": "on-premises internal workplace assistant with synthetic email, contacts, and calendar data",
+    "primary_comparison": [
+      "A",
+      "C"
+    ],
+    "primary_endpoint": "safe_completion",
+    "conditions": {
+      "A": {
+        "minimum_access_prompt": false,
+        "field_projection": "none",
+        "tool_denial": "none"
+      },
+      "B": {
+        "minimum_access_prompt": true,
+        "field_projection": "none",
+        "tool_denial": "none"
+      },
+      "C": {
+        "minimum_access_prompt": false,
+        "field_projection": "task_aware",
+        "tool_denial": "none"
+      },
+      "D": {
+        "minimum_access_prompt": true,
+        "field_projection": "task_aware",
+        "tool_denial": "none"
+      }
+    },
+    "technical_failure_policy": "exclude from endpoint denominator; report count and retry the same tuple under retry_index",
+    "model_pilot_gate": {
+      "min_valid_tool_call_rate": 0.8,
+      "max_server_or_parser_error_rate": 0.05
+    },
+    "planned_statistics": {
+      "binary": "paired exact McNemar plus effect size",
+      "counts": "paired bootstrap confidence interval",
+      "multiplicity": "primary comparison only; label others secondary"
+    }
+  },
+  "prompt_sha256_by_condition": {
+    "A": "fc7ca9d3d16af5fc7d382d8efae1e3a89d515a4d7a3184e02afb6ee76c45dc0e",
+    "B": "3e28c1e5a80bc2ce5bb251a115953fe6cc089a4360ee33147778370b806ace45",
+    "C": "fc7ca9d3d16af5fc7d382d8efae1e3a89d515a4d7a3184e02afb6ee76c45dc0e",
+    "D": "3e28c1e5a80bc2ce5bb251a115953fe6cc089a4360ee33147778370b806ace45"
+  },
+  "run_parameters": {
+    "temperature": 0.0,
+    "max_turns": 4,
+    "seeds": [
+      0
+    ],
+    "conditions": [
+      "A",
+      "B",
+      "C",
+      "D"
+    ],
+    "think": false,
+    "num_predict": 1000,
+    "tool_names": [
+      "search_contacts",
+      "get_contact",
+      "search_emails",
+      "get_email",
+      "search_calendar",
+      "create_event"
+    ]
+  },
+  "models": [
+    {
+      "name": "qwen2.5:7b",
+      "digest": "845dbda0ea48ed749caafd9e6037047aa19acfcfd82e704d7ca97d631a0b697e"
+    }
+  ],
+  "planned_runs": [
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s1",
+      "condition": "A",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s1",
+      "condition": "B",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s1",
+      "condition": "C",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s1",
+      "condition": "D",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s2",
+      "condition": "A",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s2",
+      "condition": "B",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s2",
+      "condition": "C",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s2",
+      "condition": "D",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s4",
+      "condition": "A",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s4",
+      "condition": "B",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s4",
+      "condition": "C",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s4",
+      "condition": "D",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s5",
+      "condition": "A",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s5",
+      "condition": "B",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s5",
+      "condition": "C",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s5",
+      "condition": "D",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s6",
+      "condition": "A",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s6",
+      "condition": "B",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s6",
+      "condition": "C",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s6",
+      "condition": "D",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s7",
+      "condition": "A",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s7",
+      "condition": "B",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s7",
+      "condition": "C",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s7",
+      "condition": "D",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s8",
+      "condition": "A",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s8",
+      "condition": "B",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s8",
+      "condition": "C",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s8",
+      "condition": "D",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s9",
+      "condition": "A",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s9",
+      "condition": "B",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s9",
+      "condition": "C",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s9",
+      "condition": "D",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s10",
+      "condition": "A",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s10",
+      "condition": "B",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s10",
+      "condition": "C",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s10",
+      "condition": "D",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s11",
+      "condition": "A",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s11",
+      "condition": "B",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s11",
+      "condition": "C",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s11",
+      "condition": "D",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s12",
+      "condition": "A",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s12",
+      "condition": "B",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s12",
+      "condition": "C",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s12",
+      "condition": "D",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s14",
+      "condition": "A",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s14",
+      "condition": "B",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s14",
+      "condition": "C",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s14",
+      "condition": "D",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s16",
+      "condition": "A",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s16",
+      "condition": "B",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s16",
+      "condition": "C",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s16",
+      "condition": "D",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s19",
+      "condition": "A",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s19",
+      "condition": "B",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s19",
+      "condition": "C",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s19",
+      "condition": "D",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s20",
+      "condition": "A",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s20",
+      "condition": "B",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s20",
+      "condition": "C",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s20",
+      "condition": "D",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s21",
+      "condition": "A",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s21",
+      "condition": "B",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s21",
+      "condition": "C",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s21",
+      "condition": "D",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s22",
+      "condition": "A",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s22",
+      "condition": "B",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s22",
+      "condition": "C",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s22",
+      "condition": "D",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s23",
+      "condition": "A",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s23",
+      "condition": "B",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s23",
+      "condition": "C",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s23",
+      "condition": "D",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s24",
+      "condition": "A",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s24",
+      "condition": "B",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s24",
+      "condition": "C",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s24",
+      "condition": "D",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s25",
+      "condition": "A",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s25",
+      "condition": "B",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s25",
+      "condition": "C",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s25",
+      "condition": "D",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s26",
+      "condition": "A",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s26",
+      "condition": "B",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s26",
+      "condition": "C",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s26",
+      "condition": "D",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s27",
+      "condition": "A",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s27",
+      "condition": "B",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s27",
+      "condition": "C",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s27",
+      "condition": "D",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s28",
+      "condition": "A",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s28",
+      "condition": "B",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s28",
+      "condition": "C",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s28",
+      "condition": "D",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s29",
+      "condition": "A",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s29",
+      "condition": "B",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s29",
+      "condition": "C",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s29",
+      "condition": "D",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s30",
+      "condition": "A",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s30",
+      "condition": "B",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s30",
+      "condition": "C",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s30",
+      "condition": "D",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s31",
+      "condition": "A",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s31",
+      "condition": "B",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s31",
+      "condition": "C",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s31",
+      "condition": "D",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s32",
+      "condition": "A",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s32",
+      "condition": "B",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s32",
+      "condition": "C",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s32",
+      "condition": "D",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s33",
+      "condition": "A",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s33",
+      "condition": "B",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s33",
+      "condition": "C",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s33",
+      "condition": "D",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s34",
+      "condition": "A",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s34",
+      "condition": "B",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s34",
+      "condition": "C",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s34",
+      "condition": "D",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s35",
+      "condition": "A",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s35",
+      "condition": "B",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s35",
+      "condition": "C",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s35",
+      "condition": "D",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s36",
+      "condition": "A",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s36",
+      "condition": "B",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s36",
+      "condition": "C",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s36",
+      "condition": "D",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s37",
+      "condition": "A",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s37",
+      "condition": "B",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s37",
+      "condition": "C",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s37",
+      "condition": "D",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s38",
+      "condition": "A",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s38",
+      "condition": "B",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s38",
+      "condition": "C",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s38",
+      "condition": "D",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s39",
+      "condition": "A",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s39",
+      "condition": "B",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s39",
+      "condition": "C",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s39",
+      "condition": "D",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s40",
+      "condition": "A",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s40",
+      "condition": "B",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s40",
+      "condition": "C",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s40",
+      "condition": "D",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s41",
+      "condition": "A",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s41",
+      "condition": "B",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s41",
+      "condition": "C",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s41",
+      "condition": "D",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s42",
+      "condition": "A",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s42",
+      "condition": "B",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s42",
+      "condition": "C",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s42",
+      "condition": "D",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s43",
+      "condition": "A",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s43",
+      "condition": "B",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s43",
+      "condition": "C",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s43",
+      "condition": "D",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s44",
+      "condition": "A",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s44",
+      "condition": "B",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s44",
+      "condition": "C",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s44",
+      "condition": "D",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s45",
+      "condition": "A",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s45",
+      "condition": "B",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s45",
+      "condition": "C",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s45",
+      "condition": "D",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s46",
+      "condition": "A",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s46",
+      "condition": "B",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s46",
+      "condition": "C",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s46",
+      "condition": "D",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s47",
+      "condition": "A",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s47",
+      "condition": "B",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s47",
+      "condition": "C",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s47",
+      "condition": "D",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s48",
+      "condition": "A",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s48",
+      "condition": "B",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s48",
+      "condition": "C",
+      "seed": 0,
+      "retry_index": 0
+    },
+    {
+      "model": "qwen2.5:7b",
+      "scenario": "v3_s48",
+      "condition": "D",
+      "seed": 0,
+      "retry_index": 0
+    }
+  ]
+}

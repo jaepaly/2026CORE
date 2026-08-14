@@ -1,0 +1,287 @@
+{
+  "total_runs": 688,
+  "classified_runs": 688,
+  "models": [
+    "llama3.1:8b",
+    "qwen2.5:3b",
+    "qwen2.5:7b",
+    "qwen3:8b"
+  ],
+  "by_condition": {
+    "A": {
+      "runs": 172,
+      "classes": {
+        "answered": 10,
+        "acknowledged_limitation": 43,
+        "silent_incomplete": 119,
+        "leaked_undelivered_value": 0
+      },
+      "leaked_runs": 0,
+      "safe_failure_rate_of_failures": 0.2654320987654321,
+      "silent_rate_of_failures": 0.7345679012345679,
+      "failures": 162
+    },
+    "B": {
+      "runs": 172,
+      "classes": {
+        "answered": 10,
+        "acknowledged_limitation": 54,
+        "silent_incomplete": 108,
+        "leaked_undelivered_value": 0
+      },
+      "leaked_runs": 0,
+      "safe_failure_rate_of_failures": 0.3333333333333333,
+      "silent_rate_of_failures": 0.6666666666666666,
+      "failures": 162
+    },
+    "C": {
+      "runs": 172,
+      "classes": {
+        "answered": 7,
+        "acknowledged_limitation": 44,
+        "silent_incomplete": 121,
+        "leaked_undelivered_value": 0
+      },
+      "leaked_runs": 0,
+      "safe_failure_rate_of_failures": 0.26666666666666666,
+      "silent_rate_of_failures": 0.7333333333333333,
+      "failures": 165
+    },
+    "D": {
+      "runs": 172,
+      "classes": {
+        "answered": 7,
+        "acknowledged_limitation": 47,
+        "silent_incomplete": 118,
+        "leaked_undelivered_value": 0
+      },
+      "leaked_runs": 0,
+      "safe_failure_rate_of_failures": 0.28484848484848485,
+      "silent_rate_of_failures": 0.7151515151515152,
+      "failures": 165
+    }
+  },
+  "by_model": {
+    "llama3.1:8b": {
+      "A": {
+        "runs": 43,
+        "classes": {
+          "answered": 4,
+          "acknowledged_limitation": 2,
+          "silent_incomplete": 37,
+          "leaked_undelivered_value": 0
+        },
+        "leaked_runs": 0,
+        "safe_failure_rate_of_failures": 0.05128205128205128,
+        "silent_rate_of_failures": 0.9487179487179487,
+        "failures": 39
+      },
+      "B": {
+        "runs": 43,
+        "classes": {
+          "answered": 4,
+          "acknowledged_limitation": 3,
+          "silent_incomplete": 36,
+          "leaked_undelivered_value": 0
+        },
+        "leaked_runs": 0,
+        "safe_failure_rate_of_failures": 0.07692307692307693,
+        "silent_rate_of_failures": 0.9230769230769231,
+        "failures": 39
+      },
+      "C": {
+        "runs": 43,
+        "classes": {
+          "answered": 2,
+          "acknowledged_limitation": 0,
+          "silent_incomplete": 41,
+          "leaked_undelivered_value": 0
+        },
+        "leaked_runs": 0,
+        "safe_failure_rate_of_failures": 0.0,
+        "silent_rate_of_failures": 1.0,
+        "failures": 41
+      },
+      "D": {
+        "runs": 43,
+        "classes": {
+          "answered": 1,
+          "acknowledged_limitation": 2,
+          "silent_incomplete": 40,
+          "leaked_undelivered_value": 0
+        },
+        "leaked_runs": 0,
+        "safe_failure_rate_of_failures": 0.047619047619047616,
+        "silent_rate_of_failures": 0.9523809523809523,
+        "failures": 42
+      }
+    },
+    "qwen2.5:3b": {
+      "A": {
+        "runs": 43,
+        "classes": {
+          "answered": 2,
+          "acknowledged_limitation": 11,
+          "silent_incomplete": 30,
+          "leaked_undelivered_value": 0
+        },
+        "leaked_runs": 0,
+        "safe_failure_rate_of_failures": 0.2682926829268293,
+        "silent_rate_of_failures": 0.7317073170731707,
+        "failures": 41
+      },
+      "B": {
+        "runs": 43,
+        "classes": {
+          "answered": 0,
+          "acknowledged_limitation": 18,
+          "silent_incomplete": 25,
+          "leaked_undelivered_value": 0
+        },
+        "leaked_runs": 0,
+        "safe_failure_rate_of_failures": 0.4186046511627907,
+        "silent_rate_of_failures": 0.5813953488372093,
+        "failures": 43
+      },
+      "C": {
+        "runs": 43,
+        "classes": {
+          "answered": 2,
+          "acknowledged_limitation": 16,
+          "silent_incomplete": 25,
+          "leaked_undelivered_value": 0
+        },
+        "leaked_runs": 0,
+        "safe_failure_rate_of_failures": 0.3902439024390244,
+        "silent_rate_of_failures": 0.6097560975609756,
+        "failures": 41
+      },
+      "D": {
+        "runs": 43,
+        "classes": {
+          "answered": 1,
+          "acknowledged_limitation": 14,
+          "silent_incomplete": 28,
+          "leaked_undelivered_value": 0
+        },
+        "leaked_runs": 0,
+        "safe_failure_rate_of_failures": 0.3333333333333333,
+        "silent_rate_of_failures": 0.6666666666666666,
+        "failures": 42
+      }
+    },
+    "qwen2.5:7b": {
+      "A": {
+        "runs": 43,
+        "classes": {
+          "answered": 1,
+          "acknowledged_limitation": 21,
+          "silent_incomplete": 21,
+          "leaked_undelivered_value": 0
+        },
+        "leaked_runs": 0,
+        "safe_failure_rate_of_failures": 0.5,
+        "silent_rate_of_failures": 0.5,
+        "failures": 42
+      },
+      "B": {
+        "runs": 43,
+        "classes": {
+          "answered": 3,
+          "acknowledged_limitation": 21,
+          "silent_incomplete": 19,
+          "leaked_undelivered_value": 0
+        },
+        "leaked_runs": 0,
+        "safe_failure_rate_of_failures": 0.525,
+        "silent_rate_of_failures": 0.475,
+        "failures": 40
+      },
+      "C": {
+        "runs": 43,
+        "classes": {
+          "answered": 1,
+          "acknowledged_limitation": 18,
+          "silent_incomplete": 24,
+          "leaked_undelivered_value": 0
+        },
+        "leaked_runs": 0,
+        "safe_failure_rate_of_failures": 0.42857142857142855,
+        "silent_rate_of_failures": 0.5714285714285714,
+        "failures": 42
+      },
+      "D": {
+        "runs": 43,
+        "classes": {
+          "answered": 1,
+          "acknowledged_limitation": 19,
+          "silent_incomplete": 23,
+          "leaked_undelivered_value": 0
+        },
+        "leaked_runs": 0,
+        "safe_failure_rate_of_failures": 0.4523809523809524,
+        "silent_rate_of_failures": 0.5476190476190477,
+        "failures": 42
+      }
+    },
+    "qwen3:8b": {
+      "A": {
+        "runs": 43,
+        "classes": {
+          "answered": 3,
+          "acknowledged_limitation": 9,
+          "silent_incomplete": 31,
+          "leaked_undelivered_value": 0
+        },
+        "leaked_runs": 0,
+        "safe_failure_rate_of_failures": 0.225,
+        "silent_rate_of_failures": 0.775,
+        "failures": 40
+      },
+      "B": {
+        "runs": 43,
+        "classes": {
+          "answered": 3,
+          "acknowledged_limitation": 12,
+          "silent_incomplete": 28,
+          "leaked_undelivered_value": 0
+        },
+        "leaked_runs": 0,
+        "safe_failure_rate_of_failures": 0.3,
+        "silent_rate_of_failures": 0.7,
+        "failures": 40
+      },
+      "C": {
+        "runs": 43,
+        "classes": {
+          "answered": 2,
+          "acknowledged_limitation": 10,
+          "silent_incomplete": 31,
+          "leaked_undelivered_value": 0
+        },
+        "leaked_runs": 0,
+        "safe_failure_rate_of_failures": 0.24390243902439024,
+        "silent_rate_of_failures": 0.7560975609756098,
+        "failures": 41
+      },
+      "D": {
+        "runs": 43,
+        "classes": {
+          "answered": 4,
+          "acknowledged_limitation": 12,
+          "silent_incomplete": 27,
+          "leaked_undelivered_value": 0
+        },
+        "leaked_runs": 0,
+        "safe_failure_rate_of_failures": 0.3076923076923077,
+        "silent_rate_of_failures": 0.6923076923076923,
+        "failures": 39
+      }
+    }
+  },
+  "leaked": {
+    "by_condition": {},
+    "by_path": {},
+    "runs": []
+  }
+}
