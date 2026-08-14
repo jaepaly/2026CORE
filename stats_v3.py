@@ -43,12 +43,19 @@ def paired_bootstrap_mean_difference(
 
     Resamples the per-pair differences, so pairs stay intact.  Callers must pass
     one pair per ``(model, scenario)`` unit, not per seed.
+
+    The differences are sorted before resampling.  The seeded generator draws a
+    fixed sequence of positions, so an unsorted list makes the interval depend on
+    the order the caller happened to collect the pairs in -- passing the same four
+    experiment directories in a different order on the command line moved the CI
+    from 0.37~0.64 to 0.36~0.65.  Same data, same seed, different published
+    number.  Sorting removes the caller's ordering from the result.
     """
     if not pairs:
         raise ValueError("at least one paired observation is required")
     if iterations <= 0:
         raise ValueError("iterations must be positive")
-    differences = [a_value - c_value for a_value, c_value in pairs]
+    differences = sorted(a_value - c_value for a_value, c_value in pairs)
     generator = Random(seed)
     estimates = sorted(
         sum(generator.choice(differences) for _ in differences) / len(differences)

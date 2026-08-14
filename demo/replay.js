@@ -5,6 +5,8 @@
 // 데이터(data/ 아래 JSON)를 로그의 delivered_record_ids × delivered_field_paths 와 조인해
 // 재구성한 것이므로, 표시 내용 = 그 run 에서 모델에게 실제 전달된 도구 응답이다.
 
+import { initPolicy, renderPolicy } from "./policy.js";
+
 const rq = (sel) => document.querySelector(sel);
 const esc = (v) =>
   String(v)
@@ -195,6 +197,9 @@ async function renderReplay() {
     renderRunColumn("#rpLeftEvents", "#rpLeftBadges", runL, state.records);
     renderRunColumn("#rpRightEvents", "#rpRightBadges", runR, state.records);
 
+    // 두 실험이 같은 scenario_id 를 쓰므로 선택 하나로 함께 움직인다.
+    renderPolicy(scenario);
+
     const model = state.index.experiments.find((e) => e.dir === dir)?.model || dir;
     status.textContent = `${model} · ${scenario} · 커밋된 run 로그 재생 (run_id: ${runL?.run_id ?? "-"} / ${runR?.run_id ?? "-"})`;
   } catch (err) {
@@ -209,6 +214,7 @@ function fillSelect(sel, items, toOption) {
 export async function initReplay() {
   state.index = await fetchJsonStrict("./replay_index.json");
   state.records = await loadRecords();
+  initPolicy(state.index);
 
   fillSelect("#rpModel", state.index.experiments, (e) =>
     `<option value="${esc(e.dir)}">${esc(e.model)} (${e.runs} runs)</option>`);

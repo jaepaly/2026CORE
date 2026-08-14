@@ -132,6 +132,41 @@
         <p class="rp-status" id="rpStatus">초기화 중…</p>
       </section>
 
+      <section class="demo-shell" id="policy">
+        <div class="demo-header">
+          <div>
+            <p class="eyebrow">연구 2 · 정책 작성 실험 · 실측 재생</p>
+            <h2>그럼 그 정책은 누가 쓰나</h2>
+            <p class="section-copy">
+              위 replay가 보여준 projection은 <strong>사람이 쓴 허용 필드 목록</strong>으로 작동합니다.
+              43개 시나리오 전부 사람이 작성했습니다. 그 작성 단계가 언제나 사람의 몫이라면
+              최소권한은 검토 인력에 비례해서만 확장됩니다.
+              그래서 같은 업무를 <strong>모델에게 주고 정책을 직접 쓰게 했습니다.</strong>
+              아래는 <code>experiments/policy-authoring/policies.jsonl</code>에 커밋된 실제 응답이며,
+              시나리오 선택은 위 replay와 함께 움직입니다.
+            </p>
+          </div>
+        </div>
+
+        <div class="pol-summary" id="polSummary"></div>
+
+        <div class="pol-legend">
+          <span class="pol-chip match">일치</span>
+          <span class="pol-chip over">과잉 허용 — 검토자가 뺀 필드</span>
+          <span class="pol-chip over-sensitive">민감 과잉 허용 — 금지 필드</span>
+          <span class="pol-chip under">과잉 차단 — 빠뜨린 필드</span>
+          <span class="pol-chip unknown">존재하지 않는 경로</span>
+        </div>
+
+        <div id="polBody"></div>
+
+        <p class="rp-status">
+          두 오류가 <strong>동시에</strong> 큽니다 — 더 넓거나 좁은 정책이 아니라 <strong>다른 정책</strong>입니다.
+          도구 혼동·경로 표기 오류·식별자 누락은 스키마 검증으로 잡히지만,
+          <code>email.body</code> 허용(24.3%)은 내용을 봐야 판단할 수 있어 사람이 남아야 합니다.
+        </p>
+      </section>
+
       <section class="demo-shell" id="demo">
         <div class="demo-header">
           <div>
@@ -192,9 +227,9 @@
 
       <section class="metrics-row" id="evidence">
         <article class="metric-card">
-          <span>설계상 노출 용량</span>
-          <strong id="capacityMetric">151.5</strong>
-          <small>A/B는 필드 필터 없음</small>
+          <span>전달 가능한 민감 필드 (설계상)</span>
+          <strong id="capacityMetric">2.53</strong>
+          <small>시나리오당 · 라벨에서 계산, run 무관</small>
         </article>
         <article class="metric-card">
           <span>run당 전달 민감 필드 (v3)</span>

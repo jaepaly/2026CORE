@@ -33,6 +33,10 @@ experiments/*
 # 합치려면 이 파일이 커밋돼야 하므로 v3 경로만 예외로 둔다.
 # (v1/v2 의 output/runs*.jsonl 은 원문을 담고 있어 계속 무시한다.)
 !experiments/*/runs.jsonl
+# Policy-authoring artifacts follow the same value-free rule: field paths,
+# counts and response hashes only, never reply text or record values.
+!experiments/*/policies.jsonl
+!experiments/*/analysis_policy_authoring.json
 experiments/*/traces/
 experiments/*/raw/
 experiments/*/*.log

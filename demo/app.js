@@ -1,13 +1,18 @@
 const $ = (selector) => document.querySelector(selector);
 
 // realized/safe 는 v3 본 실험 688 runs 실측 (demo/replay_index.json 이 원천, 로드 시 덮어씀).
-// capacity/malicious 는 정책 정의에서 계산되는 설계값.
+// capacity 는 v3 capacity 계층 — 라벨에서만 계산되며 run 에 의존하지 않는다.
+//   승인 43 시나리오에 금지 민감 경로 109개 = 시나리오당 2.53.
+//   A/B 는 projection 이 없어 전부 전달 가능, C/D 는 허용 집합이 민감 경로를
+//   하나도 포함하지 않으므로(43/43 검증) 0.
+//   이전 값 151.5 -> 10.5 는 v2 시절 연구자 가중치(phone·notes=5, body=2,
+//   calendar=1.5)로 만든 점수여서 v3 파이프라인으로 재현되지 않아 교체했다.
 const policies = {
   A: {
     label: "A · 중립(projection 없음)",
     short: "중립",
     method: "중립 프롬프트, 도구 결과를 그대로 모델에게 전달",
-    capacity: 151.5,
+    capacity: 2.53,
     realized: 0.5,
     malicious: 5,
     safe: 0.006,
@@ -18,7 +23,7 @@ const policies = {
     label: "B · 최소화 지시만",
     short: "프롬프트 방어",
     method: "모델에게 최소 접근을 지시하지만 도구 결과는 그대로 전달",
-    capacity: 151.5,
+    capacity: 2.53,
     realized: 0.52,
     malicious: 5,
     safe: 0.0,
@@ -29,7 +34,7 @@ const policies = {
     label: "C · 필드 projection",
     short: "필드 projection",
     method: "업무별 허용 필드만 반환 (body·phone·notes 제거)",
-    capacity: 10.5,
+    capacity: 0,
     realized: 0,
     malicious: 0,
     safe: 0.041,
@@ -40,7 +45,7 @@ const policies = {
     label: "D · 지시 + projection",
     short: "지시+projection",
     method: "최소화 지시와 필드 projection을 함께 적용",
-    capacity: 10.5,
+    capacity: 0,
     realized: 0,
     malicious: 0,
     safe: 0.029,

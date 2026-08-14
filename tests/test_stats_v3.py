@@ -105,3 +105,19 @@ class RetryCollapseTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class BootstrapDeterminismTests(unittest.TestCase):
+    """The interval must depend on the data, not on how the caller ordered it."""
+
+    def test_pair_order_does_not_move_the_interval(self):
+        pairs = [(2.0, 0.0), (0.0, 0.0), (3.0, 1.0), (1.0, 0.0), (0.0, 2.0), (4.0, 0.0)]
+
+        forward = paired_bootstrap_mean_difference(pairs, iterations=500, seed=7)
+        reversed_order = paired_bootstrap_mean_difference(
+            list(reversed(pairs)), iterations=500, seed=7)
+        shuffled = paired_bootstrap_mean_difference(
+            [pairs[i] for i in (3, 0, 5, 1, 4, 2)], iterations=500, seed=7)
+
+        self.assertEqual(forward["bootstrap_95_ci"], reversed_order["bootstrap_95_ci"])
+        self.assertEqual(forward["bootstrap_95_ci"], shuffled["bootstrap_95_ci"])
