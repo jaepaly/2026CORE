@@ -33,7 +33,7 @@ function Say($msg) {
 
 function Load-State {
   if (Test-Path $State) { return (Get-Content $State -Raw | ConvertFrom-Json) }
-  return [pscustomobject]@{ phase1 = $false; gate = $false; phase2 = $false; phase3 = $false }
+  return [pscustomobject]@{ phase1 = $false; gate = $false; phase2 = $false; phase3 = $false; commit = $null }
 }
 
 function Save-State($s) {
@@ -96,7 +96,17 @@ function Publish($message) {
 }
 
 $state = Load-State
-Say "=== driver start (commit $(git rev-parse --short HEAD)) ==="
+
+# Pin the commit for the whole plan.  The manifest freeze refuses to append runs
+# recorded under a different commit, and Publish pulls between phases, so taking
+# HEAD fresh each time would strand a half-finished directory the moment origin
+# moved.  One commit for the run, carried across resumes in the state file.
+if (-not $state.commit) {
+  $state.commit = (git rev-parse --short HEAD)
+  Save-State $state
+}
+$Commit = $state.commit
+Say "=== driver start (pinned commit $Commit) ==="
 
 # --- Phase 1: re-run under the determinism fix, capturing outcome classes -----
 if (-not $state.phase1) {
@@ -105,7 +115,7 @@ if (-not $state.phase1) {
     $dir = "experiments/rerun-" + (Slug $m)
     Say "phase 1: $m -> $dir"
     & $Python run_experiment_v3.py --experiment-dir $dir --model $m --max-turns 4 `
-      --git-commit (git rev-parse --short HEAD) | Out-File -FilePath $Log -Append -Encoding utf8
+      --git-commit $Commit | Out-File -FilePath $Log -Append -Encoding utf8
   }
   $dirs = $Models | ForEach-Object { "experiments/rerun-" + (Slug $_) }
   if (-not (Assert-Complete $dirs 172 "phase 1")) { exit 1 }
@@ -145,7 +155,7 @@ if (-not $state.phase2) {
     $dir = "experiments/turns10-" + (Slug $m)
     Say "phase 2: $m -> $dir"
     & $Python run_experiment_v3.py --experiment-dir $dir --model $m --max-turns 10 `
-      --git-commit (git rev-parse --short HEAD) | Out-File -FilePath $Log -Append -Encoding utf8
+      --git-commit $Commit | Out-File -FilePath $Log -Append -Encoding utf8
   }
   $dirs = $Models | ForEach-Object { "experiments/turns10-" + (Slug $_) }
   if (-not (Assert-Complete $dirs 172 "phase 2")) { exit 1 }
@@ -187,11 +197,11 @@ if (-not $state.phase3) {
     foreach ($m in $passed) {
       Say "phase 3: $m main study"
       & $Python run_experiment_v3.py --experiment-dir ("experiments/main-" + (Slug $m)) `
-        --model $m --max-turns 4 --git-commit (git rev-parse --short HEAD) |
+        --model $m --max-turns 4 --git-commit $Commit |
         Out-File -FilePath $Log -Append -Encoding utf8
       Say "phase 3: $m policy authoring"
       & $Python run_policy_authoring_v3.py --experiment-dir experiments/policy-authoring-round2 `
-        --model $m --git-commit (git rev-parse --short HEAD) |
+        --model $m --git-commit $Commit |
         Out-File -FilePath $Log -Append -Encoding utf8
     }
     Publish "run: additional models across both studies"
