@@ -37,6 +37,56 @@
 > 바꿔 바이트 해시만 달라진 것이다. `.gitattributes` 에 해당 파일 `eol=lf` 를 고정해
 > 재발을 막았으므로, 이후 실행은 모두 `4dafae62…` 로 기록된다.
 
+## 1-b. 데스크탑에서 무인 실행 중 (2026-08-14 시작)
+
+`DESKTOP-828COMG` 의 **`C:\Users\dor12\2026_core`** 에서 계획 4단계가 자동으로 돌고 있다.
+저장소 위치에 주의 — `C:\subject\2026CORE` 는 **다른 연구**(하이브리드 검색·전략물자 법제
+라우팅)이고 푸시되지 않은 커밋이 30여 개 있으므로 건드리지 말 것.
+
+| | |
+|---|---|
+| 드라이버 | [`scripts/run_compute_plan.ps1`](scripts/run_compute_plan.ps1) |
+| 작업 | `CORE_plan` — 로그온 시 자동 시작, 중복 실행 차단, 시간 제한 없음, 실패 시 3회 재시도 |
+| 로그 | `compute_plan.log` |
+| 상태 | `compute_plan_state.json` (끝난 단계 기록 → 재진입 시 건너뜀) |
+| 잠금 | `compute_plan.lock` (PID) |
+
+**결과는 단계마다 자동으로 커밋·푸시된다.** 노트북에서는 `git pull` 만 하면 된다.
+
+### 상태 확인
+
+```powershell
+Set-Location C:\Users\dor12\2026_core
+Get-Content compute_plan.log -Tail 20
+Get-ChildItem experiments -Directory | Where-Object { $_.Name -match 'rerun-|turns10-' } |
+  ForEach-Object { "$($_.Name): $((Get-Content (Join-Path $_.FullName 'runs.jsonl') | Measure-Object -Line).Lines)/172" }
+```
+
+### 멈췄을 때
+
+```powershell
+Start-ScheduledTask -TaskName CORE_plan
+```
+
+러너가 완료된 run 을 건너뛰므로 재시작은 정상 복구 경로다. 잠금 파일의 PID 가 죽어 있으면
+드라이버가 알아서 인수한다.
+
+### 게이트에서 멈추면 (`GATE FAILED`)
+
+전달 계층이 원본과 달라졌다는 뜻이다. 재실행은 키 순서 결함만 고치는 것이고 전달 계층은
+집합·카운트라 순서와 무관하게 같아야 한다. **다음 단계를 강행하지 말고**
+`experiments/rerun_verification.json` 을 보고 원인을 찾을 것.
+
+### 함정 (겪은 것)
+
+- **`/ru SYSTEM` 으로 등록하지 말 것.** python 이 PATH 에 없어 러너가 즉시 실패하고, git
+  자격증명이 사용자별이라 푸시도 안 된다. 드라이버는 이제 python 을 못 찾으면 중단하고,
+  각 단계는 run 수를 세어 172 에 못 미치면 완료로 표시하지 않는다.
+- **원격 PowerShell 스크립트에 한글을 넣지 말 것.** PS 5.1 이 UTF-8 파일을 시스템
+  코드페이지로 읽어 첫 줄 실행 전에 파서가 죽는다.
+- `python.exe` 가 두 개 보이는 것은 정상이다 — uv 런처가 실제 인터프리터를 재실행하는
+  부모-자식 관계이지 동시 실행이 아니다.
+
 ## 2. 지금 할 일 — 연산 계획
 
 > **GPU 데스크탑에서 돌릴 것이 정리돼 있다: [`docs/compute_plan_v3.md`](docs/compute_plan_v3.md)**
