@@ -198,6 +198,10 @@ async function renderReplay() {
     renderRunColumn("#rpRightEvents", "#rpRightBadges", runR, state.records);
 
     // 두 실험이 같은 scenario_id 를 쓰므로 선택 하나로 함께 움직인다.
+    // 연구 2 패널은 replay 패널에서 약 1,900px 아래에 있어 폰에서는 두세 화면
+    // 떨어진다. 거기에도 같은 선택기를 두고, 어느 쪽을 만지든 양쪽이 같은
+    // 시나리오를 가리키도록 값을 맞춘다.
+    rq("#polScenario").value = scenario;
     renderPolicy(scenario);
 
     const model = state.index.experiments.find((e) => e.dir === dir)?.model || dir;
@@ -228,9 +232,18 @@ export async function initReplay() {
   const preferred = state.index.experiments.find((e) => e.model === "qwen3:8b");
   if (preferred) rq("#rpModel").value = preferred.dir;
 
+  fillSelect("#polScenario", state.index.scenarios, (s) =>
+    `<option value="${esc(s.id)}">${esc(s.id)} · ${esc(s.name)}</option>`);
+
   for (const sel of ["#rpModel", "#rpScenario", "#rpLeftCond", "#rpRightCond"]) {
     rq(sel).addEventListener("change", renderReplay);
   }
+
+  // 연구 2 쪽 선택기는 위 선택기를 움직여 한 경로로만 렌더링한다.
+  rq("#polScenario").addEventListener("change", () => {
+    rq("#rpScenario").value = rq("#polScenario").value;
+    renderReplay();
+  });
   rq("#rpReload").addEventListener("click", renderReplay);
 
   await renderReplay();
