@@ -6,6 +6,7 @@
 // 재구성한 것이므로, 표시 내용 = 그 run 에서 모델에게 실제 전달된 도구 응답이다.
 
 import { initPolicy, renderPolicy } from "./policy.js";
+import { bareFieldLabel, toolLabel } from "./field_labels.js";
 
 /** 조건 코드는 실험 설계의 이름이지 방문자의 언어가 아니다. 코드만 노출하면
  *  처음 온 사람은 A 와 C 가 무엇인지 모른 채 숫자를 보게 된다. 이름을 앞에
@@ -175,7 +176,7 @@ function mergedFieldRows(evBefore, evAfter, record) {
     ].filter(Boolean).join(" ");
     const tag = sensitive.has(path) ? '<i class="rp-f-tag">민감</i>' : "";
     rows.push(
-      `<div class="${cls}"><b>${esc(normPath(path))}</b><span>${esc(showValue(value))}</span>${tag}</div>`
+      `<div class="${cls}" title="${esc(normPath(path))}"><b>${esc(bareFieldLabel(normPath(path), record.id || ""))}</b><span>${esc(showValue(value))}</span>${tag}</div>`
     );
   }
   return rows.join("");
@@ -188,10 +189,11 @@ function mergedEvent(evBefore, evAfter, records, turn) {
   const toolBefore = evBefore ? evBefore.tool_name : null;
   const toolAfter = evAfter ? evAfter.tool_name : null;
   const sameTool = toolBefore && toolAfter && toolBefore === toolAfter;
+  const name = (t) => (t ? `${toolLabel(t)}` : "호출 없음");
   const toolHtml = sameTool
-    ? `<code>${esc(toolBefore)}</code>`
-    : `<code class="rp-tool b-only">${esc(toolBefore || "호출 없음")}</code>` +
-      `<code class="rp-tool a-only">${esc(toolAfter || "호출 없음")}</code>`;
+    ? `<code title="${esc(toolBefore)}">${esc(name(toolBefore))}</code>`
+    : `<code class="rp-tool b-only" title="${esc(toolBefore || "")}">${esc(name(toolBefore))}</code>` +
+      `<code class="rp-tool a-only" title="${esc(toolAfter || "")}">${esc(name(toolAfter))}</code>`;
 
   const ids = [
     ...new Set([

@@ -1601,3 +1601,76 @@ footer a {
   text-decoration: underline;
   cursor: pointer;
 }
+
+/* ---------- 접히는 정책 카드 ----------
+   모델 4개의 칩을 전부 펼치면 이 탭만 6.6화면이 된다. 접어 두되 접힌 줄에
+   판단에 필요한 수치를 남긴다 — 열어야만 알 수 있으면 접는 의미가 없다. */
+.pol-card,
+.pol-standard {
+  border: 1px solid var(--hairline);
+  border-radius: 12px;
+  background: var(--surface);
+  overflow: hidden;
+}
+
+.pol-card { box-shadow: var(--shadow-soft); }
+.pol-standard { background: var(--canvas-soft); margin-bottom: 14px; }
+
+.pol-card > summary,
+.pol-standard > summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 10px;
+  align-items: center;
+  /* 손가락 탭 영역 확보 */
+  padding: 14px 16px;
+  cursor: pointer;
+  list-style: none;
+}
+
+.pol-card > summary::-webkit-details-marker,
+.pol-standard > summary::-webkit-details-marker { display: none; }
+
+.pol-card > summary::after,
+.pol-standard > summary::after {
+  content: "▾";
+  margin-left: auto;
+  color: var(--ink-muted);
+  font-size: 13px;
+  transition: transform 0.2s ease;
+}
+
+.pol-card[open] > summary::after,
+.pol-standard[open] > summary::after { transform: rotate(180deg); }
+
+.pol-cardname { font-size: 15px; font-weight: 700; color: var(--ink); }
+
+.pol-card > .pol-row,
+.pol-card > .pol-runid,
+.pol-standard > .pol-row {
+  padding-left: 16px;
+  padding-right: 16px;
+}
+
+.pol-card > .pol-runid {
+  margin: 0;
+  padding-bottom: 14px;
+  font-size: 12px;
+  color: var(--ink-muted);
+}
+
+.pol-standard > .pol-row:last-child { padding-bottom: 14px; }
+
+.pol-toolbar { display: flex; justify-content: flex-end; margin-bottom: 6px; }
+
+.pol-hint {
+  margin: 0 0 10px;
+  font-size: 13px;
+  color: var(--ink-muted);
+}
+
+@media (max-width: 640px) {
+  .pol-card > summary,
+  .pol-standard > summary { padding: 14px; }
+  .pol-counts { margin-left: 0; }
+}
