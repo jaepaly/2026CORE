@@ -73,7 +73,22 @@ export function currentTab() {
   return current;
 }
 
+/** 이전 버전이 "안내 봤음" 을 localStorage 에 영구 저장했다. 지금은 아무도
+ *  읽지 않지만, 그때 방문한 기기에는 키가 그대로 남는다. 우리가 심은 것이므로
+ *  우리가 지운다 — 나중에 같은 접두어를 다시 쓸 때 옛 값에 물리는 것도 막는다. */
+function clearLegacyState() {
+  try {
+    for (const key of Object.keys(localStorage)) {
+      if (key.startsWith("core2026.tutorial.seen")) localStorage.removeItem(key);
+    }
+  } catch (err) {
+    // 저장소 접근이 막힌 환경 — 지울 것도 없다.
+  }
+}
+
 export function initTabs() {
+  clearLegacyState();
+
   document.addEventListener("click", (event) => {
     const tab = event.target.closest("[data-tab]");
     if (tab) {
