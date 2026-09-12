@@ -115,8 +115,25 @@ function clearLegacyState() {
   }
 }
 
+/** 탭바는 헤더 바로 아래에 붙어야 한다. 헤더 높이는 화면 폭에 따라 달라지고
+ *  (폰에서는 부제를 숨긴다) 앞으로도 바뀔 수 있어서, 숫자를 박아 두면 폰에서는
+ *  틈이 생기고 데스크톱에서는 탭 윗부분이 헤더 밑으로 잘린다. 실제 높이를 재서
+ *  CSS 변수로 넘긴다. */
+function syncHeaderHeight() {
+  const header = document.querySelector(".topbar");
+  if (!header) return;
+  const h = Math.round(header.getBoundingClientRect().height);
+  document.documentElement.style.setProperty("--header-h", `${h}px`);
+}
+
 export function initTabs() {
   clearLegacyState();
+
+  syncHeaderHeight();
+  // rAF 로 묶지 않는다. 높이 한 번 재는 비용은 무시할 만하고, 프레임을 그리지
+  // 않는 환경(임베드 미리보기 등)에서는 rAF 가 돌지 않아 값이 멈춰 버린다.
+  window.addEventListener("resize", syncHeaderHeight);
+  window.addEventListener("orientationchange", syncHeaderHeight);
 
   document.addEventListener("click", (event) => {
     const tab = event.target.closest("[data-tab]");
