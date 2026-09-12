@@ -112,22 +112,11 @@ select {
   box-shadow: var(--shadow-soft);
 }
 
-.brand strong,
-.brand small {
-  display: block;
-}
-
 .brand strong {
   color: var(--ink);
   font-size: 15px;
   font-weight: 750;
   letter-spacing: -0.1px;
-}
-
-.brand small {
-  margin-top: 1px;
-  color: var(--ink-muted);
-  font-size: 13px;
 }
 
 main {
@@ -1341,11 +1330,6 @@ footer a {
     align-items: center;
     gap: 12px;
     padding: 9px clamp(14px, 4vw, 48px);
-  }
-
-  /* 부제는 폰에서 가로 폭만 먹는다. 로고와 이름은 남긴다. */
-  .brand small {
-    display: none;
   }
 
   .brand {

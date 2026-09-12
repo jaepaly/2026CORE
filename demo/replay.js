@@ -5,9 +5,9 @@
 // 데이터(data/ 아래 JSON)를 로그의 delivered_record_ids × delivered_field_paths 와 조인해
 // 재구성한 것이므로, 표시 내용 = 그 run 에서 모델에게 실제 전달된 도구 응답이다.
 
-import { initPolicy, renderPolicy } from "./policy.js?v=6cd5dcc5";
-import { revealStage } from "./stage_view.js?v=6cd5dcc5";
-import { bareFieldLabel, toolLabel } from "./field_labels.js?v=6cd5dcc5";
+import { initPolicy, renderPolicy } from "./policy.js?v=d5542ba6";
+import { revealStage } from "./stage_view.js?v=d5542ba6";
+import { bareFieldLabel, toolLabel } from "./field_labels.js?v=d5542ba6";
 
 /** 조건 코드는 실험 설계의 이름이지 방문자의 언어가 아니다. 코드만 노출하면
  *  처음 온 사람은 A 와 C 가 무엇인지 모른 채 숫자를 보게 된다. 이름을 앞에
