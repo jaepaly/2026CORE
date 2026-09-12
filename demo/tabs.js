@@ -8,7 +8,7 @@
 // 인계가 전부 이 앵커에 의존하므로, 탭을 넣으면서 주소 체계를 바꾸면 기존
 // 링크가 전부 죽는다. 탭 키 = 섹션 id 로 맞춰 두면 링크가 그대로 산다.
 
-const TABS = ["intro", "replay", "policy", "evidence"];
+const TABS = ["intro", "replay", "policy", "evidence", "festival"];
 const DEFAULT_TAB = "intro";
 
 let current = null;

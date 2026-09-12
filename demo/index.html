@@ -35,6 +35,7 @@
         <button class="tab" type="button" role="tab" data-tab="replay" aria-controls="panel-replay" aria-selected="false"><span class="tab-num">2</span>실측 재생</button>
         <button class="tab" type="button" role="tab" data-tab="policy" aria-controls="panel-policy" aria-selected="false"><span class="tab-num">3</span>정책은 누가</button>
         <button class="tab" type="button" role="tab" data-tab="evidence" aria-controls="panel-evidence" aria-selected="false"><span class="tab-num">4</span>결과</button>
+        <button class="tab" type="button" role="tab" data-tab="festival" aria-controls="panel-festival" aria-selected="false"><span class="tab-num">5</span>우리 학술제라면</button>
       </nav>
 
       <div class="tabpanel" id="panel-intro" role="tabpanel" aria-label="문제">
@@ -249,6 +250,39 @@
           <small>primary A vs C: p=0.070 (유의하지 않음)</small>
         </article>
       </section>
+        <div class="tab-advance">
+          <button class="button primary" type="button" data-goto="festival">다음 · 우리 학술제라면</button>
+        </div>
+      </div>
+
+      <div class="tabpanel" id="panel-festival" role="tabpanel" aria-label="우리 학술제라면" hidden>
+      <section class="demo-shell" id="festival">
+        <div class="demo-header">
+          <div>
+            <p class="eyebrow">적용 예시</p>
+            <h2>이 학술제를 AI가 운영한다면</h2>
+            <p class="fs-caveat">
+              <strong>여기부터는 측정한 결과가 아닙니다.</strong>
+              앞의 네 탭은 모두 커밋된 실험 로그에서 나온 수치이고, 이 탭은
+              같은 구조를 익숙한 상황에 대입해 본 <strong>가정 예시</strong>입니다.
+              등장하는 값은 전부 지어낸 것으로, 실제 참가자·심사위원의 정보가 아닙니다.
+            </p>
+            <p class="section-copy">
+              학술제에도 이름·연락처·학번이 있고, 지도교수 코멘트와 심사 메모처럼
+              당사자 말고는 보면 안 되는 글이 있습니다. 발표 순서표 하나를 만드는 데
+              그 전부가 필요하지는 않습니다.
+            </p>
+          </div>
+        </div>
+
+        <div id="fsBody"></div>
+
+        <p class="rp-status">
+          앞 탭에서 본 것과 같은 구조입니다 — 바뀌는 것은 AI도 프롬프트도 아니고,
+          <strong>도구가 무엇을 돌려줄지 적은 목록</strong> 하나입니다.
+          그 목록을 누가 쓰고 누가 검토할지가 이 연구가 남긴 질문입니다.
+        </p>
+      </section>
       </div>
 
     </main>
@@ -265,6 +299,7 @@
       import { initTabs, onTabChange } from "./tabs.js";
       import { initReplay } from "./replay.js";
       import { initMetrics } from "./metrics.js";
+      import { initFestival } from "./festival.js";
       import { initTutorial, tutorialForTab } from "./tutorial.js";
 
       // 탭이 열릴 때마다 그 탭에 배정된 안내 비트를 (처음 한 번만) 띄운다.
@@ -275,6 +310,7 @@
       initTutorial();
 
       initMetrics().catch((err) => console.warn("metrics:", err));
+      initFestival();
       initReplay()
         .catch((err) => {
           const status = document.querySelector("#rpStatus");
