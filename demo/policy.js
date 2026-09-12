@@ -8,7 +8,7 @@
 // 함께 움직인다. 같은 업무에 대해 "인터페이스가 무엇을 넘겼나"(연구 1)와
 // "모델이 무엇을 넘기라고 썼을까"(연구 2)를 같은 화면에서 비교하기 위한 것이다.
 
-import { fieldLabel } from "./field_labels.js?v=4c21a563";
+import { fieldLabel } from "./field_labels.js?v=bcdcb585";
 
 const pq = (sel) => document.querySelector(sel);
 

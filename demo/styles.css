@@ -1592,6 +1592,7 @@ footer a {
    언제든 열 수 있게 한 줄로 남겨 둔다. */
 .rp-helpline { margin: 0 0 12px; }
 
+/* 정책 탭의 표기 전환. 이쪽은 본문을 바꾸는 스위치라 글자 링크가 맞다. */
 .linklike {
   padding: 14px 0;
   border: 0;
@@ -1600,6 +1601,40 @@ footer a {
   font-size: 13px;
   text-decoration: underline;
   cursor: pointer;
+}
+
+/* 안내를 다시 부르는 버튼.
+   밑줄 친 글자 하나로 두었더니 눌러야 할 것으로 보이지 않았다.
+   테두리와 아이콘을 줘서 버튼으로 읽히게 하되, 본문의 주인공은 아니므로
+   면을 채우지는 않는다(ghost). */
+.help-btn {
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+  /* 손가락 탭 영역 44px */
+  padding: 11px 16px 11px 12px;
+  border: 1px solid var(--hairline-strong);
+  border-radius: 999px;
+  background: var(--surface);
+  box-shadow: var(--shadow-soft);
+  color: var(--ink-secondary);
+  font-size: 14px;
+  line-height: 1.2;
+  cursor: pointer;
+}
+
+.help-btn:hover { border-color: var(--primary-ink); color: var(--primary-ink); }
+
+.help-btn-icon {
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 999px;
+  background: var(--primary-ink);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 800;
 }
 
 /* ---------- 접히는 정책 카드 ----------

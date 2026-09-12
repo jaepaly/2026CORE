@@ -8,7 +8,7 @@
 //
 // 등장 인물은 전부 지어낸 값이다. 실제 참가자·심사위원의 정보를 쓰지 않는다.
 
-import { revealStage } from "./stage_view.js?v=4c21a563";
+import { revealStage } from "./stage_view.js?v=bcdcb585";
 
 const FIELDS = [
   { field: "이름", value: "김○○", need: true },

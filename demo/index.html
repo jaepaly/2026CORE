@@ -8,8 +8,8 @@
       name="description"
       content="Interactive demo showing how field-level least privilege changes AI agent privacy exposure."
     />
-    <link rel="stylesheet" href="./styles.css?v=4c21a563" />
-    <link rel="stylesheet" href="./tutorial.css?v=4c21a563" />
+    <link rel="stylesheet" href="./styles.css?v=bcdcb585" />
+    <link rel="stylesheet" href="./tutorial.css?v=bcdcb585" />
   </head>
   <body>
     <div class="grid-glow" aria-hidden="true"></div>
@@ -52,7 +52,10 @@
             그 차이를 실제 실험 기록으로 보여드립니다.
           </p>
           <p class="rp-helpline">
-            <button class="linklike" type="button" data-tutorial="intro">이 화면이 무엇인지 안내 보기</button>
+            <button class="help-btn" type="button" data-tutorial="intro">
+            <span class="help-btn-icon" aria-hidden="true">?</span>
+            이 화면 안내 보기
+          </button>
           </p>
         </div>
 
@@ -149,7 +152,10 @@
         <p class="rp-task" id="rpTask"></p>
 
         <p class="rp-helpline">
-          <button class="linklike" type="button" data-tutorial="replay">이 화면이 무엇인지 안내 보기</button>
+          <button class="help-btn" type="button" data-tutorial="replay">
+            <span class="help-btn-icon" aria-hidden="true">?</span>
+            이 화면 안내 보기
+          </button>
         </p>
 
         <div class="rp-player">
@@ -290,19 +296,16 @@
     </main>
 
     <footer>
-      <span>
-        Design language applied from
-        <a href="https://github.com/jaepaly/2026CORE/blob/master/DESIGN.md" target="_blank" rel="noopener">DESIGN.md</a>, generated with <code>npx getdesign@latest add notion</code>.
-      </span>
-      <span>Static demo · no external runtime</span>
+      <span>2026 C.O.R.E. 학술제 · AI시대, 인간과 기술의 공존</span>
+      <span>이 페이지는 브라우저 안에서만 돕니다. 보신 내용을 어디로도 보내지 않습니다.</span>
     </footer>
 
     <script type="module">
-      import { initTabs, onTabChange } from "./tabs.js?v=4c21a563";
-      import { initReplay } from "./replay.js?v=4c21a563";
-      import { initMetrics } from "./metrics.js?v=4c21a563";
-      import { initFestival } from "./festival.js?v=4c21a563";
-      import { initTutorial, tutorialForTab } from "./tutorial.js?v=4c21a563";
+      import { initTabs, onTabChange } from "./tabs.js?v=bcdcb585";
+      import { initReplay } from "./replay.js?v=bcdcb585";
+      import { initMetrics } from "./metrics.js?v=bcdcb585";
+      import { initFestival } from "./festival.js?v=bcdcb585";
+      import { initTutorial, tutorialForTab } from "./tutorial.js?v=bcdcb585";
 
       // 탭이 열릴 때마다 그 탭에 배정된 안내 비트를 (처음 한 번만) 띄운다.
       onTabChange((tab, meta) => {
