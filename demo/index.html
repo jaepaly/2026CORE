@@ -273,11 +273,7 @@
         tutorialForTab(tab, meta).catch((err) => console.warn("tutorial:", err));
       });
 
-      initTutorial({
-        onAdvance: (tab) => {
-          import("./tabs.js").then((m) => m.showTab(tab));
-        },
-      });
+      initTutorial();
 
       initMetrics().catch((err) => console.warn("metrics:", err));
       initReplay()

@@ -70,7 +70,6 @@ let data = null;
 let index = 0;
 let root = null;
 let lastFocused = null;
-let onFinish = null;
 
 function fieldRows() {
   return data.fields
@@ -126,32 +125,29 @@ function render() {
   root.querySelector(".tut-final").hidden = index !== steps.length - 1;
 }
 
-/** 이 안내가 끝나면 어디로 가는가. 문제 탭의 안내는 실측으로 넘기고,
- *  실측 탭의 안내는 그 자리에서 닫는다 — 이미 목적지에 있다. */
-function handoffTab() {
-  return steps.some((s) => TAB_OF_STEP[s.key] === "intro") ? "replay" : null;
-}
-
+/** 안내가 끝나면 탭을 옮기지 않는다.
+ *
+ *  자동으로 넘기면 안내만 보고 그 탭을 정작 못 둘러본다 — 설명을 들은 직후가
+ *  직접 만져 보기 가장 좋은 때인데 그 기회를 뺏는 셈이다. 그래서 그 자리에서
+ *  닫고, 다음 탭으로 가는 것은 화면 아래 "다음 · ..." 버튼과 탭바에 맡긴다. */
 function finalLabel() {
-  return handoffTab() ? "실제 기록 보러 가기" : "직접 해보기";
+  return "이 화면 둘러보기";
 }
 
-function close(advance) {
+function close() {
   if (!root) return;
   root.remove();
   root = null;
   document.body.style.overflow = "";
   document.removeEventListener("keydown", onKey);
   if (lastFocused && lastFocused.focus) lastFocused.focus();
-  const target = advance ? handoffTab() : null;
-  if (target && onFinish) onFinish(target);
 }
 
 function step(delta) {
   const next = index + delta;
   if (next < 0) return;
   if (next >= steps.length) {
-    close(true);
+    close();
     return;
   }
   index = next;
@@ -160,7 +156,7 @@ function step(delta) {
 
 function onKey(event) {
   if (event.key === "Escape") {
-    close(false);
+    close();
     return;
   }
   if (event.key === "ArrowRight") {
@@ -237,11 +233,11 @@ function build() {
       </div>
     </div>`;
 
-  root.querySelector(".tut-skip").addEventListener("click", () => close(false));
+  root.querySelector(".tut-skip").addEventListener("click", () => close());
   root.querySelector(".tut-next").addEventListener("click", () => step(1));
   root.querySelector(".tut-prev").addEventListener("click", () => step(-1));
   root.addEventListener("click", (event) => {
-    if (event.target === root) close(false);
+    if (event.target === root) close();
   });
 
   document.body.appendChild(root);
@@ -262,7 +258,7 @@ let steps = STEPS;
 
 export async function openTutorial(tab) {
   await load();
-  if (root) close(false);
+  if (root) close();
   steps = tab ? STEPS.filter((s) => TAB_OF_STEP[s.key] === tab) : STEPS;
   if (!steps.length) return;
   index = 0;
@@ -274,9 +270,7 @@ export async function openTutorial(tab) {
 /** 탭 셸이 부른다. 해당 탭에 배정된 비트를, 그 탭을 처음 열 때만 띄운다.
  *  두 번째부터는 탭 상단의 "안내 다시 보기" 로만 열린다 — 탭을 옮길 때마다
  *  모달이 뜨면 안내가 아니라 장애물이 된다. */
-export function initTutorial({ onAdvance } = {}) {
-  onFinish = onAdvance || null;
-
+export function initTutorial() {
   for (const button of document.querySelectorAll("[data-tutorial]")) {
     button.addEventListener("click", () => {
       openTutorial(button.dataset.tutorial).catch((err) => console.warn("tutorial:", err));
