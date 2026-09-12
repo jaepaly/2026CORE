@@ -145,77 +145,187 @@ function runBadges(run) {
   return b.join("");
 }
 
-function renderRunColumn(targetSel, badgeSel, run, records) {
-  const target = rq(targetSel);
-  const badge = rq(badgeSel);
-  if (!target) return;
-  if (!run) {
-    target.innerHTML = `<div class="rp-empty">이 조합의 run이 없습니다.</div>`;
-    if (badge) badge.innerHTML = "";
-    return;
+/* ---------- 전/후 병합 렌더 ----------
+ * 폰에서는 두 카드가 세로로 쌓여 560px 짜리가 774px 떨어진다. 화면이 844px 이니
+ * 두 조건을 동시에 볼 수 없다 — 나란히 놓고 비교하라는 화면인데 나란히 놓이지
+ * 않는다. 그래서 카드를 둘 두지 않고 하나를 제자리에서 바꾼다.
+ *
+ * 핵심은 같은 DOM 을 유지하는 것이다. 단계마다 다시 그리면 "무엇이 사라졌는지"가
+ * 보이지 않는다. 전·후 양쪽의 필드를 한 번에 깔아 두고 data-phase 로 상태만
+ * 바꾼다 — 사라지는 그 동작이 곧 "인터페이스가 잘라냈다" 는 설명이다.
+ */
+
+const pathsOf = (ev, key) => new Set(ev ? ev[key] || [] : []);
+
+function mergedFieldRows(evBefore, evAfter, record) {
+  const bIn = pathsOf(evBefore, "delivered_field_paths");
+  const aIn = pathsOf(evAfter, "delivered_field_paths");
+  const sensitive = pathsOf(evBefore, "delivered_sensitive_field_paths");
+
+  const all = [...new Set([...bIn, ...aIn])].sort();
+  const rows = [];
+  for (const path of all) {
+    const value = fieldValue(record, path);
+    if (value === null) continue;
+    const cls = [
+      "rp-f",
+      bIn.has(path) ? "b-in" : "b-out",
+      aIn.has(path) ? "a-in" : "a-out",
+      sensitive.has(path) ? "is-sensitive" : "",
+    ].filter(Boolean).join(" ");
+    const tag = sensitive.has(path) ? '<i class="rp-f-tag">민감</i>' : "";
+    rows.push(
+      `<div class="${cls}"><b>${esc(normPath(path))}</b><span>${esc(showValue(value))}</span>${tag}</div>`
+    );
   }
-  if (badge) badge.innerHTML = runBadges(run);
-  const events = run.delivery_events || [];
-  if (!events.length) {
-    target.innerHTML = `<div class="rp-empty">도구 호출 없음 — 모델이 도구를 부르지 않고 종료했습니다.</div>`;
-    return;
+  return rows.join("");
+}
+
+function mergedEvent(evBefore, evAfter, records, turn) {
+  const ev = evBefore || evAfter;
+  if (!ev) return "";
+
+  const toolBefore = evBefore ? evBefore.tool_name : null;
+  const toolAfter = evAfter ? evAfter.tool_name : null;
+  const sameTool = toolBefore && toolAfter && toolBefore === toolAfter;
+  const toolHtml = sameTool
+    ? `<code>${esc(toolBefore)}</code>`
+    : `<code class="rp-tool b-only">${esc(toolBefore || "호출 없음")}</code>` +
+      `<code class="rp-tool a-only">${esc(toolAfter || "호출 없음")}</code>`;
+
+  const ids = [
+    ...new Set([
+      ...(evBefore ? evBefore.delivered_record_ids || [] : []),
+      ...(evAfter ? evAfter.delivered_record_ids || [] : []),
+    ]),
+  ];
+
+  let bodyHtml;
+  if (!ids.length) {
+    const names = (ev.delivered_field_paths || []).map(normPath).join(", ") || "(없음)";
+    bodyHtml = `<div class="rp-empty">반환 필드: <code>${esc(names)}</code></div>`;
+  } else {
+    bodyHtml = ids
+      .map((id) => {
+        const record = records.get(id);
+        if (!record) {
+          return `<div class="rp-empty">생성 결과 <code>${esc(id)}</code> (sandbox)</div>`;
+        }
+        const rows = mergedFieldRows(evBefore, evAfter, record);
+        if (!rows) return "";
+        return `<article class="rp-record"><header><strong>${esc(id)}</strong></header>${rows}</article>`;
+      })
+      .join("");
   }
-  const eventsHtml = events
-    .map((ev) => {
-      const args = (ev.requested_arg_keys || []).join(", ");
-      const proj = ev.projection_source && ev.projection_source !== "none"
-        ? `<span class="rp-proj">projection: ${esc(ev.projection_source)}</span>` : "";
-      return `
-        <section class="rp-event">
-          <header>
-            <span class="rp-turn">T${esc(ev.turn)}</span>
-            <code>${esc(ev.tool_name)}(${esc(args)})</code>
-            ${proj}
-          </header>
-          ${renderEventRecords(ev, records)}
-        </section>`;
-    })
-    .join("");
-  // 모델 최종 답변은 로그에 보관하지 않는다(sha256·글자수만) — 지어내 표시하지 않는다.
-  const finalNote = `
-    <div class="rp-empty rp-final">최종 답변: 미보관 — sha256 <code>${esc((run.final_output_sha256 || "").slice(0, 12))}…</code> · ${esc(run.final_output_char_count ?? "?")}자</div>`;
-  target.innerHTML = eventsHtml + finalNote;
+
+  return `
+    <section class="rp-event">
+      <header><span class="rp-turn">T${esc(turn)}</span>${toolHtml}</header>
+      ${bodyHtml}
+    </section>`;
+}
+
+function renderMergedStage(runBefore, runAfter, records) {
+  const stage = rq("#rpStage");
+  if (!stage) return { comparable: false };
+
+  if (!runBefore && !runAfter) {
+    stage.innerHTML = `<div class="rp-empty">이 조합의 run이 없습니다.</div>`;
+    return { comparable: false };
+  }
+
+  const evB = (runBefore && runBefore.delivery_events) || [];
+  const evA = (runAfter && runAfter.delivery_events) || [];
+  const turns = Math.max(evB.length, evA.length);
+
+  if (!turns) {
+    stage.innerHTML = `<div class="rp-empty">도구 호출 없음 — 모델이 도구를 부르지 않고 종료했습니다.</div>`;
+    return { comparable: false };
+  }
+
+  let html = "";
+  for (let i = 0; i < turns; i += 1) {
+    html += mergedEvent(evB[i] || null, evA[i] || null, records, i + 1);
+  }
+  // 최종 답변은 로그에 없다(sha256·글자수만). 지어내지 않는다.
+  const sha = (run) => esc((run?.final_output_sha256 || "").slice(0, 12));
+  html += `<div class="rp-empty rp-final">최종 답변은 보관하지 않습니다 —
+    전 <code>${sha(runBefore)}…</code> · 후 <code>${sha(runAfter)}…</code></div>`;
+  stage.innerHTML = html;
+
+  // "같은 요청, 결과만 다름" 이 어디까지 성립하는지 정확히 구분한다.
+  // 도구가 갈린 것과 인자가 갈린 것은 원인이 다르다 — 전자는 모델의 선택이
+  // 달라진 것이고, 후자는 앞 턴에서 받은 정보가 달라져 생긴 하류 효과다.
+  const sameLength = evB.length === evA.length;
+  const toolsSame = sameLength && evB.every((e, i) => e.tool_name === evA[i]?.tool_name);
+  const argsSame = toolsSame && evB.every((e, i) => e.requested_args_sha256 === evA[i]?.requested_args_sha256);
+  const firstTurnIdentical =
+    evB[0] && evA[0] &&
+    evB[0].tool_name === evA[0].tool_name &&
+    evB[0].requested_args_sha256 === evA[0].requested_args_sha256;
+  return { comparable: true, toolsSame, argsSame, firstTurnIdentical };
 }
 
 function findRun(rows, scenario, condition) {
   return rows.find((r) => r.scenario === scenario && r.condition === condition) || null;
 }
 
+function setPhase(phase) {
+  const stage = rq("#rpStage");
+  if (!stage) return;
+  stage.dataset.phase = phase;
+  for (const button of document.querySelectorAll(".rp-phase")) {
+    button.classList.toggle("is-on", button.dataset.phase === phase);
+  }
+  const play = rq("#rpPlay");
+  if (play) play.textContent = phase === "before" ? "▶ 변화 재생" : "↺ 처음부터";
+}
+
 async function renderReplay() {
   const dir = rq("#rpModel").value;
   const scenario = rq("#rpScenario").value;
-  const left = rq("#rpLeftCond").value;
-  const right = rq("#rpRightCond").value;
+  const before = rq("#rpBeforeCond").value;
+  const after = rq("#rpAfterCond").value;
   const status = rq("#rpStatus");
 
   try {
     status.textContent = "runs.jsonl 로드 중…";
     const rows = await fetchRuns(dir);
-    const runL = findRun(rows, scenario, left);
-    const runR = findRun(rows, scenario, right);
+    const runB = findRun(rows, scenario, before);
+    const runA = findRun(rows, scenario, after);
 
     const meta = state.index.scenarios.find((s) => s.id === scenario);
     rq("#rpTask").textContent = meta ? meta.task : scenario;
-    rq("#rpLeftLabel").textContent = `${CONDITION_NAME[left]} (${left})`;
-    rq("#rpRightLabel").textContent = `${CONDITION_NAME[right]} (${right})`;
+    rq("#rpBeforeLabel").textContent = `${CONDITION_NAME[before]} (${before})`;
+    rq("#rpAfterLabel").textContent = `${CONDITION_NAME[after]} (${after})`;
+    rq("#rpBeforeBadges").innerHTML = runBadges(runB);
+    rq("#rpAfterBadges").innerHTML = runBadges(runA);
 
-    renderRunColumn("#rpLeftEvents", "#rpLeftBadges", runL, state.records);
-    renderRunColumn("#rpRightEvents", "#rpRightBadges", runR, state.records);
+    const cmp = renderMergedStage(runB, runA, state.records);
+    setPhase("before");
+
+    // 무엇이 같고 무엇이 달라졌는지 숨기지 않고 그대로 알린다 — 어긋난 경우도
+    // 이 실험의 결과이고, 뭉뚱그리면 화면이 거짓을 말하게 된다.
+    let note;
+    if (!cmp.comparable) {
+      note = "";
+    } else if (cmp.argsSame) {
+      note = "두 조건의 도구 호출이 완전히 같습니다 — 달라진 건 돌아온 응답뿐입니다.";
+    } else if (cmp.toolsSame) {
+      note = cmp.firstTurnIdentical
+        ? "첫 호출은 인자까지 완전히 같습니다. 이후 턴은 인자가 달라지는데, 앞에서 받은 정보가 달라졌기 때문입니다."
+        : "부른 도구는 같지만 인자가 다릅니다.";
+    } else {
+      note = "이 조합은 모델이 서로 다른 도구를 선택했습니다. 응답 차이에 도구 선택 차이가 섞여 있습니다.";
+    }
+    rq("#rpPlayNote").textContent = note;
 
     // 두 실험이 같은 scenario_id 를 쓰므로 선택 하나로 함께 움직인다.
-    // 연구 2 패널은 replay 패널에서 약 1,900px 아래에 있어 폰에서는 두세 화면
-    // 떨어진다. 거기에도 같은 선택기를 두고, 어느 쪽을 만지든 양쪽이 같은
-    // 시나리오를 가리키도록 값을 맞춘다.
     rq("#polScenario").value = scenario;
     renderPolicy(scenario);
 
     const model = state.index.experiments.find((e) => e.dir === dir)?.model || dir;
-    status.textContent = `${model} · ${scenario} · 커밋된 run 로그 재생 (run_id: ${runL?.run_id ?? "-"} / ${runR?.run_id ?? "-"})`;
+    status.textContent = `${model} · ${scenario} · 커밋된 run 로그 (${runB?.run_id ?? "-"} / ${runA?.run_id ?? "-"})`;
   } catch (err) {
     status.textContent = `로드 실패: ${err.message} — 저장소 루트에서 python -m http.server 8080 으로 실행했는지 확인하세요.`;
   }
@@ -236,8 +346,8 @@ export async function initReplay() {
     `<option value="${esc(s.id)}">${esc(s.id)} · ${esc(s.name)}</option>`);
   const condOption = (c, selected) =>
     `<option value="${c}" ${c === selected ? "selected" : ""}>${c} · ${CONDITION_NAME[c]}</option>`;
-  fillSelect("#rpLeftCond", ["A", "B", "C", "D"], (c) => condOption(c, "A"));
-  fillSelect("#rpRightCond", ["A", "B", "C", "D"], (c) => condOption(c, "C"));
+  fillSelect("#rpBeforeCond", ["A", "B", "C", "D"], (c) => condOption(c, "A"));
+  fillSelect("#rpAfterCond", ["A", "B", "C", "D"], (c) => condOption(c, "C"));
 
   // qwen3:8b 를 기본 모델로 (있으면)
   const preferred = state.index.experiments.find((e) => e.model === "qwen3:8b");
@@ -246,7 +356,19 @@ export async function initReplay() {
   fillSelect("#polScenario", state.index.scenarios, (s) =>
     `<option value="${esc(s.id)}">${esc(s.id)} · ${esc(s.name)}</option>`);
 
-  for (const sel of ["#rpModel", "#rpScenario", "#rpLeftCond", "#rpRightCond"]) {
+  // initReplay 가 두 번 불리면 토글 계열 리스너가 두 겹으로 붙어 "재생" 이
+  // 두 번 뒤집혀 제자리로 돌아온다. 절대값을 세팅하는 리스너는 증상이 없어
+  // 원인을 찾기도 어렵다. 바인딩은 한 번만 한다.
+  if (!state.bound) {
+    state.bound = true;
+    bindControls();
+  }
+
+  await renderReplay();
+}
+
+function bindControls() {
+  for (const sel of ["#rpModel", "#rpScenario", "#rpBeforeCond", "#rpAfterCond"]) {
     rq(sel).addEventListener("change", renderReplay);
   }
 
@@ -255,7 +377,11 @@ export async function initReplay() {
     rq("#rpScenario").value = rq("#polScenario").value;
     renderReplay();
   });
-  rq("#rpReload").addEventListener("click", renderReplay);
-
-  await renderReplay();
+  rq("#rpPlay").addEventListener("click", () => {
+    const stage = rq("#rpStage");
+    setPhase(stage.dataset.phase === "before" ? "after" : "before");
+  });
+  for (const button of document.querySelectorAll(".rp-phase")) {
+    button.addEventListener("click", () => setPhase(button.dataset.phase));
+  }
 }

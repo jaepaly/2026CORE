@@ -1434,3 +1434,177 @@ footer a {
   font-size: 13px;
   color: var(--ink-muted);
 }
+
+/* ---------- 탭 셸 ---------- */
+.tabbar {
+  position: sticky;
+  top: 63px;
+  z-index: 9;
+  display: flex;
+  gap: 6px;
+  margin: 0 0 22px;
+  padding: 8px 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+  background: var(--canvas-soft);
+}
+
+.tabbar::-webkit-scrollbar { display: none; }
+
+.tab {
+  display: inline-flex;
+  gap: 7px;
+  align-items: center;
+  flex: 0 0 auto;
+  /* 손가락 탭 영역 44px. 탭바가 주 이동 수단이라 여기서 빗나가면 안 된다. */
+  padding: 12px 14px;
+  border: 1px solid var(--hairline);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--ink-secondary);
+  font-size: 14px;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.tab-num {
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 999px;
+  background: #e9e7e4;
+  color: var(--ink-secondary);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.tab.is-on {
+  border-color: var(--primary-ink);
+  background: var(--primary-ink);
+  color: #fff;
+}
+
+.tab.is-on .tab-num { background: rgba(0, 0, 0, 0.22); color: #fff; }
+
+.tab-advance { display: flex; justify-content: flex-end; margin: 22px 0 0; }
+
+/* ---------- 전/후 플레이어 ----------
+   두 카드를 나란히 두던 자리를 대체한다. 폰에서는 카드 둘이 774px 떨어져
+   동시에 볼 수 없었다 — 공간 비교가 불가능하므로 시간 비교로 바꾼다. */
+.rp-phasebar {
+  display: flex;
+  gap: 8px;
+  align-items: stretch;
+  margin-bottom: 12px;
+}
+
+.rp-phase {
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 10px 12px;
+  border: 1px solid var(--hairline);
+  border-radius: 12px;
+  background: var(--surface);
+  text-align: left;
+  cursor: pointer;
+}
+
+.rp-phase.is-on { border-color: var(--primary-ink); box-shadow: inset 0 0 0 1px var(--primary-ink); }
+.rp-phase-label { font-size: 14px; font-weight: 700; color: var(--ink); }
+.rp-phase-badges { display: flex; flex-wrap: wrap; gap: 4px; }
+.rp-arrow { align-self: center; color: var(--ink-muted); font-size: 18px; }
+
+.rp-stage {
+  padding: 14px;
+  border: 1px solid var(--hairline);
+  border-radius: 14px;
+  background: var(--canvas-soft);
+}
+
+.rp-playbar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-top: 12px; }
+.rp-playnote { flex: 1 1 220px; font-size: 13px; color: var(--ink-muted); }
+
+/* 필드 한 줄. 전/후 양쪽을 한 번에 깔아 두고 상태만 바꾼다. */
+.rp-f {
+  display: grid;
+  grid-template-columns: 92px minmax(0, 1fr) auto;
+  gap: 8px;
+  align-items: baseline;
+  max-height: 80px;
+  padding: 5px 8px;
+  margin-bottom: 3px;
+  border-radius: 8px;
+  background: var(--surface);
+  font-size: 13px;
+  transition:
+    max-height 0.36s ease,
+    opacity 0.3s ease,
+    padding 0.36s ease,
+    margin 0.36s ease,
+    background 0.3s ease;
+}
+
+.rp-f b { font-weight: 600; color: #374151; overflow-wrap: anywhere; }
+.rp-f span { color: var(--ink-secondary); overflow-wrap: anywhere; }
+
+.rp-f-tag {
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: #fdecec;
+  color: var(--danger-ink);
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.rp-f.is-sensitive { background: #fdecec; }
+.rp-f.is-sensitive b, .rp-f.is-sensitive span { color: var(--danger-ink); }
+
+/* 접히는 쪽. 높이까지 접어야 "가려졌다"가 아니라 "사라졌다"로 읽힌다. */
+.rp-stage[data-phase="before"] .rp-f.b-out,
+.rp-stage[data-phase="after"] .rp-f.a-out {
+  max-height: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+  margin-bottom: 0;
+  opacity: 0;
+  overflow: hidden;
+}
+
+.rp-stage[data-phase="after"] .rp-f.a-in { background: #e7f6ec; }
+
+.rp-tool { display: none; }
+.rp-stage[data-phase="before"] .rp-tool.b-only,
+.rp-stage[data-phase="after"] .rp-tool.a-only { display: inline; }
+
+@media (prefers-reduced-motion: reduce) {
+  .rp-f { transition: none; }
+}
+
+@media (max-width: 640px) {
+  .tabbar { top: 63px; }
+  .rp-phasebar { flex-direction: column; }
+  .rp-arrow { transform: rotate(90deg); }
+  .rp-f { grid-template-columns: 78px minmax(0, 1fr); }
+  .rp-f .rp-f-tag { grid-column: 2; }
+  .tab-advance button { width: 100%; }
+}
+
+/* 각 탭에서 안내를 다시 부르는 진입점. 모달을 매번 띄우지 않는 대신
+   언제든 열 수 있게 한 줄로 남겨 둔다. */
+.rp-helpline { margin: 0 0 12px; }
+
+.linklike {
+  padding: 14px 0;
+  border: 0;
+  background: none;
+  color: var(--primary-ink);
+  font-size: 13px;
+  text-decoration: underline;
+  cursor: pointer;
+}

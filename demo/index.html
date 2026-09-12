@@ -30,6 +30,14 @@
     </header>
 
     <main>
+      <nav class="tabbar" id="tabbar" aria-label="시연 단계">
+        <button class="tab" type="button" role="tab" data-tab="intro" aria-controls="panel-intro" aria-selected="true"><span class="tab-num">1</span>문제</button>
+        <button class="tab" type="button" role="tab" data-tab="replay" aria-controls="panel-replay" aria-selected="false"><span class="tab-num">2</span>실측 재생</button>
+        <button class="tab" type="button" role="tab" data-tab="policy" aria-controls="panel-policy" aria-selected="false"><span class="tab-num">3</span>정책은 누가</button>
+        <button class="tab" type="button" role="tab" data-tab="evidence" aria-controls="panel-evidence" aria-selected="false"><span class="tab-num">4</span>결과</button>
+      </nav>
+
+      <div class="tabpanel" id="panel-intro" role="tabpanel" aria-label="문제">
       <section class="hero">
         <div class="hero-copy">
           <p class="eyebrow">AI 시대, 인간과 기술의 공존</p>
@@ -43,8 +51,8 @@
             아래 시연은 무방어 도구와 필드 최소권한 도구를 같은 화면에서 비교합니다.
           </p>
           <div class="hero-actions">
-            <button class="button primary" id="tutorialReplayBtn" type="button">1분 안내 먼저 보기</button>
-            <a class="button ghost" href="#replay">실제 실험 기록 보기</a>
+            <button class="button primary" type="button" data-tutorial="intro">안내부터 보기</button>
+            <a class="button ghost" href="#replay">실제 기록 바로 보기</a>
           </div>
         </div>
 
@@ -99,7 +107,12 @@
           </p>
         </article>
       </section>
+        <div class="tab-advance">
+          <button class="button primary" type="button" data-goto="replay">다음 · 실측 재생</button>
+        </div>
+      </div>
 
+      <div class="tabpanel" id="panel-replay" role="tabpanel" aria-label="실측 재생" hidden>
       <section class="demo-shell replay-shell" id="replay">
         <div class="demo-header">
           <div>
@@ -122,46 +135,51 @@
               <select id="rpScenario"></select>
             </label>
             <label>
-              <span>왼쪽 (비교 대상)</span>
-              <select id="rpLeftCond"></select>
+              <span>변화 전</span>
+              <select id="rpBeforeCond"></select>
             </label>
             <label>
-              <span>오른쪽 (비교 대상)</span>
-              <select id="rpRightCond"></select>
+              <span>변화 후</span>
+              <select id="rpAfterCond"></select>
             </label>
-            <button class="button primary" id="rpReload" type="button">재생</button>
           </div>
         </div>
 
         <p class="rp-task" id="rpTask"></p>
 
-        <div class="comparison-stage replay-stage">
-          <article class="compare-card danger-card">
-            <div class="compare-head">
-              <span class="policy-pill danger" id="rpLeftLabel">무방어 (A)</span>
-              <span class="rp-badges" id="rpLeftBadges"></span>
-            </div>
-            <div class="rp-events" id="rpLeftEvents"></div>
-          </article>
+        <p class="rp-helpline">
+          <button class="linklike" type="button" data-tutorial="replay">이 화면이 무엇인지 안내 보기</button>
+        </p>
 
-          <div class="stage-verdict">
-            <span>실측</span>
-            <strong>같은 시나리오,<br />같은 모델</strong>
-            <p>바뀐 것은 인터페이스뿐입니다.</p>
+        <div class="rp-player">
+          <div class="rp-phasebar" role="group" aria-label="변화 전후">
+            <button class="rp-phase is-on" type="button" data-phase="before">
+              <span class="rp-phase-label" id="rpBeforeLabel">무방어 (A)</span>
+              <span class="rp-phase-badges" id="rpBeforeBadges"></span>
+            </button>
+            <span class="rp-arrow" aria-hidden="true">→</span>
+            <button class="rp-phase" type="button" data-phase="after">
+              <span class="rp-phase-label" id="rpAfterLabel">필드 최소권한 (C)</span>
+              <span class="rp-phase-badges" id="rpAfterBadges"></span>
+            </button>
           </div>
 
-          <article class="compare-card safe-card">
-            <div class="compare-head">
-              <span class="policy-pill safe" id="rpRightLabel">필드 최소권한 (C)</span>
-              <span class="rp-badges" id="rpRightBadges"></span>
-            </div>
-            <div class="rp-events" id="rpRightEvents"></div>
-          </article>
+          <div class="rp-stage" id="rpStage" data-phase="before"></div>
+
+          <div class="rp-playbar">
+            <button class="button primary" id="rpPlay" type="button">▶ 변화 재생</button>
+            <span class="rp-playnote" id="rpPlayNote"></span>
+          </div>
         </div>
 
         <p class="rp-status" id="rpStatus">초기화 중…</p>
       </section>
+        <div class="tab-advance">
+          <button class="button primary" type="button" data-goto="policy">다음 · 정책은 누가</button>
+        </div>
+      </div>
 
+      <div class="tabpanel" id="panel-policy" role="tabpanel" aria-label="정책은 누가" hidden>
       <section class="demo-shell" id="policy">
         <div class="demo-header">
           <div>
@@ -204,65 +222,12 @@
           <code>email.body</code> 허용(24.3%)은 내용을 봐야 판단할 수 있어 사람이 남아야 합니다.
         </p>
       </section>
-
-      <section class="demo-shell" id="demo">
-        <div class="demo-header">
-          <div>
-            <p class="eyebrow">개념 시연 · 합성 예시</p>
-            <h2>같은 요청, 다른 도구 응답</h2>
-            <p class="section-copy">아래 레코드는 이해를 돕기 위한 <strong>합성 예시</strong>입니다(실측은 위 Run replay). 왼쪽은 무방어 A, 오른쪽은 선택한 정책이 같은 응답에서 무엇을 잘라내는지 보여줍니다.</p>
-          </div>
-          <div class="demo-controls">
-            <label>
-              <span>시연 시나리오</span>
-              <select id="scenarioSelect">
-                <option value="weekly">악성 메일이 섞인 업무 요약</option>
-                <option value="spam">스팸·악성 메일 식별</option>
-                <option value="contacts">전 직원 비상 연락망 구축</option>
-              </select>
-            </label>
-            <label>
-              <span>오른쪽 정책</span>
-              <select id="policySelect">
-                <option value="C">C · 필드 최소권한</option>
-                <option value="D">D · 강한 최소권한</option>
-                <option value="B">B · 프롬프트만</option>
-                <option value="A">A · 무방어</option>
-              </select>
-            </label>
-            <button class="button primary" id="runBtn" type="button">시연 재생</button>
-          </div>
+        <div class="tab-advance">
+          <button class="button primary" type="button" data-goto="evidence">다음 · 결과</button>
         </div>
+      </div>
 
-        <div class="comparison-stage">
-          <article class="compare-card danger-card">
-            <div class="compare-head">
-              <span class="policy-pill danger">A · 무방어</span>
-              <strong id="beforeScore">노출 5.31</strong>
-            </div>
-            <h3>AI에게 그대로 전달되는 도구 결과</h3>
-            <p class="compare-caption" id="beforePayload">email body payload 전달 가능</p>
-            <div class="record-list compact" id="beforeRecordList"></div>
-          </article>
-
-          <div class="stage-verdict">
-            <span>VS</span>
-            <strong id="verdictBadge">body · phone · notes 차단</strong>
-            <p id="stageNarration">같은 업무라도 인터페이스가 민감 필드를 제거하면 모델은 해당 값을 볼 수 없습니다.</p>
-          </div>
-
-          <article class="compare-card safe-card">
-            <div class="compare-head">
-              <span class="policy-pill safe" id="afterPolicyLabel">C · 필드 최소권한</span>
-              <strong id="afterScore">노출 0.00</strong>
-            </div>
-            <h3>민감 필드가 제거된 도구 결과</h3>
-            <p class="compare-caption" id="afterPayload">인젝션 전달 경로 차단</p>
-            <div class="record-list compact" id="afterRecordList"></div>
-          </article>
-        </div>
-      </section>
-
+      <div class="tabpanel" id="panel-evidence" role="tabpanel" aria-label="결과" hidden>
       <section class="metrics-row" id="evidence">
         <article class="metric-card">
           <span>전달 가능한 민감 필드 (설계상)</span>
@@ -285,6 +250,7 @@
           <small>primary A vs C: p=0.070 (유의하지 않음)</small>
         </article>
       </section>
+      </div>
 
     </main>
 
@@ -296,15 +262,30 @@
       <span>Static demo · no external runtime</span>
     </footer>
 
-    <script src="./app.js"></script>
     <script type="module">
+      import { initTabs, onTabChange } from "./tabs.js";
       import { initReplay } from "./replay.js";
-      import { initTutorial } from "./tutorial.js";
-      initTutorial().catch((err) => console.warn("tutorial:", err));
-      initReplay().catch((err) => {
-        const status = document.querySelector("#rpStatus");
-        if (status) status.textContent = `replay 초기화 실패: ${err.message} — 저장소 루트에서 python -m http.server 8080 으로 여세요.`;
+      import { initMetrics } from "./metrics.js";
+      import { initTutorial, tutorialForTab } from "./tutorial.js";
+
+      // 탭이 열릴 때마다 그 탭에 배정된 안내 비트를 (처음 한 번만) 띄운다.
+      onTabChange((tab, meta) => {
+        tutorialForTab(tab, meta).catch((err) => console.warn("tutorial:", err));
       });
+
+      initTutorial({
+        onAdvance: (tab) => {
+          import("./tabs.js").then((m) => m.showTab(tab));
+        },
+      });
+
+      initMetrics().catch((err) => console.warn("metrics:", err));
+      initReplay()
+        .catch((err) => {
+          const status = document.querySelector("#rpStatus");
+          if (status) status.textContent = `replay 초기화 실패: ${err.message}`;
+        })
+        .finally(() => initTabs());
     </script>
   </body>
 </html>

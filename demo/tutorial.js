@@ -9,7 +9,16 @@
 // 커밋된 runs.jsonl 에서 생성된다(demo/build_tutorial_data.py). 튜토리얼이
 // 지어낸 예시이면 "실측"이라는 이 연구의 강점을 여기서 스스로 버리게 된다.
 
-const STORAGE_KEY = "core2026.tutorial.seen.v1";
+const STORAGE_KEY = "core2026.tutorial.seen.v2";
+
+/** 다섯 비트를 탭에 나눠 붙인다.
+ *
+ *  탭마다 따로 온보딩을 만들면 5단계 x 4탭 = 20단계가 되어 안내가 아니라
+ *  장애물이 된다. 그래서 새로 만들지 않고 원래 다섯 걸음을 소속 탭으로
+ *  쪼갠다 — 문제 탭이 1~3(업무 -> 호출 -> 전부 넘어옴), 실측 탭이
+ *  4~5(사람이 쓴 허용 목록 -> 0건)를 맡는다. 뒤 두 탭은 각자 본문 설명이
+ *  이미 있으므로 오버레이를 띄우지 않는다. */
+const TAB_OF_STEP = { task: "intro", call: "intro", exposed: "intro", policy: "replay", protected: "replay" };
 
 const reduceMotion = () =>
   window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -63,6 +72,7 @@ let data = null;
 let index = 0;
 let root = null;
 let lastFocused = null;
+let onFinish = null;
 
 function fieldRows() {
   return data.fields
@@ -87,7 +97,7 @@ function allowList() {
 }
 
 function render() {
-  const step = STEPS[index];
+  const step = steps[index];
   const value = (x) => (typeof x === "function" ? x(data) : x);
 
   root.querySelector(".tut-stage").dataset.step = step.key;
@@ -95,7 +105,7 @@ function render() {
   root.querySelector(".tut-lead").textContent = value(step.lead);
   root.querySelector(".tut-note").textContent = value(step.note);
 
-  const shown = index >= 2;
+  const shown = ["exposed", "policy", "protected"].includes(step.key);
   root.querySelector(".tut-counter").hidden = !shown;
   if (shown) {
     const n =
@@ -113,12 +123,22 @@ function render() {
   });
 
   root.querySelector(".tut-next").textContent =
-    index === STEPS.length - 1 ? "실제 로그 보러 가기" : "다음";
+    index === steps.length - 1 ? finalLabel() : "다음";
   root.querySelector(".tut-prev").hidden = index === 0;
-  root.querySelector(".tut-final").hidden = index !== STEPS.length - 1;
+  root.querySelector(".tut-final").hidden = index !== steps.length - 1;
 }
 
-function close(goToReplay) {
+/** 이 안내가 끝나면 어디로 가는가. 문제 탭의 안내는 실측으로 넘기고,
+ *  실측 탭의 안내는 그 자리에서 닫는다 — 이미 목적지에 있다. */
+function handoffTab() {
+  return steps.some((s) => TAB_OF_STEP[s.key] === "intro") ? "replay" : null;
+}
+
+function finalLabel() {
+  return handoffTab() ? "실제 기록 보러 가기" : "직접 해보기";
+}
+
+function close(advance) {
   if (!root) return;
   try {
     localStorage.setItem(STORAGE_KEY, "1");
@@ -130,18 +150,14 @@ function close(goToReplay) {
   document.body.style.overflow = "";
   document.removeEventListener("keydown", onKey);
   if (lastFocused && lastFocused.focus) lastFocused.focus();
-  if (goToReplay) {
-    const target = document.getElementById("replay");
-    if (target) {
-      target.scrollIntoView({ behavior: reduceMotion() ? "auto" : "smooth" });
-    }
-  }
+  const target = advance ? handoffTab() : null;
+  if (target && onFinish) onFinish(target);
 }
 
 function step(delta) {
   const next = index + delta;
   if (next < 0) return;
-  if (next >= STEPS.length) {
+  if (next >= steps.length) {
     close(true);
     return;
   }
@@ -187,7 +203,7 @@ function build() {
   root.innerHTML = `
     <div class="tut-card">
       <div class="tut-top">
-        <div class="tut-dots">${STEPS.map(() => '<span class="tut-dot"></span>').join("")}</div>
+        <div class="tut-dots">${steps.map(() => '<span class="tut-dot"></span>').join("")}</div>
         <button class="tut-skip" type="button">건너뛰기</button>
       </div>
 
@@ -249,30 +265,46 @@ async function load() {
   return data;
 }
 
-export async function openTutorial() {
+let steps = STEPS;
+
+export async function openTutorial(tab) {
   await load();
   if (root) close(false);
+  steps = tab ? STEPS.filter((s) => TAB_OF_STEP[s.key] === tab) : STEPS;
+  if (!steps.length) return;
   index = 0;
   lastFocused = document.activeElement;
   build();
   render();
 }
 
-export async function initTutorial() {
-  const button = document.querySelector("#tutorialReplayBtn");
-  if (button) {
+/** 탭 셸이 부른다. 해당 탭에 배정된 비트를, 그 탭을 처음 열 때만 띄운다.
+ *  두 번째부터는 탭 상단의 "안내 다시 보기" 로만 열린다 — 탭을 옮길 때마다
+ *  모달이 뜨면 안내가 아니라 장애물이 된다. */
+export function initTutorial({ onAdvance } = {}) {
+  onFinish = onAdvance || null;
+
+  for (const button of document.querySelectorAll("[data-tutorial]")) {
     button.addEventListener("click", () => {
-      openTutorial().catch((err) => console.warn("tutorial:", err));
+      openTutorial(button.dataset.tutorial).catch((err) => console.warn("tutorial:", err));
     });
   }
+}
 
+/** 탭이 열릴 때마다 탭 셸이 부른다. */
+export async function tutorialForTab(tab, { first }) {
+  if (!first) return;
   let seen = false;
   try {
-    seen = localStorage.getItem(STORAGE_KEY) === "1";
+    seen = localStorage.getItem(`${STORAGE_KEY}.${tab}`) === "1";
   } catch (err) {
     seen = false;
   }
-  // 앵커를 달고 들어온 사람은 이미 목적지가 있다. 가로막지 않는다.
-  if (seen || location.hash) return;
-  await openTutorial();
+  if (seen) return;
+  try {
+    localStorage.setItem(`${STORAGE_KEY}.${tab}`, "1");
+  } catch (err) {
+    // 저장이 막혀도 안내 자체는 떠야 한다.
+  }
+  await openTutorial(tab);
 }
