@@ -100,5 +100,31 @@ export function initTabs() {
     showTab(location.hash, { updateHash: false });
   });
 
-  showTab(location.hash, { updateHash: false });
+  showTab(startingTab(), { updateHash: false });
+}
+
+/** 어느 탭으로 열 것인가.
+ *
+ *  새로고침과 딥링크는 페이지 입장에서 똑같이 "해시를 단 로드" 라 구분이
+ *  필요하다. navigation type 이 그 구분을 준다.
+ *
+ *  - reload   : 처음부터 다시 본다는 뜻이다. 1번 탭으로 되돌리고 해시도 지운다.
+ *               전시장에서 새로 여는 것은 대개 새 사람이 새로 시작한다는 뜻이다.
+ *  - navigate : 주소를 눌러 들어온 것이다. 목적지가 있으므로 해시를 존중한다.
+ *               QR 이나 공유 링크로 #policy 를 찍어 온 사람을 1번으로 되돌리면 안 된다.
+ */
+function startingTab() {
+  let type = "navigate";
+  try {
+    const nav = performance.getEntriesByType("navigation")[0];
+    if (nav && nav.type) type = nav.type;
+  } catch (err) {
+    // 구형 브라우저 — 해시를 존중하는 쪽으로 둔다(딥링크가 더 중요하다).
+  }
+  if (type !== "reload") return location.hash;
+
+  if (location.hash) {
+    history.replaceState({ tab: DEFAULT_TAB }, "", location.pathname + location.search);
+  }
+  return DEFAULT_TAB;
 }

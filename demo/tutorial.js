@@ -9,8 +9,6 @@
 // 커밋된 runs.jsonl 에서 생성된다(demo/build_tutorial_data.py). 튜토리얼이
 // 지어낸 예시이면 "실측"이라는 이 연구의 강점을 여기서 스스로 버리게 된다.
 
-const STORAGE_KEY = "core2026.tutorial.seen.v2";
-
 /** 다섯 비트를 탭에 나눠 붙인다.
  *
  *  탭마다 따로 온보딩을 만들면 5단계 x 4탭 = 20단계가 되어 안내가 아니라
@@ -140,11 +138,6 @@ function finalLabel() {
 
 function close(advance) {
   if (!root) return;
-  try {
-    localStorage.setItem(STORAGE_KEY, "1");
-  } catch (err) {
-    // 사생활 보호 모드 등에서 저장이 막힐 수 있다. 안내는 그대로 동작해야 한다.
-  }
   root.remove();
   root = null;
   document.body.style.overflow = "";
@@ -291,20 +284,13 @@ export function initTutorial({ onAdvance } = {}) {
   }
 }
 
-/** 탭이 열릴 때마다 탭 셸이 부른다. */
+/** 탭이 열릴 때마다 탭 셸이 부른다.
+ *
+ *  "봤음" 은 메모리에만 둔다(탭 셸의 first 플래그). localStorage 에 남기면
+ *  한 번 본 기기에서는 새로고침해도 안내가 영영 다시 뜨지 않는다. 이 사이트는
+ *  전시장에서 QR 로 건네는 화면이고, 새로 여는 것은 대개 새 사람이 새로
+ *  시작한다는 뜻이다. 한 번의 방문 안에서 탭을 오갈 때만 다시 뜨지 않으면 된다. */
 export async function tutorialForTab(tab, { first }) {
   if (!first) return;
-  let seen = false;
-  try {
-    seen = localStorage.getItem(`${STORAGE_KEY}.${tab}`) === "1";
-  } catch (err) {
-    seen = false;
-  }
-  if (seen) return;
-  try {
-    localStorage.setItem(`${STORAGE_KEY}.${tab}`, "1");
-  } catch (err) {
-    // 저장이 막혀도 안내 자체는 떠야 한다.
-  }
   await openTutorial(tab);
 }
