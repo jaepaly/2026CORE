@@ -9,6 +9,7 @@
       content="Interactive demo showing how field-level least privilege changes AI agent privacy exposure."
     />
     <link rel="stylesheet" href="./styles.css" />
+    <link rel="stylesheet" href="./tutorial.css" />
   </head>
   <body>
     <div class="grid-glow" aria-hidden="true"></div>
@@ -43,6 +44,7 @@
           </p>
           <div class="hero-actions">
             <a class="button primary" href="#demo">비교 시연 바로 보기</a>
+            <button class="button ghost" id="tutorialReplayBtn" type="button">3분 안내 보기</button>
             <button class="button ghost" id="autoPlayBtn" type="button">발표 모드</button>
           </div>
         </div>
@@ -287,6 +289,8 @@
     <script src="./app.js"></script>
     <script type="module">
       import { initReplay } from "./replay.js";
+      import { initTutorial } from "./tutorial.js";
+      initTutorial().catch((err) => console.warn("tutorial:", err));
       initReplay().catch((err) => {
         const status = document.querySelector("#rpStatus");
         if (status) status.textContent = `replay 초기화 실패: ${err.message} — 저장소 루트에서 python -m http.server 8080 으로 여세요.`;
