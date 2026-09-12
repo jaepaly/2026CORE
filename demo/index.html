@@ -8,8 +8,8 @@
       name="description"
       content="Interactive demo showing how field-level least privilege changes AI agent privacy exposure."
     />
-    <link rel="stylesheet" href="./styles.css?v=6f54652a" />
-    <link rel="stylesheet" href="./tutorial.css?v=6f54652a" />
+    <link rel="stylesheet" href="./styles.css?v=a1faeebc" />
+    <link rel="stylesheet" href="./tutorial.css?v=a1faeebc" />
   </head>
   <body>
     <div class="grid-glow" aria-hidden="true"></div>
@@ -48,8 +48,8 @@
             <span>맡길 필요는 없습니다.</span>
           </h1>
           <p class="hero-text">
-            같은 업무 요청이라도 도구가 어떤 필드를 반환하느냐에 따라 AI가 보는 정보가 달라집니다.
-            아래 시연은 무방어 도구와 필드 최소권한 도구를 같은 화면에서 비교합니다.
+            같은 일을 시켜도 도구가 무엇을 돌려주느냐에 따라 AI가 보는 정보가 달라집니다.
+            그 차이를 실제 실험 기록으로 보여드립니다.
           </p>
           <p class="rp-helpline">
             <button class="linklike" type="button" data-tutorial="intro">이 화면이 무엇인지 안내 보기</button>
@@ -60,8 +60,8 @@
           <div class="dash-top">
             <span class="sticker">AI</span>
             <div>
-              <strong>실험 핵심</strong>
-              <small>도구 응답이 곧 모델의 시야입니다</small>
+              <strong>한 줄로 줄이면</strong>
+              <small>AI는 도구가 준 것만 볼 수 있습니다</small>
             </div>
           </div>
           <div class="dash-meter">
@@ -76,9 +76,9 @@
             </div>
           </div>
           <p>
-            업무 1회당 AI에게 넘어간 민감 항목 수입니다(실험 688회 평균).
-            AI에게 <b>말로 부탁한 경우는 0.52</b> — 줄지 않았습니다.
-            도구가 직접 잘라낸 경우에만 0이 됐습니다.
+            업무 한 번에 AI로 넘어간 민감 항목 수입니다(688회 평균).
+            <b>말로 부탁했을 때는 0.52</b>로 거의 그대로였고,
+            도구가 직접 잘라냈을 때만 0이 됐습니다.
           </p>
         </aside>
       </section>
@@ -88,8 +88,8 @@
           <p class="eyebrow">방법 1</p>
           <h3>AI에게 부탁하기</h3>
           <p>
-            “필요한 것만 보라”고 일러두는 방식입니다. 그런데 도구가 전화번호·개인 메모·메일
-            본문을 그대로 돌려주면, AI가 그것을 읽은 뒤입니다. 부탁은 전달을 막지 못합니다.
+            “필요한 것만 보라”고 일러두는 방식입니다. 그런데 도구가 전화번호와 개인 메모,
+            메일 본문을 그대로 돌려주면 AI는 이미 다 읽은 뒤입니다. 부탁으로는 전달을 막지 못합니다.
           </p>
           <p class="compare-codes">
             이 사이트에서 <b>무방어(A)</b>와 <b>지시문만(B)</b>이 여기 해당합니다.
@@ -99,8 +99,8 @@
           <p class="eyebrow">방법 2</p>
           <h3>도구가 아예 주지 않기</h3>
           <p>
-            AI를 믿는 대신 도구 쪽에서 잘라냅니다. 업무마다 어떤 항목까지 넘길지를
-            <b>사람이 미리 정해두면</b>, 그 밖의 항목은 AI에게 도달하지 않습니다.
+            AI를 믿는 대신 도구 쪽에서 잘라냅니다. 업무마다 넘길 항목을
+            <b>사람이 미리 정해두면</b>, 목록에 없는 것은 AI에게 아예 가지 않습니다.
           </p>
           <p class="compare-codes">
             이 사이트에서 <b>필드 최소권한(C)</b>과 <b>최소권한+지시문(D)</b>이 여기 해당합니다.
@@ -119,10 +119,11 @@
             <p class="eyebrow">Run replay · 실측</p>
             <h2>본 실험 688 runs를 그대로 재생</h2>
             <p class="section-copy">
-              이 화면은 시뮬레이션이 아닙니다. 커밋된 <code>experiments/main-*/runs.jsonl</code>의
-              실제 로그를 턴 단위로 재생합니다. 로그에는 원문이 없으며(레코드 ID·필드 경로·해시만),
-              화면의 원문은 공개 합성 데이터(<code>data/</code>)를 로그와 조인해 재구성한 것입니다 —
-              즉 아래 내용이 그 run에서 모델이 실제로 받은 도구 응답입니다.
+              꾸며낸 화면이 아닙니다. 커밋해 둔 <code>experiments/main-*/runs.jsonl</code>의
+              실행 기록을 한 턴씩 그대로 되감습니다.
+              기록에는 원문이 없습니다. 레코드 번호와 필드 경로, 해시만 남겨 두었습니다.
+              화면의 값은 공개 합성 데이터(<code>data/</code>)를 그 기록과 맞춰 되살린 것입니다.
+              아래 보이는 것이 그때 AI가 실제로 받은 응답입니다.
             </p>
           </div>
           <div class="demo-controls">
@@ -186,12 +187,12 @@
             <p class="eyebrow">연구 2 · 정책 작성 실험 · 실측 재생</p>
             <h2>그럼 그 정책은 누가 쓰나</h2>
             <p class="section-copy">
-              위 replay가 보여준 projection은 <strong>사람이 쓴 허용 필드 목록</strong>으로 작동합니다.
-              43개 시나리오 전부 사람이 작성했습니다. 그 작성 단계가 언제나 사람의 몫이라면
-              최소권한은 검토 인력에 비례해서만 확장됩니다.
-              그래서 같은 업무를 <strong>모델에게 주고 정책을 직접 쓰게 했습니다.</strong>
-              아래는 <code>experiments/policy-authoring/policies.jsonl</code>에 커밋된 실제 응답이며,
-              시나리오 선택은 위 replay와 함께 움직입니다.
+              앞 탭에서 민감정보를 잘라낸 것은 <strong>사람이 쓴 허용 목록</strong>이었습니다.
+              43개 시나리오를 전부 사람이 손으로 적었습니다.
+              그 일을 늘 사람이 해야 한다면, 이 방식은 검토할 사람 수만큼만 늘어납니다.
+              그래서 같은 업무를 <strong>모델에게 주고 목록을 직접 써 보게 했습니다.</strong>
+              아래는 <code>experiments/policy-authoring/policies.jsonl</code>에 커밋된 실제 응답입니다.
+              시나리오를 바꾸면 실측 재생 탭도 같이 움직입니다.
             </p>
           </div>
         </div>
@@ -201,25 +202,26 @@
             <span>시나리오</span>
             <select id="polScenario"></select>
           </label>
-          <span class="pol-controls-note">위 replay 패널과 같은 시나리오로 함께 움직입니다.</span>
+          <span class="pol-controls-note">실측 재생 탭과 같은 시나리오를 따라갑니다.</span>
         </div>
 
         <div class="pol-summary" id="polSummary"></div>
 
         <div class="pol-legend">
-          <span class="pol-chip match">일치</span>
-          <span class="pol-chip over">과잉 허용 — 검토자가 뺀 필드</span>
-          <span class="pol-chip over-sensitive">민감 과잉 허용 — 금지 필드</span>
-          <span class="pol-chip under">과잉 차단 — 빠뜨린 필드</span>
-          <span class="pol-chip unknown">존재하지 않는 경로</span>
+          <span class="pol-chip match">사람과 같음</span>
+          <span class="pol-chip over">사람은 안 준 것을 열어줌</span>
+          <span class="pol-chip over-sensitive">주면 안 되는 것을 열어줌</span>
+          <span class="pol-chip under">필요한 것을 빠뜨림</span>
+          <span class="pol-chip unknown">없는 항목을 지어냄</span>
         </div>
 
         <div id="polBody"></div>
 
         <p class="rp-status">
-          두 오류가 <strong>동시에</strong> 큽니다 — 더 넓거나 좁은 정책이 아니라 <strong>다른 정책</strong>입니다.
-          도구 혼동·경로 표기 오류·식별자 누락은 스키마 검증으로 잡히지만,
-          <code>email.body</code> 허용(24.3%)은 내용을 봐야 판단할 수 있어 사람이 남아야 합니다.
+          모자란 쪽과 넘치는 쪽이 <strong>동시에</strong> 큽니다. 더 넓지도 좁지도 않은,
+          <strong>그냥 다른 목록</strong>입니다.
+          도구를 헷갈리거나 표기를 틀리거나 번호를 빠뜨린 것은 기계가 잡아냅니다.
+          그런데 메일 본문을 열어줄지(24.3%)는 내용을 읽어봐야 알 수 있어, 여기부터가 사람의 몫입니다.
         </p>
       </section>
         <div class="tab-advance">
@@ -230,24 +232,24 @@
       <div class="tabpanel" id="panel-evidence" role="tabpanel" aria-label="결과" hidden>
       <section class="metrics-row" id="evidence">
         <article class="metric-card">
-          <span>전달 가능한 민감 필드 (설계상)</span>
+          <span>설계상 넘어갈 수 있는 민감 항목</span>
           <strong id="capacityMetric">2.53</strong>
-          <small>시나리오당 · 라벨에서 계산, run 무관</small>
+          <small>업무 하나당 · 정책 정의에서 계산</small>
         </article>
         <article class="metric-card">
-          <span>run당 전달 민감 필드 (v3)</span>
+          <span>실제로 넘어간 민감 항목</span>
           <strong id="realizedMetric">0.50</strong>
-          <small id="realizedCaption">비교 정책 A · 688 runs</small>
+          <small id="realizedCaption">업무 하나당 · 무방어(A) 기준 688회</small>
         </article>
         <article class="metric-card">
-          <span>악성 지시 전달 가능</span>
+          <span>숨은 악성 지시가 지나갈 수 있는 통로</span>
           <strong id="malMetric">5</strong>
-          <small>email body payload 기준 (설계)</small>
+          <small>메일 본문에 심었을 때 · 정책 정의에서 계산</small>
         </article>
         <article class="metric-card">
-          <span>safe_completion (v3)</span>
+          <span>안전하게 끝난 비율</span>
           <strong id="successMetric">0.01</strong>
-          <small>primary A vs C: p=0.070 (유의하지 않음)</small>
+          <small>업무도 해내고 민감정보도 안 흘린 비율 · A vs C p=0.070(유의하지 않음)</small>
         </article>
       </section>
         <div class="tab-advance">
@@ -268,9 +270,9 @@
               등장하는 값은 전부 지어낸 것으로, 실제 참가자·심사위원의 정보가 아닙니다.
             </p>
             <p class="section-copy">
-              학술제에도 이름·연락처·학번이 있고, 지도교수 코멘트와 심사 메모처럼
-              당사자 말고는 보면 안 되는 글이 있습니다. 발표 순서표 하나를 만드는 데
-              그 전부가 필요하지는 않습니다.
+              학술제에도 이름과 연락처, 학번이 있습니다. 지도교수 코멘트나 심사 메모처럼
+              당사자 말고는 봐선 안 되는 글도 있고요. 발표 순서표 한 장 만드는 데
+              그게 다 필요하지는 않습니다.
             </p>
           </div>
         </div>
@@ -278,9 +280,9 @@
         <div id="fsBody"></div>
 
         <p class="rp-status">
-          앞 탭에서 본 것과 같은 구조입니다 — 바뀌는 것은 AI도 프롬프트도 아니고,
-          <strong>도구가 무엇을 돌려줄지 적은 목록</strong> 하나입니다.
-          그 목록을 누가 쓰고 누가 검토할지가 이 연구가 남긴 질문입니다.
+          앞 탭에서 본 것과 같은 구조입니다. 바뀌는 것은 AI도 프롬프트도 아니고
+          <strong>도구가 무엇을 돌려줄지 적은 목록</strong> 하나뿐입니다.
+          그 목록을 누가 쓰고 누가 검토할지, 이 연구가 남긴 질문은 거기에 있습니다.
         </p>
       </section>
       </div>
@@ -296,11 +298,11 @@
     </footer>
 
     <script type="module">
-      import { initTabs, onTabChange } from "./tabs.js?v=6f54652a";
-      import { initReplay } from "./replay.js?v=6f54652a";
-      import { initMetrics } from "./metrics.js?v=6f54652a";
-      import { initFestival } from "./festival.js?v=6f54652a";
-      import { initTutorial, tutorialForTab } from "./tutorial.js?v=6f54652a";
+      import { initTabs, onTabChange } from "./tabs.js?v=a1faeebc";
+      import { initReplay } from "./replay.js?v=a1faeebc";
+      import { initMetrics } from "./metrics.js?v=a1faeebc";
+      import { initFestival } from "./festival.js?v=a1faeebc";
+      import { initTutorial, tutorialForTab } from "./tutorial.js?v=a1faeebc";
 
       // 탭이 열릴 때마다 그 탭에 배정된 안내 비트를 (처음 한 번만) 띄운다.
       onTabChange((tab, meta) => {

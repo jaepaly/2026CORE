@@ -5,8 +5,8 @@
 // 데이터(data/ 아래 JSON)를 로그의 delivered_record_ids × delivered_field_paths 와 조인해
 // 재구성한 것이므로, 표시 내용 = 그 run 에서 모델에게 실제 전달된 도구 응답이다.
 
-import { initPolicy, renderPolicy } from "./policy.js?v=6f54652a";
-import { bareFieldLabel, toolLabel } from "./field_labels.js?v=6f54652a";
+import { initPolicy, renderPolicy } from "./policy.js?v=a1faeebc";
+import { bareFieldLabel, toolLabel } from "./field_labels.js?v=a1faeebc";
 
 /** 조건 코드는 실험 설계의 이름이지 방문자의 언어가 아니다. 코드만 노출하면
  *  처음 온 사람은 A 와 C 가 무엇인지 모른 채 숫자를 보게 된다. 이름을 앞에
@@ -88,10 +88,10 @@ const showValue = (v) => (Array.isArray(v) || typeof v === "object" ? JSON.strin
 function fieldRow(label, value, kind) {
   // kind: "plain" | "sensitive" | "removed"
   if (kind === "removed") {
-    return `<div class="rp-field removed"><b>${esc(label)}</b><span class="rp-strike">${esc(showValue(value))}</span><i>모델에 전달 안 됨</i></div>`;
+    return `<div class="rp-field removed"><b>${esc(label)}</b><span class="rp-strike">${esc(showValue(value))}</span><i>AI에게 안 감</i></div>`;
   }
   const cls = kind === "sensitive" ? "rp-field sensitive" : "rp-field";
-  const tag = kind === "sensitive" ? "<i>민감 필드 전달됨</i>" : "";
+  const tag = kind === "sensitive" ? "<i>민감정보 넘어감</i>" : "";
   return `<div class="${cls}"><b>${esc(label)}</b><span>${esc(showValue(value))}</span>${tag}</div>`;
 }
 
@@ -102,10 +102,10 @@ function renderEventRecords(ev, records) {
   const ids = ev.delivered_record_ids || [];
 
   if (ev.policy_decision && ev.policy_decision !== "allowed") {
-    return `<div class="rp-denied">정책이 이 호출을 거부: <code>${esc(ev.policy_decision)}</code></div>`;
+    return `<div class="rp-denied">이 호출은 정책이 막았습니다: <code>${esc(ev.policy_decision)}</code></div>`;
   }
   if (delivered.includes("error") || delivered.includes("detail")) {
-    return `<div class="rp-empty">빈 결과 또는 오류 응답 (레코드 미전달)</div>`;
+    return `<div class="rp-empty">빈 결과이거나 오류라 아무것도 오지 않았습니다</div>`;
   }
   if (!ids.length) {
     // create_event 등 — 레코드 조인 없이 응답 필드만 요약
@@ -139,10 +139,10 @@ function renderEventRecords(ev, records) {
 function runBadges(run) {
   if (!run) return "";
   const b = [];
-  b.push(`<span class="rp-badge ${run.task_success ? "ok" : "no"}">task ${run.task_success ? "성공" : "실패"}</span>`);
-  b.push(`<span class="rp-badge ${run.safe_completion ? "ok" : "no"}">safe ${run.safe_completion ? "달성" : "미달"}</span>`);
+  b.push(`<span class="rp-badge ${run.task_success ? "ok" : "no"}">업무 ${run.task_success ? "성공" : "실패"}</span>`);
+  b.push(`<span class="rp-badge ${run.safe_completion ? "ok" : "no"}">안전 ${run.safe_completion ? "통과" : "미달"}</span>`);
   const n = run.excess_sensitive_field_count ?? 0;
-  b.push(`<span class="rp-badge ${n > 0 ? "warn" : "ok"}">민감 전달 ${n}</span>`);
+  b.push(`<span class="rp-badge ${n > 0 ? "warn" : "ok"}">민감정보 ${n}건</span>`);
   return b.join("");
 }
 
@@ -232,7 +232,7 @@ function renderMergedStage(runBefore, runAfter, records) {
   if (!stage) return { comparable: false };
 
   if (!runBefore && !runAfter) {
-    stage.innerHTML = `<div class="rp-empty">이 조합의 run이 없습니다.</div>`;
+    stage.innerHTML = `<div class="rp-empty">이 조합은 실행 기록이 없습니다.</div>`;
     return { comparable: false };
   }
 
@@ -241,7 +241,7 @@ function renderMergedStage(runBefore, runAfter, records) {
   const turns = Math.max(evB.length, evA.length);
 
   if (!turns) {
-    stage.innerHTML = `<div class="rp-empty">도구 호출 없음 — 모델이 도구를 부르지 않고 종료했습니다.</div>`;
+    stage.innerHTML = `<div class="rp-empty">도구를 한 번도 쓰지 않고 끝냈습니다.</div>`;
     return { comparable: false };
   }
 
@@ -251,7 +251,7 @@ function renderMergedStage(runBefore, runAfter, records) {
   }
   // 최종 답변은 로그에 없다(sha256·글자수만). 지어내지 않는다.
   const sha = (run) => esc((run?.final_output_sha256 || "").slice(0, 12));
-  html += `<div class="rp-empty rp-final">최종 답변은 보관하지 않습니다 —
+  html += `<div class="rp-empty rp-final">최종 답변은 남겨 두지 않았습니다 —
     전 <code>${sha(runBefore)}…</code> · 후 <code>${sha(runAfter)}…</code></div>`;
   stage.innerHTML = html;
 
@@ -291,7 +291,7 @@ async function renderReplay() {
   const status = rq("#rpStatus");
 
   try {
-    status.textContent = "runs.jsonl 로드 중…";
+    status.textContent = "실행 기록 불러오는 중…";
     const rows = await fetchRuns(dir);
     const runB = findRun(rows, scenario, before);
     const runA = findRun(rows, scenario, after);
@@ -312,13 +312,13 @@ async function renderReplay() {
     if (!cmp.comparable) {
       note = "";
     } else if (cmp.argsSame) {
-      note = "두 조건의 도구 호출이 완전히 같습니다 — 달라진 건 돌아온 응답뿐입니다.";
+      note = "양쪽이 똑같은 요청을 보냈습니다. 달라진 건 돌아온 응답뿐입니다.";
     } else if (cmp.toolsSame) {
       note = cmp.firstTurnIdentical
-        ? "첫 호출은 인자까지 완전히 같습니다. 이후 턴은 인자가 달라지는데, 앞에서 받은 정보가 달라졌기 때문입니다."
-        : "부른 도구는 같지만 인자가 다릅니다.";
+        ? "첫 요청은 글자 하나까지 같습니다. 그다음부터 달라지는데, 앞에서 받은 정보가 달랐기 때문입니다."
+        : "같은 도구를 썼지만 보낸 내용이 다릅니다.";
     } else {
-      note = "이 조합은 모델이 서로 다른 도구를 선택했습니다. 응답 차이에 도구 선택 차이가 섞여 있습니다.";
+      note = "이 경우는 AI가 서로 다른 도구를 골랐습니다. 응답 차이에 도구 선택 차이가 섞여 있습니다.";
     }
     rq("#rpPlayNote").textContent = note;
 
@@ -329,7 +329,7 @@ async function renderReplay() {
     const model = state.index.experiments.find((e) => e.dir === dir)?.model || dir;
     status.textContent = `${model} · ${scenario} · 커밋된 run 로그 (${runB?.run_id ?? "-"} / ${runA?.run_id ?? "-"})`;
   } catch (err) {
-    status.textContent = `로드 실패: ${err.message} — 저장소 루트에서 python -m http.server 8080 으로 실행했는지 확인하세요.`;
+    status.textContent = `기록을 불러오지 못했습니다: ${err.message}`;
   }
 }
 

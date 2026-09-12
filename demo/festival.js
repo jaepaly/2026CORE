@@ -14,10 +14,10 @@ const FIELDS = [
   { field: "발표 시각", value: "14:20 ~ 14:35", need: true },
   { field: "발표 장소", value: "310관 세미나실", need: true },
   { field: "소속 학과", value: "소프트웨어학부", need: true },
-  { field: "학번", value: "20XX-XXXXX", need: false, why: "순서표에 쓰지 않음" },
-  { field: "휴대폰 번호", value: "010-XXXX-XXXX", need: false, why: "순서표에 쓰지 않음" },
-  { field: "지도교수 코멘트", value: "실험 설계는 좋으나 통계 해석에 보완 필요", need: false, why: "당사자에게만 보여야 함" },
-  { field: "심사 메모", value: "발표력 미흡, 질의응답에서 만회 가능해 보임", need: false, why: "공개되면 안 됨" },
+  { field: "학번", value: "20XX-XXXXX", need: false, why: "순서표엔 안 씀" },
+  { field: "휴대폰 번호", value: "010-XXXX-XXXX", need: false, why: "순서표엔 안 씀" },
+  { field: "지도교수 코멘트", value: "실험 설계는 좋으나 통계 해석에 보완 필요", need: false, why: "본인만 봐야 함" },
+  { field: "심사 메모", value: "발표력 미흡, 질의응답에서 만회 가능해 보임", need: false, why: "새어 나가면 안 됨" },
 ];
 
 const TASK = "310관 오후 세션 발표 순서표를 만들어 줘";
@@ -51,8 +51,8 @@ function setPhase(phase) {
   if (note) {
     note.textContent =
       phase === "before"
-        ? "AI는 순서표를 만들려고 참가자 기록을 불러옵니다. 도구가 기록을 통째로 주면 심사 메모까지 읽습니다."
-        : "허용 목록에 없는 항목은 애초에 전달되지 않습니다. AI가 착해져서가 아니라 도구가 주지 않아서입니다.";
+        ? "순서표를 만들려면 참가자 기록이 필요합니다. 그런데 도구가 기록을 통째로 주면 심사 메모까지 읽게 됩니다."
+        : "목록에 없는 항목은 아예 넘어가지 않습니다. AI가 착해져서가 아니라 도구가 주지 않아서입니다.";
   }
   const count = document.querySelector("#fsCount");
   if (count) {
@@ -72,11 +72,11 @@ export function initFestival() {
     <div class="rp-stage" id="fsStage" data-phase="before">
       <div class="tut-tool" style="opacity:1;transform:none">
         <span class="tut-toolname">참가자 기록 조회</span>
-        <span class="tut-toolhint">학술제 운영 도구</span>
+        <span class="tut-toolhint">학술제 운영 시스템</span>
       </div>
       ${rows()}
       <div class="rp-fscount">
-        <span>순서표와 무관하게 AI가 읽게 되는 항목</span>
+        <span>순서표와 상관없이 AI가 읽게 되는 항목</span>
         <strong id="fsCount">0</strong>
         <span>개</span>
       </div>

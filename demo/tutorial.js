@@ -35,26 +35,26 @@ const STEPS = [
     key: "task",
     title: "업무 하나를 AI에게 맡깁니다",
     lead: (d) => `"${d.task}"`,
-    note: "평범한 사내 업무입니다. 여기까지는 특별할 것이 없습니다.",
+    note: "특별할 것 없는 사내 업무입니다.",
   },
   {
     key: "call",
     title: "AI가 주소록을 조회합니다",
-    lead: () => "일을 하려면 사람 정보가 필요하니 AI가 도구를 부릅니다.",
-    note: (d) => `호출한 도구: ${d.tool}`,
+    lead: () => "일정을 잡으려면 상대가 누구인지 알아야 하니, AI가 주소록을 찾아봅니다.",
+    note: (d) => `이때 쓴 도구: ${d.tool}`,
   },
   {
     key: "exposed",
     title: "그런데 이만큼이 돌아옵니다",
     lead: (d) =>
-      `일정을 잡는 데 필요한 건 이름뿐인데, ${d.recordName} 씨의 항목이 전부 넘어갔습니다.`,
-    note: "빨간 항목은 이 업무와 상관없는 민감정보입니다.",
+      `일정을 잡는 데는 이름만 있으면 됩니다. 그런데 ${d.recordName} 씨의 항목이 전부 넘어왔습니다.`,
+    note: "빨간 것은 이 일과 상관없는 민감정보입니다.",
   },
   {
     key: "policy",
     title: "바꾸는 건 이것 하나입니다",
     lead:
-      "AI를 바꾸지 않습니다. 프롬프트로 부탁하지도 않습니다. 도구가 무엇을 돌려줄지 적은 목록 하나를 사람이 정합니다.",
+      "AI를 손보지도, 프롬프트로 부탁하지도 않습니다. 도구가 무엇을 돌려줄지 적은 목록 하나를 사람이 정할 뿐입니다.",
     note: "이 목록은 사람이 쓰고 사람이 검토합니다.",
   },
   {
@@ -62,7 +62,7 @@ const STEPS = [
     title: "같은 요청, 같은 AI — 결과만 달라집니다",
     lead: "요청은 글자 하나 바뀌지 않았습니다. 도구가 돌려주는 것만 달라졌습니다.",
     note: (d) =>
-      `요청 인자 해시가 양쪽 모두 ${d.requestArgsSha256.slice(0, 12)}… 로 같습니다.`,
+      `보낸 요청이 양쪽 모두 똑같습니다 (해시 ${d.requestArgsSha256.slice(0, 12)}…).`,
   },
 ];
 
@@ -222,7 +222,7 @@ function build() {
       <p class="tut-note"></p>
 
       <p class="tut-final" hidden>
-        방금 본 건 예시가 아니라 커밋된 실험 로그입니다 —
+        방금 본 건 지어낸 예시가 아니라 커밋해 둔 실험 기록입니다 —
         <code>${esc(data.provenance.runIdWithout)}</code>
         <code>${esc(data.provenance.runIdWith)}</code>
       </p>
