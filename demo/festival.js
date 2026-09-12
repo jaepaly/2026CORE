@@ -8,6 +8,8 @@
 //
 // 등장 인물은 전부 지어낸 값이다. 실제 참가자·심사위원의 정보를 쓰지 않는다.
 
+import { revealStage } from "./stage_view.js?v=4c21a563";
+
 const FIELDS = [
   { field: "이름", value: "김○○", need: true },
   { field: "발표 제목", value: "로컬 LLM 에이전트의 도구 권한 설계", need: true },
@@ -88,7 +90,8 @@ export function initFestival() {
 
   document.querySelector("#fsPlay").addEventListener("click", () => {
     const stage = document.querySelector("#fsStage");
-    setPhase(stage.dataset.phase === "before" ? "after" : "before");
+    const next = stage.dataset.phase === "before" ? "after" : "before";
+    revealStage(stage, () => setPhase(next));
   });
 
   setPhase("before");
