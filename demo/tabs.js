@@ -58,6 +58,8 @@ export function showTab(key, { updateHash = true } = {}) {
     window.scrollTo({ top: 0, behavior: "auto" });
   }
 
+  revealFollowingTabs(next);
+
   const first = !openedOnce.has(next);
   openedOnce.add(next);
   for (const fn of listeners) {
@@ -67,6 +69,33 @@ export function showTab(key, { updateHash = true } = {}) {
       console.warn("tab listener:", err);
     }
   }
+}
+
+/** 탭바를 현재 탭이 맨 왼쪽에 오도록 민다.
+ *
+ *  탭바는 가로로 스크롤되는데, 처음 보면 1~3번만 있는 것처럼 보여 4·5번이
+ *  있다는 사실 자체가 안 보인다. 현재 탭을 왼쪽 끝에 두면 그 오른쪽으로
+ *  남은 탭이 항상 따라 나온다 — "다음이 있다" 가 화면에 드러난다.
+ *
+ *  끝쪽 탭(4·5번)에서는 더 밀 곳이 없어 브라우저가 알아서 최대치에서 멈춘다.
+ *  결과적으로 3·4·5번을 보고 있을 때의 화면이 같아진다. */
+function revealFollowingTabs(key) {
+  const bar = document.getElementById("tabbar");
+  const button = bar && bar.querySelector(`.tab[data-tab="${key}"]`);
+  if (!bar || !button) return;
+  // 끝쪽 탭에서는 더 밀 곳이 없어 브라우저가 최대치에서 멈춘다. 굳이 "뒤에서
+  // 세 번째 탭 고정" 으로 더 당기지는 않는다 — 라벨이 길어 세 개가 한 화면에
+  // 안 들어가고, 그러면 정작 보고 있는 탭이 오른쪽에서 잘린다. 활성 탭이
+  // 온전히 보이는 쪽이 우선이다.
+  // offsetLeft 는 offsetParent 가 무엇이냐에 따라 기준이 달라진다(탭바가
+  // sticky 라 스스로 offsetParent 가 되기도 한다). 현재 스크롤 위치에
+  // 화면상 거리를 더하는 방식이 그 차이를 타지 않는다.
+  const target =
+    bar.scrollLeft + (button.getBoundingClientRect().left - bar.getBoundingClientRect().left);
+  const behavior = window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    ? "auto"
+    : "smooth";
+  bar.scrollTo({ left: target, behavior });
 }
 
 export function currentTab() {

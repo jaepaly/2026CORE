@@ -8,8 +8,8 @@
       name="description"
       content="Interactive demo showing how field-level least privilege changes AI agent privacy exposure."
     />
-    <link rel="stylesheet" href="./styles.css" />
-    <link rel="stylesheet" href="./tutorial.css" />
+    <link rel="stylesheet" href="./styles.css?v=6f54652a" />
+    <link rel="stylesheet" href="./tutorial.css?v=6f54652a" />
   </head>
   <body>
     <div class="grid-glow" aria-hidden="true"></div>
@@ -33,9 +33,9 @@
       <nav class="tabbar" id="tabbar" aria-label="시연 단계">
         <button class="tab" type="button" role="tab" data-tab="intro" aria-controls="panel-intro" aria-selected="true"><span class="tab-num">1</span>문제</button>
         <button class="tab" type="button" role="tab" data-tab="replay" aria-controls="panel-replay" aria-selected="false"><span class="tab-num">2</span>실측 재생</button>
-        <button class="tab" type="button" role="tab" data-tab="policy" aria-controls="panel-policy" aria-selected="false"><span class="tab-num">3</span>정책은 누가</button>
+        <button class="tab" type="button" role="tab" data-tab="policy" aria-controls="panel-policy" aria-selected="false"><span class="tab-num">3</span>정책 작성</button>
         <button class="tab" type="button" role="tab" data-tab="evidence" aria-controls="panel-evidence" aria-selected="false"><span class="tab-num">4</span>결과</button>
-        <button class="tab" type="button" role="tab" data-tab="festival" aria-controls="panel-festival" aria-selected="false"><span class="tab-num">5</span>우리 학술제라면</button>
+        <button class="tab" type="button" role="tab" data-tab="festival" aria-controls="panel-festival" aria-selected="false"><span class="tab-num">5</span>학술제 적용</button>
       </nav>
 
       <div class="tabpanel" id="panel-intro" role="tabpanel" aria-label="문제">
@@ -175,7 +175,7 @@
         <p class="rp-status" id="rpStatus">초기화 중…</p>
       </section>
         <div class="tab-advance">
-          <button class="button primary" type="button" data-goto="policy">다음 · 정책은 누가</button>
+          <button class="button primary" type="button" data-goto="policy">다음 · 정책 작성</button>
         </div>
       </div>
 
@@ -251,7 +251,7 @@
         </article>
       </section>
         <div class="tab-advance">
-          <button class="button primary" type="button" data-goto="festival">다음 · 우리 학술제라면</button>
+          <button class="button primary" type="button" data-goto="festival">다음 · 학술제 적용</button>
         </div>
       </div>
 
@@ -296,11 +296,11 @@
     </footer>
 
     <script type="module">
-      import { initTabs, onTabChange } from "./tabs.js";
-      import { initReplay } from "./replay.js";
-      import { initMetrics } from "./metrics.js";
-      import { initFestival } from "./festival.js";
-      import { initTutorial, tutorialForTab } from "./tutorial.js";
+      import { initTabs, onTabChange } from "./tabs.js?v=6f54652a";
+      import { initReplay } from "./replay.js?v=6f54652a";
+      import { initMetrics } from "./metrics.js?v=6f54652a";
+      import { initFestival } from "./festival.js?v=6f54652a";
+      import { initTutorial, tutorialForTab } from "./tutorial.js?v=6f54652a";
 
       // 탭이 열릴 때마다 그 탭에 배정된 안내 비트를 (처음 한 번만) 띄운다.
       onTabChange((tab, meta) => {
