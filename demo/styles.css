@@ -1424,3 +1424,13 @@ footer a {
 .metrics-row {
   scroll-margin-top: 88px;
 }
+
+/* 조건 코드(A~D)를 정의하는 줄. 본문보다 한 단 낮춰 '이 사이트의 표기법'
+   임을 드러낸다 — 주장이 아니라 용어 안내다. */
+.compare-codes {
+  margin: 10px 0 0;
+  padding-top: 10px;
+  border-top: 1px dashed var(--hairline-strong);
+  font-size: 13px;
+  color: var(--ink-muted);
+}

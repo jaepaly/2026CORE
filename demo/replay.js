@@ -7,6 +7,16 @@
 
 import { initPolicy, renderPolicy } from "./policy.js";
 
+/** 조건 코드는 실험 설계의 이름이지 방문자의 언어가 아니다. 코드만 노출하면
+ *  처음 온 사람은 A 와 C 가 무엇인지 모른 채 숫자를 보게 된다. 이름을 앞에
+ *  두고 코드는 괄호로 내린다 — 보고서·포스터와 대조는 그대로 가능하다. */
+const CONDITION_NAME = {
+  A: "무방어",
+  B: "지시문만",
+  C: "필드 최소권한",
+  D: "최소권한+지시문",
+};
+
 const rq = (sel) => document.querySelector(sel);
 const esc = (v) =>
   String(v)
@@ -191,8 +201,8 @@ async function renderReplay() {
 
     const meta = state.index.scenarios.find((s) => s.id === scenario);
     rq("#rpTask").textContent = meta ? meta.task : scenario;
-    rq("#rpLeftLabel").textContent = `조건 ${left}`;
-    rq("#rpRightLabel").textContent = `조건 ${right}`;
+    rq("#rpLeftLabel").textContent = `${CONDITION_NAME[left]} (${left})`;
+    rq("#rpRightLabel").textContent = `${CONDITION_NAME[right]} (${right})`;
 
     renderRunColumn("#rpLeftEvents", "#rpLeftBadges", runL, state.records);
     renderRunColumn("#rpRightEvents", "#rpRightBadges", runR, state.records);
@@ -224,7 +234,8 @@ export async function initReplay() {
     `<option value="${esc(e.dir)}">${esc(e.model)} (${e.runs} runs)</option>`);
   fillSelect("#rpScenario", state.index.scenarios, (s) =>
     `<option value="${esc(s.id)}">${esc(s.id)} · ${esc(s.name)}</option>`);
-  const condOption = (c, selected) => `<option value="${c}" ${c === selected ? "selected" : ""}>${c}</option>`;
+  const condOption = (c, selected) =>
+    `<option value="${c}" ${c === selected ? "selected" : ""}>${c} · ${CONDITION_NAME[c]}</option>`;
   fillSelect("#rpLeftCond", ["A", "B", "C", "D"], (c) => condOption(c, "A"));
   fillSelect("#rpRightCond", ["A", "B", "C", "D"], (c) => condOption(c, "C"));
 

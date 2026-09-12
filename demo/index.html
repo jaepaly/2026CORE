@@ -43,9 +43,8 @@
             아래 시연은 무방어 도구와 필드 최소권한 도구를 같은 화면에서 비교합니다.
           </p>
           <div class="hero-actions">
-            <a class="button primary" href="#demo">비교 시연 바로 보기</a>
-            <button class="button ghost" id="tutorialReplayBtn" type="button">3분 안내 보기</button>
-            <button class="button ghost" id="autoPlayBtn" type="button">발표 모드</button>
+            <button class="button primary" id="tutorialReplayBtn" type="button">1분 안내 먼저 보기</button>
+            <a class="button ghost" href="#replay">실제 실험 기록 보기</a>
           </div>
         </div>
 
@@ -59,17 +58,46 @@
           </div>
           <div class="dash-meter">
             <div>
-              <span>projection 없음 A·B</span>
+              <span>도구를 그대로 뒀을 때</span>
               <strong>0.50</strong>
             </div>
             <div class="dash-line" aria-hidden="true"><i></i></div>
             <div>
-              <span>projection C·D</span>
+              <span>도구가 잘라냈을 때</span>
               <strong>0.00</strong>
             </div>
           </div>
-          <p>v3 본 실험 688 runs — run당 실제 전달된 민감 필드. 프롬프트 지시(B 0.52)는 줄이지 못했고, 필드 projection만 0으로 만들었습니다.</p>
+          <p>
+            업무 1회당 AI에게 넘어간 민감 항목 수입니다(실험 688회 평균).
+            AI에게 <b>말로 부탁한 경우는 0.52</b> — 줄지 않았습니다.
+            도구가 직접 잘라낸 경우에만 0이 됐습니다.
+          </p>
         </aside>
+      </section>
+
+      <section class="comparison">
+        <article>
+          <p class="eyebrow">방법 1</p>
+          <h3>AI에게 부탁하기</h3>
+          <p>
+            “필요한 것만 보라”고 일러두는 방식입니다. 그런데 도구가 전화번호·개인 메모·메일
+            본문을 그대로 돌려주면, AI가 그것을 읽은 뒤입니다. 부탁은 전달을 막지 못합니다.
+          </p>
+          <p class="compare-codes">
+            이 사이트에서 <b>무방어(A)</b>와 <b>지시문만(B)</b>이 여기 해당합니다.
+          </p>
+        </article>
+        <article>
+          <p class="eyebrow">방법 2</p>
+          <h3>도구가 아예 주지 않기</h3>
+          <p>
+            AI를 믿는 대신 도구 쪽에서 잘라냅니다. 업무마다 어떤 항목까지 넘길지를
+            <b>사람이 미리 정해두면</b>, 그 밖의 항목은 AI에게 도달하지 않습니다.
+          </p>
+          <p class="compare-codes">
+            이 사이트에서 <b>필드 최소권한(C)</b>과 <b>최소권한+지시문(D)</b>이 여기 해당합니다.
+          </p>
+        </article>
       </section>
 
       <section class="demo-shell replay-shell" id="replay">
@@ -94,11 +122,11 @@
               <select id="rpScenario"></select>
             </label>
             <label>
-              <span>왼쪽 조건</span>
+              <span>왼쪽 (비교 대상)</span>
               <select id="rpLeftCond"></select>
             </label>
             <label>
-              <span>오른쪽 조건</span>
+              <span>오른쪽 (비교 대상)</span>
               <select id="rpRightCond"></select>
             </label>
             <button class="button primary" id="rpReload" type="button">재생</button>
@@ -110,7 +138,7 @@
         <div class="comparison-stage replay-stage">
           <article class="compare-card danger-card">
             <div class="compare-head">
-              <span class="policy-pill danger" id="rpLeftLabel">조건 A</span>
+              <span class="policy-pill danger" id="rpLeftLabel">무방어 (A)</span>
               <span class="rp-badges" id="rpLeftBadges"></span>
             </div>
             <div class="rp-events" id="rpLeftEvents"></div>
@@ -124,7 +152,7 @@
 
           <article class="compare-card safe-card">
             <div class="compare-head">
-              <span class="policy-pill safe" id="rpRightLabel">조건 C</span>
+              <span class="policy-pill safe" id="rpRightLabel">필드 최소권한 (C)</span>
               <span class="rp-badges" id="rpRightBadges"></span>
             </div>
             <div class="rp-events" id="rpRightEvents"></div>
@@ -258,24 +286,6 @@
         </article>
       </section>
 
-      <section class="comparison">
-        <article>
-          <p class="eyebrow">Before</p>
-          <h3>A/B · 프롬프트에 부탁하기</h3>
-          <p>
-            모델에게 “필요한 것만 읽어라”고 말해도 도구가 body·phone·notes를 그대로 반환하면,
-            접근 순간 민감 필드는 모델 컨텍스트에 들어갑니다.
-          </p>
-        </article>
-        <article>
-          <p class="eyebrow">After</p>
-          <h3>C/D · 인터페이스에서 집행하기</h3>
-          <p>
-            정책 미들웨어가 민감 필드를 제거하면 모델이 같은 ID를 조회해도 본문과 개인 메모가
-            전달되지 않습니다. 안전은 프롬프트가 아니라 인터페이스에서 강제됩니다.
-          </p>
-        </article>
-      </section>
     </main>
 
     <footer>

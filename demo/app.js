@@ -177,7 +177,6 @@ const scenarios = {
   },
 };
 
-let autoPlayTimer = null;
 let traceTimers = [];
 
 function escapeHtml(value) {
@@ -394,45 +393,10 @@ function runDemo() {
   renderTrace(policyKey, scenarioKey);
 }
 
-function autoAdvance() {
-  const policySelect = $("#policySelect");
-  const scenarioSelect = $("#scenarioSelect");
-  const policyKeys = Object.keys(policies);
-  const scenarioKeys = Object.keys(scenarios);
-  const currentPolicyIndex = policyKeys.indexOf(policySelect.value);
-  const nextPolicyIndex = (currentPolicyIndex + 1) % policyKeys.length;
-
-  policySelect.value = policyKeys[nextPolicyIndex];
-
-  if (nextPolicyIndex === 0) {
-    const currentScenarioIndex = scenarioKeys.indexOf(scenarioSelect.value);
-    scenarioSelect.value = scenarioKeys[(currentScenarioIndex + 1) % scenarioKeys.length];
-  }
-
-  runDemo();
-}
-
-function toggleAutoPlay() {
-  const button = $("#autoPlayBtn");
-  if (autoPlayTimer) {
-    window.clearInterval(autoPlayTimer);
-    autoPlayTimer = null;
-    button.textContent = "발표 모드";
-    button.classList.remove("primary");
-    return;
-  }
-
-  button.textContent = "발표 모드 중지";
-  button.classList.add("primary");
-  autoAdvance();
-  autoPlayTimer = window.setInterval(autoAdvance, 2600);
-}
-
 function bindEvents() {
   $("#runBtn").addEventListener("click", runDemo);
   $("#policySelect").addEventListener("change", runDemo);
   $("#scenarioSelect").addEventListener("change", runDemo);
-  $("#autoPlayBtn").addEventListener("click", toggleAutoPlay);
 }
 
 loadExperimentSummaries()
