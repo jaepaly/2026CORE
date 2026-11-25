@@ -33,7 +33,7 @@ python run_experiments_v2.py mistral:7b --seeds 1
 
 > 참고: mistral 실행 중에는 매 런마다 judge(qwen3:8b)로 잠깐 바뀌어 느릴 수 있음 — 정상.
 
-## 4. 제출 (팀장에게 전달)
+## 4. 제출 (실험 총괄에게 전달)
 - `output/runs_qwen3_8b.jsonl`, `output/runs_mistral_7b.jsonl` 2개 파일
 - 환경 1줄: OS / `ollama --version` / 각 모델 `ollama show <model>`의 digest
 

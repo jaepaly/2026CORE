@@ -1,4 +1,4 @@
-# 실험 실행 패킷 — 팀장 (데스크탑) + 집계
+# 실험 실행 패킷 — 실험 총괄 (데스크탑) + 집계
 
 > 데스크탑(여유 있는 머신) 담당. **2~3개 모델** 실행 + 마지막 **집계/문서 갱신**.
 > 담당 모델: `qwen2.5:3b`, `qwen2.5:14b` (VRAM 여유 시 `qwen2.5:32b` 추가).
@@ -40,8 +40,8 @@ runs_qwen3_8b.jsonl      (이예찬)
 runs_mistral_7b.jsonl    (이예찬)
 runs_llama3.1_8b.jsonl   (장승우)
 runs_qwen2.5_7b.jsonl    (장승우)
-runs_qwen2.5_3b.jsonl    (팀장)
-runs_qwen2.5_14b.jsonl   (팀장)
+runs_qwen2.5_3b.jsonl    (실험 총괄)
+runs_qwen2.5_14b.jsonl   (실험 총괄)
 ```
 
 ## 6. 집계 + 통계 + 그림

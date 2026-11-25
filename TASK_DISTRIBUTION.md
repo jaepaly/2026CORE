@@ -13,7 +13,7 @@
 
 ---
 
-## 1. 코디네이터(팀장)가 먼저 — 모두 시작 전 (BLOCKING)
+## 1. 코디네이터(실험 총괄)가 먼저 — 모두 시작 전 (BLOCKING)
 
 1. **시나리오 40개 확정**: `data/scenarios_v2.json`을 s1~s40으로 확장(각 `task`/`minimum`/`success_criteria`). → 별도 작성 중.
 2. **코드 동기화 + base commit**: 아래가 반영된 상태로 commit/push. 모두 이 커밋을 pull한다.
@@ -50,7 +50,7 @@ ollama show <할당받은 모델>        # 출력에 'tools' capability 있는�
 |---|---|---|---|---|
 | 이예찬 | 노트북 | `qwen3:8b`, `mistral:7b` | 5GB | [team/member_yechan.md](team/member_yechan.md) |
 | 장승우 | 노트북 | `llama3.1:8b`, `qwen2.5:7b` | 5GB | [team/member_seungwoo.md](team/member_seungwoo.md) |
-| 팀장 | 데스크탑 | `qwen2.5:3b`, `qwen2.5:14b` (+32b) | 2.5~20GB | [team/member_jaepaly.md](team/member_jaepaly.md) |
+| 실험 총괄 | 데스크탑 | `qwen2.5:3b`, `qwen2.5:14b` (+32b) | 2.5~20GB | [team/member_jaepaly.md](team/member_jaepaly.md) |
 
 - 6모델 × 160런 = 960런. 3명 병렬이면 각 ~320런(약 1~2시간).
 - judge(`qwen3:8b`)는 전원 필수 — 모델 간 성공률 비교를 공정하게 하기 위함.
